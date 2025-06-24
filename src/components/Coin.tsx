@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 
 interface CoinProps {
@@ -9,27 +9,20 @@ interface CoinProps {
 }
 
 export default function Coin({ position = [0, 0, 0], scale = 5 }: CoinProps) {
-  const { nodes } = useGLTF("/models/BoardandCoin.glb") as any;
+  const { nodes } = useGLTF("/models/Coin.glb") as any;
 
   const ref = useRef<THREE.Mesh>(null);
-
-  useFrame((_, delta) => {
-    if (!ref.current) return;
-    ref.current.rotation.z += delta;
-  });
-
+  
   return (
     <mesh
       ref={ref}
       geometry={nodes.Coin.geometry}
       position={position}
       scale={scale}
-      castShadow
-      receiveShadow
     >
-      <meshStandardMaterial color={"#aaa"} />
+      <meshBasicMaterial color={"#aaa"} />
     </mesh>
   );
 }
 
-useGLTF.preload("/models/coin.glb");
+useGLTF.preload("/models/Coin.glb");

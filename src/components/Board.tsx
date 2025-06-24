@@ -1,17 +1,18 @@
-// components/Board.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
-import { useRef } from "react";
+import { forwardRef } from "react";
 
 interface BoardProps {
   position?: [number, number, number];
   scale?: number;
 }
 
-export default function Board({ position = [0, 0, 0], scale = 1 }: BoardProps) {
+const Board = forwardRef<THREE.Mesh, BoardProps>(function Board(
+  { position = [0, 0, 0], scale = 5 },
+  ref
+) {
   const { nodes } = useGLTF("/models/Board.glb") as any;
-
-  const ref = useRef<THREE.Mesh>(null);
 
   return (
     <mesh
@@ -19,12 +20,12 @@ export default function Board({ position = [0, 0, 0], scale = 1 }: BoardProps) {
       geometry={nodes.Board.geometry}
       position={position}
       scale={scale}
-      receiveShadow
-      castShadow
     >
-      <meshStandardMaterial color="#222" roughness={1} metalness={0} />
+      <meshBasicMaterial color={"#aaa"} />
     </mesh>
   );
-}
+});
+
+export default Board;
 
 useGLTF.preload("/models/Board.glb");

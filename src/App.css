@@ -20,6 +20,7 @@ html, body {
 }
 
 .bgCanvas {
+  pointer-events: auto;
   position: fixed;
   inset: 0;
   width: 100%;
@@ -28,6 +29,7 @@ html, body {
 
 /* keep the *canvas* itself in the background, not the whole wrapper */
 .bgCanvas canvas {
+  pointer-events: auto;
   z-index: -1;          /* draw behind the HTML */
   pointer-events: none; /* never block clicks or scroll */
 }
@@ -91,4 +93,8 @@ section {
 .hero p {
   opacity: 0;
   animation: subtitleFade 0.8s 0.3s forwards;
+}
+
+.scroll-html {
+  pointer-events: none; /* ← allow clicks to pass through */
 }
