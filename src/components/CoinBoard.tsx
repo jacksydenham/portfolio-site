@@ -9,6 +9,7 @@ export default function CoinBoard() {
 
   return (
     <group>
+{/* <Board position={[0, 0, -0.1]} scale={0.8} /> */}
       {coinMeta.map(({ name, gridX, gridY }) => (
         <CoinInstance
           key={name}

@@ -9,7 +9,7 @@ interface CoinProps {
 }
 
 export default function Coin({ position = [0, 0, 0], scale = 5 }: CoinProps) {
-  const { nodes } = useGLTF("/models/Coin.glb") as any;
+  const { nodes } = useGLTF("/models/BoardandCoin.glb") as any;
 
   const ref = useRef<THREE.Mesh>(null);
 
