@@ -6,10 +6,10 @@ import {
   useScroll,
   Environment,
 } from "@react-three/drei";
-import Coin from "./components/Coin";
 import "./App.css";
 import React from "react";
 import "@fontsource/bebas-neue/400.css";
+import CoinBoard from "./components/CoinBoard";
 
 
 function ScrollScene() {
@@ -33,7 +33,7 @@ function ScrollScene() {
       y = THREE.MathUtils.lerp(0, -1, k);
     }
 
-    coinState.current.rotation.y += 0.01;
+    coinState.current.rotation.y += 0.0005;
     coinState.current.position.set(x, y, 0);
   });
 
@@ -41,7 +41,7 @@ function ScrollScene() {
     <group ref={coinState}>
       <ambientLight intensity={0.6} />
       <directionalLight position={[2, 4, 3]} intensity={1} />
-      <Coin scale={3} />
+      <CoinBoard/>
       <Environment preset="studio" />
     </group>
   );
@@ -54,6 +54,7 @@ export default function App() {
         <ScrollScene />
 
         <Scroll html>
+
           <section className="hero"> 
             <h1>Jack&nbsp;Sydenham</h1>
             <p>Full-stack&nbsp;Developer</p>
