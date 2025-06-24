@@ -2,15 +2,16 @@ import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { ScrollControls, Scroll, useScroll, Stats } from "@react-three/drei";
 import "./App.css";
-import React from "react";
+import { useRef } from "react";
 import "@fontsource/bebas-neue/400.css";
 import CoinBoard from "./components/CoinBoard";
 
 function ScrollScene() {
-  const groupRef = React.useRef<THREE.Group>(null);
-  const boardGroup = React.useRef<THREE.Group>(null);
+  const groupRef = useRef<THREE.Group>(null);
+  const boardGroup = useRef<THREE.Group>(null);
   const scroll = useScroll();
 
+  // Animate position based on scroll
   useFrame(() => {
     if (!boardGroup.current) return;
     const scrollPos = scroll.offset;
@@ -18,13 +19,12 @@ function ScrollScene() {
     let x = 0.5,
       y = 0;
 
-    if (scrollPos < 0.25)
-      x = THREE.MathUtils.lerp(0.5, 2.5, scrollPos / 0.25); // first 25%
-    else if (scrollPos < 0.75) x = 2.5; // middle 50%
-    else {
-      // last 25%
+    if (scrollPos < 0.25) {
+      x = THREE.MathUtils.lerp(0.5, 2.5, scrollPos / 0.25);
+    } else if (scrollPos < 0.75) {
+      x = 2.5;
+    } else {
       const k = (scrollPos - 0.75) / 0.25;
-
       x = 2.5;
       y = THREE.MathUtils.lerp(0, -1, k);
     }
@@ -32,16 +32,35 @@ function ScrollScene() {
     boardGroup.current.position.set(x, y, 0);
   });
 
-  const rotationStartTime = React.useRef(0);
+  const boardAnimTime = useRef(0);
+  const boardInitialZ = 4; // start near the camera
+  const boardTargetZ = 0; // final resting place
+
+  useFrame((_, dt) => {
+    if (!boardGroup.current) return;
+
+    boardAnimTime.current += dt;
+    function easeInOutQuad(t: number) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    const t = Math.min(boardAnimTime.current / 3, 1);
+    const eased = easeInOutQuad(t);
+    // Interpolate from initialZ to targetZ
+    boardGroup.current.position.z = THREE.MathUtils.lerp(
+      boardInitialZ,
+      boardTargetZ,
+      eased
+    );
+  });
+
+  // Animate rotation after 2s delay
   useFrame((_, dt) => {
     if (!groupRef.current) return;
 
-    rotationStartTime.current += dt;
-    if (rotationStartTime.current < 2) return;
-
     groupRef.current.rotation.y = THREE.MathUtils.damp(
       groupRef.current.rotation.y,
-      Math.PI,
+      0,
       3,
       dt
     );
@@ -52,11 +71,10 @@ function ScrollScene() {
       1,
       dt
     );
-
   });
 
   return (
-    <group ref={boardGroup}>
+    <group ref={boardGroup} position={[0.5, 0, 4]}>
       <group ref={groupRef}>
         <CoinBoard />
       </group>
@@ -71,12 +89,22 @@ export default function App() {
       dpr={[1, 1.5]}
       camera={{ position: [0, 2, 6], fov: 50 }}
     >
-      <ambientLight intensity={1.5} />
-      <directionalLight position={[5, 10, 5]} intensity={2} />
+      <ambientLight intensity={0.5} />
+      <directionalLight
+        castShadow
+        position={[5, 10, 5]}
+        intensity={1.5}
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        shadow-camera-far={50}
+        shadow-camera-left={-10}
+        shadow-camera-right={10}
+        shadow-camera-top={10}
+        shadow-camera-bottom={-10}
+      />
       <Stats />
       <ScrollControls pages={3}>
         <ScrollScene />
-
         <Scroll html>
           <div className="scroll-html"></div>
           <section className="hero">

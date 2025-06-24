@@ -20,8 +20,12 @@ const Board = forwardRef<THREE.Mesh, BoardProps>(function Board(
       geometry={nodes.Board.geometry}
       position={position}
       scale={scale}
-    >
-      <meshBasicMaterial color={"#aaa"} />
+    receiveShadow>
+      <meshPhongMaterial
+  color="#ffffff"
+  shininess={80}
+/>
+
     </mesh>
   );
 });

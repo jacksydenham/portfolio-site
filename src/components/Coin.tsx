@@ -19,6 +19,8 @@ export default function Coin({ position = [0, 0, 0], scale = 5 }: CoinProps) {
       geometry={nodes.Coin.geometry}
       position={position}
       scale={scale}
+      castShadow
+      receiveShadow
     >
       <meshBasicMaterial color={"#aaa"} />
     </mesh>
