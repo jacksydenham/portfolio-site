@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/bebas-neue": "^5.2.6",
     "@react-three/drei": "^10.3.0",
     "@react-three/fiber": "^9.1.2",
     "react": "^19.1.0",
