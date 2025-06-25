@@ -33,8 +33,11 @@ export default function CoinInstance({
     [name]
   );
 
-  const basePosition = useRef<THREE.Vector3>(new THREE.Vector3(...position));
   const delay = useMemo(() => Math.random() * 1.5, []);
+  const bobSpeed = useMemo(() => 1.5 + Math.random() * 0.8, []);
+  const bobPhase = useMemo(() => Math.random() * Math.PI * 2, []);
+
+  const basePosition = useRef<THREE.Vector3>(new THREE.Vector3(...position));
   const startTime = useRef<number | null>(null);
 
   const ref = useRef<THREE.Mesh>(null);
@@ -51,9 +54,10 @@ export default function CoinInstance({
     const progress = Math.min(Math.max((t - delay) * 2, 0), 1);
     const eased = THREE.MathUtils.smoothstep(progress, 0, 1);
 
-    // slide down from above + fade in
+    // slide down from above w opacity
     const targetY = basePosition.current.y;
-    const hoverLift = isHovered ? 0.2 : 0;
+    const hoverLift = isHovered ? 0.3 : 0;
+    materialRef.current.opacity = eased;
 
     const animatedY = THREE.MathUtils.damp(
       ref.current.position.y,
@@ -62,15 +66,20 @@ export default function CoinInstance({
       dt
     );
 
+    // calc y movement to for bobbing
+    const isSection2 = !setHoveredCategory;
+    const bobY =
+      isHovered && isSection2
+        ? Math.sin(elapsed * bobSpeed + bobPhase) * 0.015
+        : 0;
+
     ref.current.position.set(
       basePosition.current.x,
-      THREE.MathUtils.lerp(targetY + 1, animatedY, eased),
+      THREE.MathUtils.lerp(targetY + 1, animatedY, eased) + bobY,
       basePosition.current.z
     );
 
-    materialRef.current.opacity = eased;
-
-    const targetYaw = isHovered ? yLookAt(ref.current, camera.position) : 0; // flat default orientation
+    const targetYaw = isHovered ? yLookAt(ref.current, camera.position) : 0; // default lay flat
 
     ref.current.rotation.x = THREE.MathUtils.damp(
       ref.current.rotation.x,
@@ -79,20 +88,58 @@ export default function CoinInstance({
       dt
     );
 
-    // fuckass ai point coins to cam for section 1
+    // coin hover anims
     if (isHovered) {
-      const toCam = new THREE.Vector3()
-        .subVectors(camera.position, ref.current.position)
-        .normalize();
+      if (setHoveredCategory) {
+        // section 1: face cam
+        const toCam = new THREE.Vector3()
+          .subVectors(camera.position, ref.current.position)
+          .normalize();
 
-      const target = new THREE.Quaternion().setFromUnitVectors(
-        new THREE.Vector3(0, 1, 0),
-        toCam
-      );
+        const target = new THREE.Quaternion().setFromUnitVectors(
+          new THREE.Vector3(0, 1, 0),
+          toCam
+        );
 
-      ref.current.quaternion.slerp(target, 0.1);
+        ref.current.quaternion.slerp(target, 0.1);
+      } else {
+        // section 2: sonic coin ass spin
+        ref.current.rotation.y += dt * 2;
+
+        ref.current.rotation.x = THREE.MathUtils.damp(
+          ref.current.rotation.x,
+          0,
+          6,
+          dt
+        );
+
+        ref.current.rotation.z = THREE.MathUtils.damp(
+          ref.current.rotation.z,
+          THREE.MathUtils.degToRad(90),
+          6,
+          dt
+        );
+      }
     } else {
-      ref.current.quaternion.slerp(new THREE.Quaternion(), 0.1);
+      if (setHoveredCategory) {
+        // section 1: reset upright
+        ref.current.quaternion.slerp(new THREE.Quaternion(), 0.1);
+      } else {
+        // section 2: lay flat again without y reset (this is fucking raw)
+        ref.current.rotation.x = THREE.MathUtils.damp(
+          ref.current.rotation.x,
+          0,
+          6,
+          dt
+        );
+
+        ref.current.rotation.z = THREE.MathUtils.damp(
+          ref.current.rotation.z,
+          0,
+          6,
+          dt
+        );
+      }
     }
   });
 
@@ -103,7 +150,7 @@ export default function CoinInstance({
       scale={scale}
       onPointerOver={(e) => {
         e.stopPropagation();
-        setHoveredCategory?.(categories[0]); // or loop if you support multi
+        setHoveredCategory?.(categories[0]);
       }}
       onPointerOut={(e) => {
         e.stopPropagation();

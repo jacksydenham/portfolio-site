@@ -189,7 +189,9 @@ export default function App() {
                   activeProject === project ? "active" : ""
                 }`}
                 onMouseEnter={() => setUserOverride(project)}
-                onMouseLeave={() => setUserOverride(null)}
+                onMouseLeave={() => {
+                  setUserOverride(project);
+                }}
               >
                 <h3>{project}</h3>
               </div>
