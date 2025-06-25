@@ -15,7 +15,7 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
   const boardAnimTime = useRef(0);
   const idleTime = useRef(0);
   const hasSpun = useRef(false);
-  const spinTargetY = Math.PI * 1.25;
+  const spinTargetY = -Math.PI * 0.75;
 
   const wasInProjects = useRef(false);
 
@@ -54,7 +54,7 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
       const t = boardAnimTime.current / 3;
       const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
       targetTiltX = THREE.MathUtils.lerp(
-        THREE.MathUtils.degToRad(15),
+        THREE.MathUtils.degToRad(0),
         THREE.MathUtils.degToRad(70),
         eased
       );
@@ -74,7 +74,7 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
     } else if (inHero) {
       YRotation = 0;
     } else if (inContact) {
-      YRotation = -THREE.MathUtils.degToRad(0);
+      YRotation = -Math.PI * 1.5;
     }
 
     groupRef.current.rotation.y = THREE.MathUtils.damp(
@@ -107,6 +107,7 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
     }
 
     // board pos
+    // -- X --
     if (inContact) {
       // slide off-screen
       boardGroup.current.position.x = THREE.MathUtils.damp(
@@ -124,6 +125,37 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
         dt
       );
     }
+
+    // -- Z --
+    if (inHero) {
+      // initial slide in
+      const boardInitialZ = 4;
+      const boardTargetZ = 0;
+      const tZ = Math.min(boardAnimTime.current / 3, 1);
+      const easedZ = tZ < 0.5 ? 2 * tZ * tZ : -1 + (4 - 2 * tZ) * tZ;
+
+      boardGroup.current.position.z = THREE.MathUtils.lerp(
+        boardInitialZ,
+        boardTargetZ,
+        easedZ
+      );
+    } else if (inProjects) {
+      // hold at z = 0
+      boardGroup.current.position.z = THREE.MathUtils.damp(
+        boardGroup.current.position.z,
+        0,
+        4,
+        dt
+      );
+    } else if (inContact) {
+      // slide away
+      boardGroup.current.position.z = THREE.MathUtils.damp(
+        boardGroup.current.position.z,
+        -5,
+        4,
+        dt
+      );
+    }
   });
 
   return (
@@ -131,7 +163,7 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
       <group
         ref={groupRef}
         position={[0, -0.4, 0]}
-        rotation={[THREE.MathUtils.degToRad(15), 0, 0]}
+        rotation={[0, 0, 0]}
       >
         <CoinBoard
           currentSection={

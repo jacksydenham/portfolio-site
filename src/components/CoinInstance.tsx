@@ -122,6 +122,8 @@ export default function CoinInstance({
     }
   });
 
+  console.log(texture)
+
   return (
     <mesh
       ref={ref}
@@ -138,7 +140,7 @@ export default function CoinInstance({
     >
       <meshBasicMaterial
         ref={materialRef}
-        map={texture}
+        
         toneMapped={false}
         transparent
         opacity={0}

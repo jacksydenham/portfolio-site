@@ -25,14 +25,14 @@ export default function CoinBoard({
     const height = box.max.z - box.min.z;
 
     setGaps({
-      gapX: (width / (cols - 1)) * 0.75,
-      gapY: (height / (rows - 1)) * 0.75,
+      gapX: (width / (cols - 1)) * 0.72,
+      gapY: (height / (rows - 1)) * 0.65,
     });
   }, []);
 
   return (
     <group>
-      <Board ref={boardRef} position={[0, 0, 0]} scale={0.6} />
+      <Board ref={boardRef} position={[0, 0, 0]} scale={1.5} />
       {gaps &&
         coinMeta.map(({ name, categories, gridX, gridY, projects }) => {
           const isHovered =
@@ -46,10 +46,10 @@ export default function CoinBoard({
               name={name}
               position={[
                 (gridX - (cols - 1) / 2) * gaps.gapX,
-                0.4,
+                0.2,
                 (gridY - (rows - 1) / 2) * gaps.gapY,
               ]}
-              scale={0.75}
+              scale={0.55}
               categories={categories}
               isHovered={isHovered}
               setHoveredCategory={
