@@ -8,7 +8,7 @@ export default function CoinBoard({
   currentSection,
   activeProject,
 }: {
-  currentSection: "hero" | "projects";
+  currentSection: "hero" | "projects" | "contact";
   activeProject: string;
 }) {
   const boardRef = useRef<THREE.Mesh>(null);

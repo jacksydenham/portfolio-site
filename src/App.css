@@ -12,11 +12,11 @@ html, body {
 
 .hero {
   text-align: center;
-  background: transparent;   /* keep backdrop clear */
+  background: transparent;
 }
 
 .content {
-  background: rgba(0,0,0,0.15); /* faint overlay so text pops */
+  background: rgba(0,0,0,0.15);
 }
 
 .bgCanvas {
@@ -27,11 +27,10 @@ html, body {
   height: 100%;
 }
 
-/* keep the *canvas* itself in the background, not the whole wrapper */
 .bgCanvas canvas {
   pointer-events: auto;
-  z-index: -1;          /* draw behind the HTML */
-  pointer-events: none; /* never block clicks or scroll */
+  z-index: -1;
+  pointer-events: none;
 }
 
 section { 
@@ -81,10 +80,9 @@ section {
   letter-spacing: 0.3em;
   color: #ddd;
   text-transform: uppercase;
-  pointer-events: auto;   /* allow text selection/links if needed */
+  pointer-events: auto;
 }
 
-/* optional subtle fade-in for subtitle */
 @keyframes subtitleFade {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -96,7 +94,7 @@ section {
 }
 
 .scroll-html {
-  pointer-events: none; /* ← allow clicks to pass through */
+  pointer-events: none;
 }
 
 .projects {
@@ -129,5 +127,23 @@ section {
 .project-card.active {
   outline: 2px solid #3b82f6;
   border-color: #3b82f6;
+}
+
+.contact {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+.contact-box {
+  width: 75vw;
+  aspect-ratio: 1 / 1;
+  background:#111;
+  margin-top: 60px;
+  border:2px solid #555;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#eee;
+  font-size:2rem;
 }
 

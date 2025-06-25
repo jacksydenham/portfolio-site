@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { ScrollControls, Scroll, useScroll, Stats } from "@react-three/drei";
@@ -16,38 +17,45 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
   const hasSpun = useRef(false);
   const spinTargetY = Math.PI * 1.25;
 
+  const wasInProjects = useRef(false);
+
   // anims
-  useFrame((_, dt) => {
+  useFrame(({ clock }, dt) => {
     if (!boardGroup.current || !groupRef.current) return;
 
     // time trackers
     boardAnimTime.current += dt;
     idleTime.current += dt;
 
-    // scroll position
     const scrollY = scroll.offset;
+    const heroEnd = 0.05;
+    const projectsEnd = 0.8;
 
-    // move board on init
-    const boardInitialZ = 4;
-    const boardTargetZ = 0;
-    const tZ = Math.min(boardAnimTime.current / 3, 1);
-    const easedZ = tZ < 0.5 ? 2 * tZ * tZ : -1 + (4 - 2 * tZ) * tZ;
-    boardGroup.current.position.z = THREE.MathUtils.lerp(
-      boardInitialZ,
-      boardTargetZ,
-      easedZ
-    );
+    const inHero = scrollY < heroEnd;
+    const inProjects = scrollY >= heroEnd && scrollY < projectsEnd;
+    const inContact = scrollY >= projectsEnd;
+
+    // coins wait after spinning
+    if (inProjects && !wasInProjects.current) {
+      (window as any).section2EntryTime = clock.getElapsedTime();
+      (window as any).setActiveProject?.("Keydocs");
+    } else if (!inProjects && wasInProjects.current) {
+      delete (window as any).section2EntryTime;
+      (window as any).resetActiveProject?.();
+    }
+
+    wasInProjects.current = inProjects;
 
     // tilt board on x
-    let targetTiltX = THREE.MathUtils.degToRad(45);
-    if (scrollY > 0.05) {
+    let targetTiltX = THREE.MathUtils.degToRad(70);
+    if (inProjects) {
       targetTiltX = THREE.MathUtils.degToRad(10);
     } else if (boardAnimTime.current < 3) {
       const t = boardAnimTime.current / 3;
       const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
       targetTiltX = THREE.MathUtils.lerp(
         THREE.MathUtils.degToRad(15),
-        THREE.MathUtils.degToRad(45),
+        THREE.MathUtils.degToRad(70),
         eased
       );
     }
@@ -55,27 +63,28 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
     groupRef.current.rotation.x = THREE.MathUtils.damp(
       groupRef.current.rotation.x,
       targetTiltX,
-      2,
+      3,
       dt
     );
 
-    // spin board on y
-    const wantSpin = scrollY > 0.05 ? spinTargetY : 0;
+    // spin board
+    let YRotation = groupRef.current.rotation.y;
+    if (inProjects) {
+      YRotation = spinTargetY;
+    } else if (inHero) {
+      YRotation = 0;
+    } else if (inContact) {
+      YRotation = -THREE.MathUtils.degToRad(0);
+    }
+
     groupRef.current.rotation.y = THREE.MathUtils.damp(
       groupRef.current.rotation.y,
-      wantSpin,
-      2,
-      dt
-    );
-
-    // move board to right
-    boardGroup.current.position.x = THREE.MathUtils.damp(
-      boardGroup.current.position.x,
-      scrollY > 0.05 ? 2.5 : 0.5,
+      YRotation,
       4,
       dt
     );
 
+    // fuckass check for sonic coin
     if (
       !hasSpun.current &&
       Math.abs(groupRef.current.rotation.y - spinTargetY) < 0.05
@@ -84,40 +93,34 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
     }
 
     // idle anim
-    const fade = THREE.MathUtils.clamp(idleTime.current / 2, 0, 1);
-    const bobY = Math.sin(idleTime.current * 1.8) * 0.035 * fade;
-    const yawAdd =
-      Math.sin(idleTime.current * 0.8) * THREE.MathUtils.degToRad(0.1) * fade;
-    const rollZ =
-      Math.sin(idleTime.current * 1.6) * THREE.MathUtils.degToRad(1) * fade;
+    if (inProjects) {
+      const fade = THREE.MathUtils.clamp(idleTime.current / 2, 0, 1);
+      const bobY = Math.sin(idleTime.current * 1.8) * 0.035 * fade;
+      const yawAdd =
+        Math.sin(idleTime.current * 0.8) * THREE.MathUtils.degToRad(0.1) * fade;
+      const rollZ =
+        Math.sin(idleTime.current * 1.6) * THREE.MathUtils.degToRad(1) * fade;
 
-    boardGroup.current.position.y = bobY;
-    groupRef.current.rotation.y += yawAdd;
-    groupRef.current.rotation.z = rollZ;
+      boardGroup.current.position.y = bobY;
+      groupRef.current.rotation.y += yawAdd;
+      groupRef.current.rotation.z = rollZ;
+    }
 
-    // reset everything when at top
-    if (scrollY <= 0.05) {
-      hasSpun.current = false;
-      idleTime.current = 0;
-
+    // board pos
+    if (inContact) {
+      // slide off-screen
       boardGroup.current.position.x = THREE.MathUtils.damp(
         boardGroup.current.position.x,
-        0.5,
-        4,
-        dt
-      );
-
-      boardGroup.current.position.y = THREE.MathUtils.damp(
-        boardGroup.current.position.y,
-        0,
-        3,
-        dt
-      );
-
-      groupRef.current.rotation.y = THREE.MathUtils.damp(
-        groupRef.current.rotation.y,
-        0,
+        15,
         2,
+        dt
+      );
+    } else {
+      // project or hero
+      boardGroup.current.position.x = THREE.MathUtils.damp(
+        boardGroup.current.position.x,
+        inProjects ? 2.5 : 0.5,
+        4,
         dt
       );
     }
@@ -131,7 +134,13 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
         rotation={[THREE.MathUtils.degToRad(15), 0, 0]}
       >
         <CoinBoard
-          currentSection={scroll.offset > 0.05 ? "projects" : "hero"}
+          currentSection={
+            scroll.offset < 0.05
+              ? "hero"
+              : scroll.offset < 0.75
+              ? "projects"
+              : "contact"
+          }
           activeProject={activeProject}
         />
       </group>
@@ -141,16 +150,15 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
 
 export default function App() {
   const projectCycle = ["Keydocs", "Carer Manager Plus", "SmartBoard"];
-  const [autoProjectIndex, setAutoProjectIndex] = useState(0);
+  const [autoProjectIndex] = useState(0);
   const [userOverride, setUserOverride] = useState<string | null>(null);
 
+  // unselect project
   useEffect(() => {
-    if (userOverride !== null) return;
-    const interval = setInterval(() => {
-      setAutoProjectIndex((i) => (i + 1) % projectCycle.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [userOverride]);
+    (window as any).resetActiveProject = () => setUserOverride(null);
+    (window as any).setActiveProject = (project: string) =>
+      setUserOverride(project);
+  }, []);
 
   const activeProject = userOverride ?? projectCycle[autoProjectIndex];
 
@@ -196,6 +204,9 @@ export default function App() {
                 <h3>{project}</h3>
               </div>
             ))}
+          </section>
+          <section className="contact">
+            <div className="contact-box">contact form coming soon…</div>
           </section>
         </Scroll>
       </ScrollControls>
