@@ -2,11 +2,11 @@ import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { ScrollControls, Scroll, useScroll, Stats } from "@react-three/drei";
 import "./App.css";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "@fontsource/bebas-neue/400.css";
 import CoinBoard from "./components/CoinBoard";
 
-function ScrollScene() {
+function ScrollScene({ activeProject }: { activeProject: string }) {
   const groupRef = useRef<THREE.Group>(null);
   const boardGroup = useRef<THREE.Group>(null);
   const scroll = useScroll();
@@ -16,20 +16,20 @@ function ScrollScene() {
   const hasSpun = useRef(false);
   const spinTargetY = Math.PI * 1.25;
 
+  // anims
   useFrame((_, dt) => {
     if (!boardGroup.current || !groupRef.current) return;
 
+    // time trackers
     boardAnimTime.current += dt;
     idleTime.current += dt;
 
+    // scroll position
     const scrollY = scroll.offset;
 
-    // ----------------------------
-    // Board Z entrance easing
-    // ----------------------------
+    // move board on init
     const boardInitialZ = 4;
     const boardTargetZ = 0;
-
     const tZ = Math.min(boardAnimTime.current / 3, 1);
     const easedZ = tZ < 0.5 ? 2 * tZ * tZ : -1 + (4 - 2 * tZ) * tZ;
     boardGroup.current.position.z = THREE.MathUtils.lerp(
@@ -38,11 +38,8 @@ function ScrollScene() {
       easedZ
     );
 
-    // ----------------------------
-    // Scroll-driven X tilt
-    // ----------------------------
+    // tilt board on x
     let targetTiltX = THREE.MathUtils.degToRad(45);
-
     if (scrollY > 0.05) {
       targetTiltX = THREE.MathUtils.degToRad(10);
     } else if (boardAnimTime.current < 3) {
@@ -62,11 +59,8 @@ function ScrollScene() {
       dt
     );
 
-    // ----------------------------
-    // Spin to isometric angle
-    // ----------------------------
+    // spin board on y
     const wantSpin = scrollY > 0.05 ? spinTargetY : 0;
-
     groupRef.current.rotation.y = THREE.MathUtils.damp(
       groupRef.current.rotation.y,
       wantSpin,
@@ -74,6 +68,7 @@ function ScrollScene() {
       dt
     );
 
+    // move board to right
     boardGroup.current.position.x = THREE.MathUtils.damp(
       boardGroup.current.position.x,
       scrollY > 0.05 ? 2.5 : 0.5,
@@ -88,9 +83,7 @@ function ScrollScene() {
       hasSpun.current = true;
     }
 
-    // ----------------------------
-    // Idle motion
-    // ----------------------------
+    // idle anim
     const fade = THREE.MathUtils.clamp(idleTime.current / 2, 0, 1);
     const bobY = Math.sin(idleTime.current * 1.8) * 0.035 * fade;
     const yawAdd =
@@ -102,9 +95,7 @@ function ScrollScene() {
     groupRef.current.rotation.y += yawAdd;
     groupRef.current.rotation.z = rollZ;
 
-    // ----------------------------
-    // Reset when back to top
-    // ----------------------------
+    // reset everything when at top
     if (scrollY <= 0.05) {
       hasSpun.current = false;
       idleTime.current = 0;
@@ -139,13 +130,30 @@ function ScrollScene() {
         position={[0, -0.4, 0]}
         rotation={[THREE.MathUtils.degToRad(15), 0, 0]}
       >
-        <CoinBoard />
+        <CoinBoard
+          currentSection={scroll.offset > 0.05 ? "projects" : "hero"}
+          activeProject={activeProject}
+        />
       </group>
     </group>
   );
 }
 
 export default function App() {
+  const projectCycle = ["Keydocs", "Carer Manager Plus", "SmartBoard"];
+  const [autoProjectIndex, setAutoProjectIndex] = useState(0);
+  const [userOverride, setUserOverride] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (userOverride !== null) return;
+    const interval = setInterval(() => {
+      setAutoProjectIndex((i) => (i + 1) % projectCycle.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [userOverride]);
+
+  const activeProject = userOverride ?? projectCycle[autoProjectIndex];
+
   return (
     <Canvas
       className="bgCanvas"
@@ -167,22 +175,26 @@ export default function App() {
       />
       <Stats />
       <ScrollControls pages={3}>
-        <ScrollScene />
+        <ScrollScene activeProject={activeProject} />
         <Scroll html>
-          <div className="scroll-html"></div>
           <section className="hero">
             <h1>Jack&nbsp;Sydenham</h1>
             <p>Full-stack&nbsp;Developer</p>
           </section>
-
-          <section>
-            <h2>Skills + Projects</h2>
+          <section className="projects">
+            {projectCycle.map((project) => (
+              <div
+                key={project}
+                className={`project-card ${
+                  activeProject === project ? "active" : ""
+                }`}
+                onMouseEnter={() => setUserOverride(project)}
+                onMouseLeave={() => setUserOverride(null)}
+              >
+                <h3>{project}</h3>
+              </div>
+            ))}
           </section>
-
-          <section>
-            <h2>Skills + Projects</h2>
-          </section>
-          <div />
         </Scroll>
       </ScrollControls>
     </Canvas>

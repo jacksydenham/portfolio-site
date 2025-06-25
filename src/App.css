@@ -98,3 +98,36 @@ section {
 .scroll-html {
   pointer-events: none; /* ← allow clicks to pass through */
 }
+
+.projects {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.project-card {
+  width: 500px;
+  height: 180px;
+  padding: 1rem;
+  background: #111;
+  border-radius: 8px;
+  color: white;
+  transition: outline 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.project-card:hover {
+  background: #1a1a1a;
+}
+
+.project-card.active {
+  outline: 2px solid #3b82f6;
+  border-color: #3b82f6;
+}
+

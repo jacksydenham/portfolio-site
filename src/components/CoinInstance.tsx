@@ -11,7 +11,7 @@ interface Props {
   scale?: number;
   categories: string[];
   isHovered: boolean;
-  setHoveredCategory: (cat: string | null) => void;
+  setHoveredCategory?: (cat: string | null) => void;
 }
 
 function yLookAt(source: THREE.Object3D, target: THREE.Vector3) {
@@ -19,7 +19,14 @@ function yLookAt(source: THREE.Object3D, target: THREE.Vector3) {
   return Math.atan2(v1.x, v1.z); // yaw angle in radians
 }
 
-export default function CoinInstance({ name, position, scale = 1, categories, isHovered, setHoveredCategory }: Props) {
+export default function CoinInstance({
+  name,
+  position,
+  scale = 1,
+  categories,
+  isHovered,
+  setHoveredCategory,
+}: Props) {
   const { nodes } = useGLTF("/models/Coin.glb") as any;
   const texture = useMemo(
     () => makeLetterTexture(name[0].toUpperCase()),
@@ -37,7 +44,6 @@ export default function CoinInstance({ name, position, scale = 1, categories, is
   useFrame(({ clock }, dt) => {
     if (!ref.current || !materialRef.current) return;
 
-    /* ---------- entrance animation (unchanged) ---------- */
     const elapsed = clock.getElapsedTime();
     if (startTime.current === null) startTime.current = elapsed;
     const t = elapsed - startTime.current;
@@ -73,22 +79,19 @@ export default function CoinInstance({ name, position, scale = 1, categories, is
       dt
     );
 
-    /* --------------- face-camera tilt --------------- */
+    // fuckass ai point coins to cam for section 1
     if (isHovered) {
-      // Get direction from coin to camera
       const toCam = new THREE.Vector3()
         .subVectors(camera.position, ref.current.position)
         .normalize();
 
-      // Build a rotation so the coin's +Z (face) points to camera
       const target = new THREE.Quaternion().setFromUnitVectors(
-        new THREE.Vector3(0, 1, 0), // coin's up-facing normal
+        new THREE.Vector3(0, 1, 0),
         toCam
       );
 
       ref.current.quaternion.slerp(target, 0.1);
     } else {
-      // Ease back to upright (identity)
       ref.current.quaternion.slerp(new THREE.Quaternion(), 0.1);
     }
   });
@@ -100,11 +103,11 @@ export default function CoinInstance({ name, position, scale = 1, categories, is
       scale={scale}
       onPointerOver={(e) => {
         e.stopPropagation();
-        setHoveredCategory(categories[0]); // or loop if you support multi
+        setHoveredCategory?.(categories[0]); // or loop if you support multi
       }}
       onPointerOut={(e) => {
         e.stopPropagation();
-        setHoveredCategory(null);
+        setHoveredCategory?.(null);
       }}
     >
       <meshBasicMaterial

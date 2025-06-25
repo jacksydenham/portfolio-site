@@ -4,7 +4,13 @@ import CoinInstance from "./CoinInstance";
 import { useRef, useLayoutEffect, useState } from "react";
 import * as THREE from "three";
 
-export default function CoinBoard() {
+export default function CoinBoard({
+  currentSection,
+  activeProject,
+}: {
+  currentSection: "hero" | "projects";
+  activeProject: string;
+}) {
   const boardRef = useRef<THREE.Mesh>(null);
   const [gaps, setGaps] = useState<{ gapX: number; gapY: number } | null>(null);
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
@@ -16,7 +22,7 @@ export default function CoinBoard() {
     if (!boardRef.current) return;
     const box = new THREE.Box3().setFromObject(boardRef.current);
     const width = box.max.x - box.min.x;
-    const height = box.max.z - box.min.z; // Z axis = board depth
+    const height = box.max.z - box.min.z;
 
     setGaps({
       gapX: (width / (cols - 1)) * 0.75,
@@ -26,23 +32,29 @@ export default function CoinBoard() {
 
   return (
     <group>
-      <Board ref={boardRef} position={[0, 0, 0]} scale={0.60} />
+      <Board ref={boardRef} position={[0, 0, 0]} scale={0.6} />
       {gaps &&
-        coinMeta.map(({ name, categories, gridX, gridY }) => {
-          const x = (gridX - (cols - 1) / 2) * gaps.gapX;
-          const z = (gridY - (rows - 1) / 2) * gaps.gapY;
+        coinMeta.map(({ name, categories, gridX, gridY, projects }) => {
           const isHovered =
-            hoveredCategory !== null && categories.includes(hoveredCategory);
+            currentSection === "hero"
+              ? hoveredCategory !== null && categories.includes(hoveredCategory)
+              : projects?.includes(activeProject) ?? false;
 
           return (
             <CoinInstance
               key={name}
               name={name}
-              position={[x, 0.4, z]}
+              position={[
+                (gridX - (cols - 1) / 2) * gaps.gapX,
+                0.4,
+                (gridY - (rows - 1) / 2) * gaps.gapY,
+              ]}
               scale={0.75}
               categories={categories}
               isHovered={isHovered}
-              setHoveredCategory={setHoveredCategory}
+              setHoveredCategory={
+                currentSection === "hero" ? setHoveredCategory : undefined
+              }
             />
           );
         })}
