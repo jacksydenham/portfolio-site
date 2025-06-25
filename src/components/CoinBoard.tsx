@@ -19,14 +19,14 @@ export default function CoinBoard() {
     const height = box.max.z - box.min.z; // Z axis = board depth
 
     setGaps({
-      gapX: (width / (cols - 1)) * 0.8,
-      gapY: (height / (rows - 1)) * 0.8,
+      gapX: (width / (cols - 1)) * 0.75,
+      gapY: (height / (rows - 1)) * 0.75,
     });
   }, []);
 
   return (
     <group>
-      <Board ref={boardRef} position={[0, 0, 0]} scale={0.75} />
+      <Board ref={boardRef} position={[0, 0, 0]} scale={0.60} />
       {gaps &&
         coinMeta.map(({ name, categories, gridX, gridY }) => {
           const x = (gridX - (cols - 1) / 2) * gaps.gapX;
