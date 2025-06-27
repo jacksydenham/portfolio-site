@@ -53,7 +53,7 @@ section {
   flex-direction: column;
   justify-content: flex-start;
   background: transparent;
-  align-items: flex-start;
+  align-items: flex-end;
   pointer-events: none;
   position: relative;
   z-index: 10;
@@ -65,7 +65,7 @@ section {
   font-family: "Bebas Neue", sans-serif;
   font-size: clamp(6rem, 18vw, 14rem);
   font-weight: 400;
-  align-items: start;
+  align-items: end;
   color: transparent;
   -webkit-text-stroke: 2px #aaa;
   margin: 0;

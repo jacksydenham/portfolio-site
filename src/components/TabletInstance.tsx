@@ -27,7 +27,7 @@ export default function TabletInstance({
   isHovered,
   setHoveredCategory,
 }: Props) {
-  const { nodes } = useGLTF("/models/TabletXL.glb") as any;
+  const { nodes } = useGLTF("/models/Tablet.glb") as any;
 
   // texture tablets
   const fileName = `${name}.png`;
@@ -44,6 +44,9 @@ export default function TabletInstance({
 
   const ref = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.MeshBasicMaterial>(null);
+  const angularVelocity = useRef(0);
+  const wasHovered = useRef(false);
+
   const { camera } = useThree();
 
   useFrame(({ clock }, dt) => {
@@ -93,27 +96,35 @@ export default function TabletInstance({
       dt
     );
 
-    /* -------- hover-specific rotations -------- */
+    // hover shit
+    const justStartedHover = hoverActive && !wasHovered.current;
+    wasHovered.current = hoverActive;
+
     if (hoverActive) {
+      if (justStartedHover) {
+        angularVelocity.current = 10;
+      }
+
       if (setHoveredCategory) {
-        // section 1: face camera
         const toCam = new THREE.Vector3()
           .subVectors(camera.position, ref.current.position)
           .normalize();
+
+        // decreasing spin speed
         const quatTarget = new THREE.Quaternion().setFromUnitVectors(
           new THREE.Vector3(0, 1, 0),
           toCam
         );
         ref.current.quaternion.slerp(quatTarget, 0.1);
       } else {
-        // section 2: sonic ring ass spin
-        ref.current.rotation.y += dt * 2;
-        ref.current.rotation.x = THREE.MathUtils.damp(
-          ref.current.rotation.x,
-          0,
-          6,
+        ref.current.rotation.y += dt * angularVelocity.current;
+        angularVelocity.current = THREE.MathUtils.damp(
+          angularVelocity.current,
+          2,
+          2,
           dt
         );
+
         ref.current.rotation.z = THREE.MathUtils.damp(
           ref.current.rotation.z,
           THREE.MathUtils.degToRad(90),
@@ -122,7 +133,8 @@ export default function TabletInstance({
         );
       }
     } else {
-      // lay flat
+      angularVelocity.current = 0;
+
       if (setHoveredCategory) {
         ref.current.quaternion.slerp(new THREE.Quaternion(), 0.1);
       } else {
@@ -147,7 +159,7 @@ export default function TabletInstance({
   return (
     <mesh
       ref={ref}
-      geometry={nodes.TabletXL.geometry}
+      geometry={nodes.Tablet.geometry}
       scale={scale}
       onPointerOver={(e) => {
         e.stopPropagation();

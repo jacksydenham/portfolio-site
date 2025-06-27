@@ -15,7 +15,8 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
   const boardAnimTime = useRef(0);
   const idleTime = useRef(0);
   const hasSpun = useRef(false);
-  const spinTargetY = -Math.PI * 0.75;
+  const spinTargetY = Math.PI * 1.25;
+  const projectSpinRate = THREE.MathUtils.degToRad(15);
 
   const wasInProjects = useRef(false);
 
@@ -49,7 +50,7 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
     // tilt board on x
     let targetTiltX = THREE.MathUtils.degToRad(70);
     if (inProjects) {
-      targetTiltX = THREE.MathUtils.degToRad(10);
+      targetTiltX = THREE.MathUtils.degToRad(5);
     } else if (boardAnimTime.current < 3) {
       const t = boardAnimTime.current / 3;
       const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
@@ -68,18 +69,15 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
     );
 
     // spin board
-    let YRotation = groupRef.current.rotation.y;
-    if (inProjects) {
-      YRotation = spinTargetY;
-    } else if (inHero) {
-      YRotation = 0;
-    } else if (inContact) {
-      YRotation = -Math.PI * 1.5;
-    }
+     let YTarget = groupRef.current.rotation.y;
+    if (inProjects)      YTarget = spinTargetY;
+    else if (inHero)     YTarget = 0;
+    else if (inContact)  YTarget = Math.PI * 0.5;
 
+    // ease to default y orientation
     groupRef.current.rotation.y = THREE.MathUtils.damp(
       groupRef.current.rotation.y,
-      YRotation,
+      YTarget,
       4,
       dt
     );
@@ -94,16 +92,31 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
 
     // idle anim
     if (inProjects) {
-      const fade = THREE.MathUtils.clamp(idleTime.current / 2, 0, 1);
-      const bobY = Math.sin(idleTime.current * 1.8) * 0.035 * fade;
-      const yawAdd =
-        Math.sin(idleTime.current * 0.8) * THREE.MathUtils.degToRad(0.1) * fade;
-      const rollZ =
+
+      const fade   = THREE.MathUtils.clamp(idleTime.current / 2, 0, 1);
+      const liftY  = 0.5 * fade;                               // ≤ 1 unit
+      const bobY   = Math.sin(idleTime.current * 1.8) * 0.035 * fade;
+      const yawAdd = projectSpinRate * dt * fade;            // constant spin
+      const rollZ  =
         Math.sin(idleTime.current * 1.6) * THREE.MathUtils.degToRad(1) * fade;
 
-      boardGroup.current.position.y = bobY;
+      boardGroup.current.position.y = THREE.MathUtils.damp(
+        boardGroup.current.position.y,
+        liftY + bobY,
+        4,
+        dt
+      );
+
       groupRef.current.rotation.y += yawAdd;
-      groupRef.current.rotation.z = rollZ;
+      groupRef.current.rotation.z  = rollZ;
+    } else {
+      // y = 0 outside of proj
+      boardGroup.current.position.y = THREE.MathUtils.damp(
+        boardGroup.current.position.y,
+        0,
+        4,
+        dt
+      );
     }
 
     // board pos
@@ -120,7 +133,7 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
       // project or hero
       boardGroup.current.position.x = THREE.MathUtils.damp(
         boardGroup.current.position.x,
-        inProjects ? 2.5 : 0.5,
+        inProjects ? 2.5 : -2,
         4,
         dt
       );
@@ -128,22 +141,18 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
 
     // -- Z --
     if (inHero) {
-      // initial slide in
-      const boardInitialZ = 4;
-      const boardTargetZ = 0;
-      const tZ = Math.min(boardAnimTime.current / 3, 1);
-      const easedZ = tZ < 0.5 ? 2 * tZ * tZ : -1 + (4 - 2 * tZ) * tZ;
-
-      boardGroup.current.position.z = THREE.MathUtils.lerp(
-        boardInitialZ,
-        boardTargetZ,
-        easedZ
-      );
-    } else if (inProjects) {
-      // hold at z = 0
+      // always ease back to the front (z = 0)
       boardGroup.current.position.z = THREE.MathUtils.damp(
         boardGroup.current.position.z,
         0,
+        4,
+        dt
+      );
+    } else if (inProjects) {
+      // hold at z = 4
+      boardGroup.current.position.z = THREE.MathUtils.damp(
+        boardGroup.current.position.z,
+        1,
         4,
         dt
       );
@@ -160,11 +169,7 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
 
   return (
     <group ref={boardGroup}>
-      <group
-        ref={groupRef}
-        position={[0, -0.4, 0]}
-        rotation={[0, 0, 0]}
-      >
+      <group ref={groupRef} position={[0, -0.4, 0]} rotation={[0, 0, 0]}>
         <TabletBoard
           currentSection={
             scroll.offset < 0.05

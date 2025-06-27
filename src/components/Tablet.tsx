@@ -9,14 +9,14 @@ interface TabletProps {
 }
 
 export default function Tablet({ position = [0, 0, 0], scale = 5 }: TabletProps) {
-  const { nodes } = useGLTF("/models/TabletXL.glb") as any;
+  const { nodes } = useGLTF("/models/Tablet.glb") as any;
 
   const ref = useRef<THREE.Mesh>(null);
   
   return (
     <mesh
       ref={ref}
-      geometry={nodes.TabletXL.geometry}
+      geometry={nodes.Tablet.geometry}
       position={position}
       scale={scale}
       castShadow
@@ -27,4 +27,4 @@ export default function Tablet({ position = [0, 0, 0], scale = 5 }: TabletProps)
   );
 }
 
-useGLTF.preload("/models/TabletXL.glb");
+useGLTF.preload("/models/Tablet.glb");

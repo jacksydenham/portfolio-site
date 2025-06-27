@@ -12,7 +12,7 @@ const Board = forwardRef<THREE.Mesh, BoardProps>(function Board(
   { position = [0, 0, 0], scale = 5 },
   ref
 ) {
-  const { nodes } = useGLTF("/models/BoardFlat.glb") as any;
+  const { nodes } = useGLTF("/models/BoardLowPoly.glb") as any;
 
   return (
     <mesh
@@ -29,4 +29,4 @@ const Board = forwardRef<THREE.Mesh, BoardProps>(function Board(
 
 export default Board;
 
-useGLTF.preload("/models/BoardFlat.glb");
+useGLTF.preload("/models/BoardLowPoly.glb");
