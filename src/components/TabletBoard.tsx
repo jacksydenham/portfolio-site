@@ -49,12 +49,14 @@ export default function TabletBoard({
                 0.2,
                 (gridY - (rows - 1) / 2) * gaps.gapY,
               ]}
+              currentSection={currentSection}
               scale={0.25}
               categories={categories}
               isHovered={isHovered}
               setHoveredCategory={
-                currentSection === "hero" ? setHoveredCategory : undefined
+                currentSection !== "projects" ? setHoveredCategory : undefined
               }
+
             />
           );
         })}

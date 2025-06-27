@@ -36,6 +36,29 @@ html, body {
   height: 100% !important;
 }
 
+/* total scrollbar area */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* track */
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+/* draggable thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #444;
+  border-radius: 6px;
+  border: 2px solid #1a1a1a; /* creates inner padding effect */
+}
+
+/* on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
+}
+
+
 .content-shell {
   position: relative;
   z-index: 1;
@@ -57,7 +80,7 @@ html, body {
 }
 
 section { 
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
   padding: 3rem 4vw;
   display: flex;
@@ -71,7 +94,7 @@ section {
 
 .hero {
   width: 100%;
-  height: 100vh;
+  height: 500px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -148,15 +171,17 @@ section {
 }
 
 .contact {
-  height: 100vh;
+  height: 800px;
   display: grid;
-  place-items: center;
+  place-items: start;
+  opacity: 50%;
 }
+
 .contact-box {
+  height: 400px;
   width: 75vw;
   aspect-ratio: 1 / 1;
   background:#111;
-  margin-top: 60px;
   border:2px solid #555;
   display:flex;
   align-items:center;
@@ -165,11 +190,11 @@ section {
   font-size:2rem;
 }
 
-.board-anchor-section {
-  height: 250px; /* or more if you want more room for the 3D board */
+.board-anchor {
+  height: 250px;
   width: 100%;
   position: relative;
-  pointer-events: none; /* let canvas events still go through */
+  pointer-events: none;
 }
 
 .board-anchor {

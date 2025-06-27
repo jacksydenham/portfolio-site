@@ -9,6 +9,7 @@ interface Props {
   name: string;
   position: [number, number, number];
   scale?: number;
+  currentSection: "hero" | "projects" | "contact";
   categories: string[];
   isHovered: boolean;
   setHoveredCategory?: (cat: string | null) => void;
@@ -23,6 +24,7 @@ export default function TabletInstance({
   name,
   position,
   scale = 1,
+  currentSection,
   categories,
   isHovered,
   setHoveredCategory,
@@ -42,6 +44,9 @@ export default function TabletInstance({
   const basePosition = useRef(new THREE.Vector3(...position));
   const startTime = useRef<number | null>(null);
 
+  const isProjects = currentSection === "projects";
+  const isHero = currentSection === "hero";
+
   const ref = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.MeshBasicMaterial>(null);
   const angularVelocity = useRef(0);
@@ -56,8 +61,8 @@ export default function TabletInstance({
     const elapsed = clock.getElapsedTime();
     const entryTime = (window as any).section2EntryTime as number | undefined;
     const inDelayGate = entryTime !== undefined && elapsed - entryTime < 0.5;
-    const isSection2 = !setHoveredCategory;
-    const hoverActive = isHovered && !(isSection2 && inDelayGate);
+
+    const hoverActive = isHovered && ((isProjects && !inDelayGate) || isHero);
 
     // initial drop-in animation
     if (startTime.current === null) startTime.current = elapsed;
@@ -76,10 +81,9 @@ export default function TabletInstance({
       dt
     );
 
-    const bobY =
-      hoverActive && isSection2
-        ? Math.sin(elapsed * bobSpeed + bobPhase) * 0.005
-        : 0;
+    const bobY = hoverActive
+      ? Math.sin(elapsed * bobSpeed + bobPhase) * 0.005
+      : 0;
 
     ref.current.position.set(
       basePosition.current.x,

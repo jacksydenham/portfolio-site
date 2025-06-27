@@ -23,14 +23,14 @@ function ScrollScene({
   const spinTargetY = Math.PI * 1.25;
   const projectSpinRate = THREE.MathUtils.degToRad(15);
   const wasInProjects = useRef(false);
+  
 
   const { viewport } = useThree(); // ← { width, height } in world units
   const w = viewport.width; // recomputed every resize
 
   // handy helpers
   const heroX = -w * 0.18; // 18 % left of centre
-  const projectsX = w * 0.15; // 15 % right of centre
-  const contactX = w * 0.6;
+  const projectsX = w * 0.2; // 15 % right of centre
 
   const scroll = useScroll();
   const REF_W = 14;
@@ -39,9 +39,9 @@ function ScrollScene({
   useFrame(({ clock }, dt) => {
     if (!boardGroup.current || !groupRef.current) return;
 
-    const { width } = viewport;                   // live world-units width
-  const scale     = width / REF_W;              // < 1.0 if frustum narrows
-  boardGroup.current.scale.setScalar(scale);
+    const { width } = viewport;
+    const scale = width / REF_W;
+    boardGroup.current.scale.setScalar(scale);
 
     // time trackers
     boardAnimTime.current += dt;
@@ -49,7 +49,7 @@ function ScrollScene({
 
     const scrollY = scroll.offset;
     const heroEnd = 0.05;
-    const projectsEnd = 0.8;
+    const projectsEnd = 0.55;
 
     const inHero = scrollY < heroEnd;
     const inProjects = scrollY >= heroEnd && scrollY < projectsEnd;
@@ -91,7 +91,7 @@ function ScrollScene({
     let YTarget = groupRef.current.rotation.y;
     if (inProjects) YTarget = spinTargetY;
     else if (inHero) YTarget = 0;
-    else if (inContact) YTarget = Math.PI * 0.5;
+    else if (inContact) YTarget = 0;
 
     // ease to default y orientation
     groupRef.current.rotation.y = THREE.MathUtils.damp(
@@ -139,15 +139,7 @@ function ScrollScene({
 
     // board pos
     // -- X --
-    if (inContact) {
-      // slide off-screen
-      boardGroup.current.position.x = THREE.MathUtils.damp(
-        boardGroup.current.position.x,
-        contactX,
-        2,
-        dt
-      );
-    } else {
+    if (!inContact) {
       // project or hero
       boardGroup.current.position.x = THREE.MathUtils.damp(
         boardGroup.current.position.x,
@@ -174,30 +166,55 @@ function ScrollScene({
         4,
         dt
       );
-    } else if (inContact) {
-      // slide away
-      boardGroup.current.position.z = THREE.MathUtils.damp(
-        boardGroup.current.position.z,
-        -5,
+    }
+
+    // stick board to contact
+    if (inContact && anchorRef.current) {
+      // lock scaling
+      boardGroup.current.scale.setScalar(1);
+
+      const rect = anchorRef.current.getBoundingClientRect();
+      const canvasHeight = window.innerHeight;
+      const anchorMidY = rect.top + rect.height / 2;
+      const yNorm = (canvasHeight - anchorMidY) / canvasHeight;
+      const targetY = viewport.height * yNorm;
+      const targetZ = 1;
+      const targetX = 0;
+      
+      // boardGroup.current.position.set(0, targetY, 1);
+      // anims to fixed pos
+      boardGroup.current.position.x = THREE.MathUtils.damp(
+        boardGroup.current.position.x,
+        targetX,
         4,
         dt
       );
-    }
-
-    if (inContact && anchorRef.current) {
-      const rect = anchorRef.current.getBoundingClientRect();
-      const canvasHeight = window.innerHeight;
-
-      // Normalized Y: bottom of screen is 0, top is 1
-      const yNorm = (canvasHeight - rect.top) / canvasHeight;
-
-      boardGroup.current.position.set(
-        0,
-        -2.5 * yNorm,
-        0.5 // keep this for front display
+      boardGroup.current.position.y = THREE.MathUtils.damp(
+        boardGroup.current.position.y,
+        targetY,
+        4,
+        dt
+      );
+      boardGroup.current.position.z = THREE.MathUtils.damp(
+        boardGroup.current.position.z,
+        targetZ,
+        4,
+        dt
       );
 
-      groupRef.current.rotation.set(0, Math.PI, 0);
+      // contact rotations
+      groupRef.current.rotation.x = THREE.MathUtils.damp(
+        groupRef.current.rotation.x,
+        1.35,
+        1,
+        dt
+      );
+      groupRef.current.rotation.z = THREE.MathUtils.damp(
+        groupRef.current.rotation.z,
+        THREE.MathUtils.degToRad(180),
+        4,
+        dt
+      );
     }
   });
 
@@ -225,6 +242,19 @@ export default function App() {
   const [userOverride, setUserOverride] = useState<string | null>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
 
+  const [pages, setPages] = useState(3);
+
+  useEffect(() => {
+    const recalculate = () => {
+      const sectionHeights = 720 + 800 + 500;
+      setPages(sectionHeights / window.innerHeight);
+    };
+
+    recalculate();
+    window.addEventListener("resize", recalculate);
+    return () => window.removeEventListener("resize", recalculate);
+  }, []);
+
   // unselect project
   useEffect(() => {
     (window as any).resetActiveProject = () => setUserOverride(null);
@@ -236,14 +266,12 @@ export default function App() {
 
   return (
     <div className="page-root">
-      {/* WebGL + overlay are now clamped to a centred column (≤ 1280 px) */}
       <div className="canvas-column">
         <Canvas
           camera={{ position: [0, 2, 6], fov: 50 }}
           gl={{ powerPreference: "low-power", antialias: false }}
           dpr={[1, Math.min(window.devicePixelRatio, 1.5)]}
         >
-          {/* ----- LIGHTS / PERF ----- */}
           <ambientLight intensity={0.5} />
           <directionalLight
             castShadow
@@ -259,20 +287,15 @@ export default function App() {
           />
           <Stats />
 
-          {/* ----- SCROLL SCENE ----- */}
-          <ScrollControls pages={3}>
+          <ScrollControls pages={pages}>
             <ScrollScene activeProject={activeProject} anchorRef={anchorRef} />
-
-            {/* HTML that scrolls with drei; inherits the same width clamp */}
             <Scroll html>
               <div className="content-shell">
-                {/* HERO ---------------------------------------------------- */}
                 <section className="hero">
                   <h1>Jack&nbsp;Sydenham</h1>
                   <p>Full-stack&nbsp;Developer</p>
                 </section>
 
-                {/* PROJECTS ------------------------------------------------ */}
                 <section className="projects">
                   {projectCycle.map((project) => (
                     <div
@@ -281,20 +304,20 @@ export default function App() {
                         activeProject === project ? "active" : ""
                       }`}
                       onMouseEnter={() => setUserOverride(project)}
-                      onMouseLeave={() => setUserOverride(null)}
+                      onMouseLeave={() => {
+                        setUserOverride(project);
+                      }}
                     >
                       <h3>{project}</h3>
                     </div>
                   ))}
                 </section>
 
-                {/* CONTACT ------------------------------------------------- */}
                 <section className="contact">
                   <div className="contact-box">contact form coming soon…</div>
                 </section>
 
-                {/* ANCHOR FOR BOARD OFFSET -------------------------------- */}
-                <section className="board-anchor-section">
+                <section className="board-anchor">
                   <div ref={anchorRef} className="board-anchor" />
                 </section>
               </div>
