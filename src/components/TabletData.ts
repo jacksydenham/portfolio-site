@@ -1,4 +1,4 @@
-export interface CoinMeta {
+export interface TabletMeta {
   name: string;
   categories: string[];
   gridX: number;
@@ -6,10 +6,10 @@ export interface CoinMeta {
   projects?: string[];
 }
 
-export const coinMeta: CoinMeta[] = [
+export const TabletMeta: TabletMeta[] = [
   { name: "React",                 categories: ["Full Stack"],                          gridX: 0, gridY: 0, projects: ["Keydocs", "Carer Manager Plus"] },
   { name: "Next.js",               categories: ["Full Stack", "Cloud"],                 gridX: 1, gridY: 0, projects: ["Keydocs", "Carer Manager Plus"] },
-  { name: "TS/JS",                 categories: ["Full Stack","Lang"],                   gridX: 2, gridY: 0, projects: ["Keydocs", "Carer Manager Plus"] },
+  { name: "JSTS",                  categories: ["Full Stack","Lang"],                   gridX: 2, gridY: 0, projects: ["Keydocs", "Carer Manager Plus"] },
   { name: "Node.js",               categories: ["Full Stack","Integration"],            gridX: 3, gridY: 0, projects: ["Carer Manager Plus"] },
   { name: "SQL",                   categories: ["Databasing"],                          gridX: 4, gridY: 0, projects: ["Carer Manager Plus", "SmartBoard"] },
   { name: "Prisma",                categories: ["Databasing"],                          gridX: 5, gridY: 0, projects: ["Keydocs"] },
@@ -23,8 +23,8 @@ export const coinMeta: CoinMeta[] = [
     
   { name: "Java",                  categories: ["Lang"],                                gridX: 0, gridY: 2, projects: ["SmartBoard"] },
   { name: "Python",                categories: ["Lang"],                                gridX: 1, gridY: 2 },
-  { name: "C++",                   categories: ["Lang"],                                gridX: 2, gridY: 2 },
-  { name: "JavaFX",                categories: ["Full Stack"],                          gridX: 3, gridY: 2, projects: ["SmartBoard"] },
+  { name: "CPP",                   categories: ["Lang"],                                gridX: 2, gridY: 2 },
+  { name: "Postman",               categories: ["Integration", "SDLC"],                 gridX: 3, gridY: 2, projects: ["Carer Manager Plus"] },
   { name: "DevExtreme",            categories: ["Full Stack"],                          gridX: 4, gridY: 2, projects: ["Carer Manager Plus"] },
   { name: "ShadCN",                categories: ["Full Stack"],                          gridX: 5, gridY: 2, projects: ["Keydocs"] },
 

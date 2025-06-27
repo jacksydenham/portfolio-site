@@ -3,28 +3,28 @@ import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
 import { useRef } from "react";
 
-interface CoinProps {
+interface TabletProps {
   position?: [number, number, number];
   scale?: number;
 }
 
-export default function Coin({ position = [0, 0, 0], scale = 5 }: CoinProps) {
-  const { nodes } = useGLTF("/models/Coin.glb") as any;
+export default function Tablet({ position = [0, 0, 0], scale = 5 }: TabletProps) {
+  const { nodes } = useGLTF("/models/TabletXL.glb") as any;
 
   const ref = useRef<THREE.Mesh>(null);
   
   return (
     <mesh
       ref={ref}
-      geometry={nodes.Coin.geometry}
+      geometry={nodes.TabletXL.geometry}
       position={position}
       scale={scale}
       castShadow
       receiveShadow
     >
-      <meshBasicMaterial color={"#aaa"} />
+      <meshBasicMaterial />
     </mesh>
   );
 }
 
-useGLTF.preload("/models/Coin.glb");
+useGLTF.preload("/models/TabletXL.glb");

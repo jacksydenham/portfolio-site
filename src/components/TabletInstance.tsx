@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useGLTF } from "@react-three/drei";
-import { makeLetterTexture } from "./makeLetterTexture";
+// import { makeLetterTexture } from "./makeLetterTexture";
 import { useMemo, useRef } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 interface Props {
@@ -19,7 +19,7 @@ function yLookAt(source: THREE.Object3D, target: THREE.Vector3) {
   return Math.atan2(v1.x, v1.z); // yaw angle in radians
 }
 
-export default function CoinInstance({
+export default function TabletInstance({
   name,
   position,
   scale = 1,
@@ -27,41 +27,46 @@ export default function CoinInstance({
   isHovered,
   setHoveredCategory,
 }: Props) {
-  const { nodes } = useGLTF("/models/Coin.glb") as any;
-  const texture = useMemo(() => makeLetterTexture(name[0].toUpperCase()), [name]);
+  const { nodes } = useGLTF("/models/TabletXL.glb") as any;
 
-  const delay          = useMemo(() => Math.random() * 1.5, []);
-  const bobSpeed       = useMemo(() => 1.5 + Math.random() * 0.8, []);
-  const bobPhase       = useMemo(() => Math.random() * Math.PI * 2, []);
-  const basePosition   = useRef(new THREE.Vector3(...position));
-  const startTime      = useRef<number | null>(null);
+  // texture tablets
+  const fileName = `${name}.png`;
 
-  const ref          = useRef<THREE.Mesh>(null);
-  const materialRef  = useRef<THREE.MeshBasicMaterial>(null);
-  const { camera }   = useThree();
+  const texture = useLoader(THREE.TextureLoader, `/textures/${fileName}`);
+  texture.flipY = false;
+  texture.colorSpace = THREE.SRGBColorSpace;
+
+  const delay = useMemo(() => Math.random() * 1.5, []);
+  const bobSpeed = useMemo(() => 1.5 + Math.random() * 0.8, []);
+  const bobPhase = useMemo(() => Math.random() * Math.PI * 2, []);
+  const basePosition = useRef(new THREE.Vector3(...position));
+  const startTime = useRef<number | null>(null);
+
+  const ref = useRef<THREE.Mesh>(null);
+  const materialRef = useRef<THREE.MeshBasicMaterial>(null);
+  const { camera } = useThree();
 
   useFrame(({ clock }, dt) => {
     if (!ref.current || !materialRef.current) return;
 
-   // fuckass delay on section 2 entry
-    const elapsed      = clock.getElapsedTime();
-    const entryTime    = (window as any).section2EntryTime as number | undefined;
-    const inDelayGate  =
-      entryTime !== undefined && elapsed - entryTime < 0.5;
-    const isSection2   = !setHoveredCategory;
-    const hoverActive  = isHovered && !(isSection2 && inDelayGate);
+    // fuckass delay on section 2 entry
+    const elapsed = clock.getElapsedTime();
+    const entryTime = (window as any).section2EntryTime as number | undefined;
+    const inDelayGate = entryTime !== undefined && elapsed - entryTime < 0.5;
+    const isSection2 = !setHoveredCategory;
+    const hoverActive = isHovered && !(isSection2 && inDelayGate);
 
     // initial drop-in animation
     if (startTime.current === null) startTime.current = elapsed;
-    const dropT      = elapsed - startTime.current;
-    const progress   = Math.min(Math.max((dropT - delay) * 2, 0), 1);
-    const eased      = THREE.MathUtils.smoothstep(progress, 0, 1);
+    const dropT = elapsed - startTime.current;
+    const progress = Math.min(Math.max((dropT - delay) * 2, 0), 1);
+    const eased = THREE.MathUtils.smoothstep(progress, 0, 1);
 
-    const targetY    = basePosition.current.y;
-    const hoverLift  = hoverActive ? 0.3 : 0;
+    const targetY = basePosition.current.y;
+    const hoverLift = hoverActive ? 0.3 : 0;
     materialRef.current.opacity = eased;
 
-    const animatedY  = THREE.MathUtils.damp(
+    const animatedY = THREE.MathUtils.damp(
       ref.current.position.y,
       targetY + hoverLift,
       6,
@@ -103,7 +108,12 @@ export default function CoinInstance({
       } else {
         // section 2: sonic ring ass spin
         ref.current.rotation.y += dt * 2;
-        ref.current.rotation.x = THREE.MathUtils.damp(ref.current.rotation.x, 0, 6, dt);
+        ref.current.rotation.x = THREE.MathUtils.damp(
+          ref.current.rotation.x,
+          0,
+          6,
+          dt
+        );
         ref.current.rotation.z = THREE.MathUtils.damp(
           ref.current.rotation.z,
           THREE.MathUtils.degToRad(90),
@@ -116,18 +126,28 @@ export default function CoinInstance({
       if (setHoveredCategory) {
         ref.current.quaternion.slerp(new THREE.Quaternion(), 0.1);
       } else {
-        ref.current.rotation.x = THREE.MathUtils.damp(ref.current.rotation.x, 0, 6, dt);
-        ref.current.rotation.z = THREE.MathUtils.damp(ref.current.rotation.z, 0, 6, dt);
+        ref.current.rotation.x = THREE.MathUtils.damp(
+          ref.current.rotation.x,
+          0,
+          6,
+          dt
+        );
+        ref.current.rotation.z = THREE.MathUtils.damp(
+          ref.current.rotation.z,
+          0,
+          6,
+          dt
+        );
       }
     }
   });
 
-  console.log(texture)
+  console.log(texture);
 
   return (
     <mesh
       ref={ref}
-      geometry={nodes.Coin.geometry}
+      geometry={nodes.TabletXL.geometry}
       scale={scale}
       onPointerOver={(e) => {
         e.stopPropagation();
@@ -140,7 +160,8 @@ export default function CoinInstance({
     >
       <meshBasicMaterial
         ref={materialRef}
-        
+        map={texture}
+        side={THREE.DoubleSide}
         toneMapped={false}
         transparent
         opacity={0}
@@ -149,4 +170,4 @@ export default function CoinInstance({
   );
 }
 
-useGLTF.preload("/models/Coin.glb");
+useGLTF.preload("/models/Tablet.glb");

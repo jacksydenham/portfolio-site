@@ -1,10 +1,10 @@
 import Board from "./Board";
-import { coinMeta } from "./coinData";
-import CoinInstance from "./CoinInstance";
+import { TabletMeta } from "./TabletData";
+import TabletInstance from "./TabletInstance";
 import { useRef, useLayoutEffect, useState } from "react";
 import * as THREE from "three";
 
-export default function CoinBoard({
+export default function TabletBoard({
   currentSection,
   activeProject,
 }: {
@@ -34,14 +34,14 @@ export default function CoinBoard({
     <group>
       <Board ref={boardRef} position={[0, 0, 0]} scale={1.5} />
       {gaps &&
-        coinMeta.map(({ name, categories, gridX, gridY, projects }) => {
+        TabletMeta.map(({ name, categories, gridX, gridY, projects }) => {
           const isHovered =
             currentSection === "hero"
               ? hoveredCategory !== null && categories.includes(hoveredCategory)
               : projects?.includes(activeProject) ?? false;
 
           return (
-            <CoinInstance
+            <TabletInstance
               key={name}
               name={name}
               position={[
@@ -49,7 +49,7 @@ export default function CoinBoard({
                 0.2,
                 (gridY - (rows - 1) / 2) * gaps.gapY,
               ]}
-              scale={0.55}
+              scale={0.25}
               categories={categories}
               isHovered={isHovered}
               setHoveredCategory={

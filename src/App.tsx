@@ -5,7 +5,7 @@ import { ScrollControls, Scroll, useScroll, Stats } from "@react-three/drei";
 import "./App.css";
 import { useEffect, useRef, useState } from "react";
 import "@fontsource/bebas-neue/400.css";
-import CoinBoard from "./components/CoinBoard";
+import TabletBoard from "./components/TabletBoard";
 
 function ScrollScene({ activeProject }: { activeProject: string }) {
   const groupRef = useRef<THREE.Group>(null);
@@ -35,7 +35,7 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
     const inProjects = scrollY >= heroEnd && scrollY < projectsEnd;
     const inContact = scrollY >= projectsEnd;
 
-    // coins wait after spinning
+    // Tablets wait after spinning
     if (inProjects && !wasInProjects.current) {
       (window as any).section2EntryTime = clock.getElapsedTime();
       (window as any).setActiveProject?.("Keydocs");
@@ -84,7 +84,7 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
       dt
     );
 
-    // fuckass check for sonic coin
+    // fuckass check for sonic Tablet
     if (
       !hasSpun.current &&
       Math.abs(groupRef.current.rotation.y - spinTargetY) < 0.05
@@ -165,7 +165,7 @@ function ScrollScene({ activeProject }: { activeProject: string }) {
         position={[0, -0.4, 0]}
         rotation={[0, 0, 0]}
       >
-        <CoinBoard
+        <TabletBoard
           currentSection={
             scroll.offset < 0.05
               ? "hero"
