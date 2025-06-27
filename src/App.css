@@ -10,26 +10,49 @@ html, body {
   overflow-y: auto; 
 }
 
-.hero {
-  text-align: center;
-  background: transparent;
-}
-
-.content {
-  background: rgba(0,0,0,0.15);
-}
-
-.bgCanvas {
-  pointer-events: auto;
-  position: fixed;
-  inset: 0;
+/* ----- layout shell ------------------------------------- */
+.page-root {
+  position: relative;
   width: 100%;
-  height: 100%;
+  overflow-x: hidden;
+  background: #0d0d0d;
 }
 
-.bgCanvas canvas {
+/* ----- NEW canvas column -------------------------------- */
+.canvas-column {
+  position: fixed;         /* stick to viewport like Steam’s header art  */
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(320px, 90vw, 1280px);   /* hard limit = 1280px */
+  height: 100vh;
+  pointer-events: none;    /* R3F ray-casting still works */
+  z-index: 0;              /* behind your .content-shell */
+}
+
+/* R3F overwrites canvas sizes, so force it to the wrapper */
+.canvas-column canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.content-shell {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
   pointer-events: auto;
-  z-index: -1;
+}
+.canvas-wrapper {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1280px;
+  height: 100%;
+  z-index: 0;
   pointer-events: none;
 }
 
@@ -59,6 +82,8 @@ section {
   z-index: 10;
   padding-top: 0vh;
   box-sizing: border-box;
+  text-align: center;
+  background: transparent;
 }
 
 .hero h1 {
@@ -81,20 +106,13 @@ section {
   color: #ddd;
   text-transform: uppercase;
   pointer-events: auto;
+  opacity: 0;
+  animation: subtitleFade 0.8s 0.3s forwards;
 }
 
 @keyframes subtitleFade {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
-}
-
-.hero p {
-  opacity: 0;
-  animation: subtitleFade 0.8s 0.3s forwards;
-}
-
-.scroll-html {
-  pointer-events: none;
 }
 
 .projects {
@@ -146,4 +164,17 @@ section {
   color:#eee;
   font-size:2rem;
 }
+
+.board-anchor-section {
+  height: 250px; /* or more if you want more room for the 3D board */
+  width: 100%;
+  position: relative;
+  pointer-events: none; /* let canvas events still go through */
+}
+
+.board-anchor {
+  height: 100%;
+  width: 100%;
+}
+
 
