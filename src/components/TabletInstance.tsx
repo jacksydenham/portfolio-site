@@ -37,6 +37,8 @@ export default function TabletInstance({
   const texture = useLoader(THREE.TextureLoader, `/textures/${fileName}`);
   texture.flipY = false;
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.rotation = Math.PI / 2;
+  texture.center.set(0.5, 0.5);
 
   const delay = useMemo(() => Math.random() * 1.5, []);
   const bobSpeed = useMemo(() => 1.5 + Math.random() * 0.8, []);

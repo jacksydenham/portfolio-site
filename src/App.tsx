@@ -7,6 +7,13 @@ import { useEffect, useRef, useState } from "react";
 import "@fontsource/bebas-neue/400.css";
 import TabletBoard from "./components/TabletBoard";
 
+/* ---------------- pixel → world helper ----------------------------- */
+const pxToWorld = (px: number, vh: number) => (px / window.innerHeight) * vh; // px offset ⇒ world-units
+/* design offsets (in px) --------------------------------------------*/
+const HERO_Y_OFFSET_PX = 320; // board below the divider
+const CONTACT_Y_OFFSET_PX = 120; // board above the contact box
+const CONTACT_X_OFFSET_PX = 220;    // tweak to taste
+
 function ScrollScene({
   activeProject,
   anchorRef,
@@ -24,47 +31,54 @@ function ScrollScene({
   const projectSpinRate = THREE.MathUtils.degToRad(15);
   const wasInProjects = useRef(false);
 
-  const { viewport } = useThree(); // ← { width, height } in world units
+  const { viewport } = useThree(); // { width, height } in world units
   const w = viewport.width; // recomputed every resize
-
-  const heroX = -w * 0.18; // 18 % left of centre
-  const projectsX = w * 0.22; // 15 % right of centre
-
+  // convert the pixel offset into world-units each frame
+  const heroBaseY =
+    viewport.height / 2 - pxToWorld(HERO_Y_OFFSET_PX, viewport.height);
+  const projectsBaseY = 0; // centred
+  
+  // board x disatcne from centre in sections
+  const heroX = -w * 0.18; 
+  const projectsX = w * 0.22;
+  const contactX = -viewport.width / 2.35
+               + pxToWorld(CONTACT_X_OFFSET_PX, viewport.height);
+  
   const scroll = useScroll();
-  const REF_W = 14
-
+  const REF_W = 14;
+  
   // anims
   useFrame(({ clock }, dt) => {
     if (!boardGroup.current || !groupRef.current) return;
-
+    
     const { width } = viewport;
     const scale = width / REF_W;
     boardGroup.current.scale.setScalar(scale);
-
+    
     // time trackers
     boardAnimTime.current += dt;
     idleTime.current += dt;
-
+    
     const scrollY = scroll.offset;
     const heroEnd = 0.05;
-    const projectsEnd = 0.55;
-
+    const projectsEnd = 0.88;
+    
     const inHero = scrollY < heroEnd;
     const inProjects = scrollY >= heroEnd && scrollY < projectsEnd;
     const inContact = scrollY >= projectsEnd;
-
-    // Tablets wait after spinning
+    
+    // Tablets wait after spinning / active project set
     if (inProjects && !wasInProjects.current) {
       (window as any).section2EntryTime = clock.getElapsedTime();
-      (window as any).setActiveProject?.("KeyDocs"); // ← sets "KeyDocs" when entering
+      (window as any).setActiveProject?.("KeyDocs");
       idleTime.current = 0;
     } else if (!inProjects && wasInProjects.current) {
       delete (window as any).section2EntryTime;
-      (window as any).resetActiveProject?.(); // ← resets to ""
+      (window as any).resetActiveProject?.();
     }
-
+    
     wasInProjects.current = inProjects;
-
+    
     // tilt board on x
     let targetTiltX = THREE.MathUtils.degToRad(70);
     if (inProjects) {
@@ -78,20 +92,20 @@ function ScrollScene({
         eased
       );
     }
-
+    
     groupRef.current.rotation.x = THREE.MathUtils.damp(
       groupRef.current.rotation.x,
       targetTiltX,
       3,
       dt
     );
-
+    
     // spin board targets
     let YTarget = groupRef.current.rotation.y;
     if (inProjects) YTarget = spinTargetY;
     else if (inHero) YTarget = 0;
     else if (inContact) YTarget = 0;
-
+    
     // ease to default y orientation
     groupRef.current.rotation.y = THREE.MathUtils.damp(
       groupRef.current.rotation.y,
@@ -99,7 +113,7 @@ function ScrollScene({
       4,
       dt
     );
-
+    
     // fuckass check for sonic Tablet
     if (
       !hasSpun.current &&
@@ -107,12 +121,14 @@ function ScrollScene({
     ) {
       hasSpun.current = true;
     }
-
+    
     // idle anim
+    const LIFT_Y_UNITS = 0.5;
     let ZTarget = groupRef.current.rotation.z;
+    
     if (inProjects) {
       const fade = THREE.MathUtils.clamp(idleTime.current / 2, 0, 1);
-      const liftY = 0.5 * fade;
+      const liftY = LIFT_Y_UNITS * fade;
       const bobY = Math.sin(idleTime.current * 1.8) * 0.035 * fade;
       const yawAdd = projectSpinRate * dt * fade;
       ZTarget =
@@ -120,16 +136,17 @@ function ScrollScene({
 
       boardGroup.current.position.y = THREE.MathUtils.damp(
         boardGroup.current.position.y,
-        liftY + bobY,
+        projectsBaseY + liftY + bobY,
         4,
         dt
       );
 
       groupRef.current.rotation.y += yawAdd;
     } else {
+      /* Hero & other sections: slide back to the hero baseline */
       boardGroup.current.position.y = THREE.MathUtils.damp(
         boardGroup.current.position.y,
-        0,
+        heroBaseY,
         4,
         dt
       );
@@ -201,17 +218,13 @@ function ScrollScene({
     // stick board to contact
     if (inContact && anchorRef.current) {
       // lock scaling
-      boardGroup.current.scale.setScalar(1);
+      boardGroup.current.scale.setScalar(scale);
 
-      const rect = anchorRef.current.getBoundingClientRect();
-      const canvasHeight = window.innerHeight;
-      const anchorMidY = rect.top + rect.height / 2;
-      const yNorm = (canvasHeight - anchorMidY) / canvasHeight;
-      const targetY = viewport.height * yNorm;
-      const targetZ = 1;
-      const targetX = 0;
+      // contact destination
+      const targetY = -viewport.height / 1.5 + pxToWorld(CONTACT_Y_OFFSET_PX, viewport.height)
+      const targetZ = 0.5
+      const targetX = contactX; 
 
-      // boardGroup.current.position.set(0, targetY, 1);
       // anims to fixed pos
       boardGroup.current.position.x = THREE.MathUtils.damp(
         boardGroup.current.position.x,
@@ -275,7 +288,7 @@ export default function App() {
 
   useEffect(() => {
     const recalculate = () => {
-      const sectionHeights = 720 + 800 + 500;
+      const sectionHeights = 720 + 800 + 340;
       setPages(sectionHeights / window.innerHeight);
     };
 
