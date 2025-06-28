@@ -6,7 +6,6 @@ html, body {
 #root {
   width: 100%;
   height: 100%;
-  overflow-x: hidden;
   overflow-y: auto; 
 }
 
@@ -14,7 +13,6 @@ html, body {
 .page-root {
   position: relative;
   width: 100%;
-  overflow-x: hidden;
   background: #0d0d0d;
 }
 
@@ -24,7 +22,7 @@ html, body {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: clamp(320px, 90vw, 1280px);   /* hard limit = 1280px */
+  width: clamp(320px, 90vw, 1440px);   /* hard limit = 1280px */
   height: 100vh;
   pointer-events: none;    /* R3F ray-casting still works */
   z-index: 0;              /* behind your .content-shell */
@@ -67,6 +65,7 @@ html, body {
   margin: 0 auto;
   pointer-events: auto;
 }
+
 .canvas-wrapper {
   position: absolute;
   top: 0;
@@ -138,27 +137,32 @@ section {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ---------- PROJECTS LIST ---------- */
 .projects {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 1rem;
-  padding: 2rem;
+  gap: 1.5rem;
+  padding: 4.75rem;
+  overflow: visible;
+  z-index: 0;
 }
 
 .project-card {
+  position: relative;
   width: 500px;
   height: 180px;
-  padding: 1rem;
+  padding: 1.25rem 1.75rem;
+  border-radius: 12px;
   background: #111;
-  border-radius: 8px;
-  color: white;
-  transition: outline 0.2s ease;
-  cursor: pointer;
-  border: 1px solid transparent;
+  color: #eee;
+  border: 1px solid rgba(255,255,255,0.06);
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  font-size: 1.35rem;
+  font-weight: 500;
+  user-select: none;
+  cursor: pointer;
 }
 
 .project-card:hover {
@@ -166,9 +170,50 @@ section {
 }
 
 .project-card.active {
-  outline: 2px solid #3b82f6;
-  border-color: #3b82f6;
+  background: #0e0e0e;
+  border-color: transparent;
 }
+
+/* 1) OUTER BLOOM */
+.project-card.active::before {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  border-radius: inherit;
+  background: linear-gradient(
+    to bottom right,
+    rgba(59, 130, 246, 0.4),
+    rgba(108, 68, 255, 0.3),
+    rgba(236, 72, 153, 0.2)
+  );
+  filter: blur(40px);
+  z-index: -2;
+  pointer-events: none;
+}
+
+
+/* 2) INNER NEON RIM  -------------------- */
+.project-card.active::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:-1;
+
+  box-shadow:
+     0 0 3px   1px  rgba(59,130,246,.9),
+     0 0 6px   2px  rgba(108,68,255,.7),
+     0 0 12px  4px  rgba(236,72,153,.55);
+
+  border-image:linear-gradient(135deg,
+              #3b82f6 0%,
+              #6366f1 30%,
+              #a855f7 65%,
+              #ec4899 100%) 1;
+}
+
+
 
 .contact {
   height: 800px;

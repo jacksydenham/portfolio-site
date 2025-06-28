@@ -23,17 +23,15 @@ function ScrollScene({
   const spinTargetY = Math.PI * 1.25;
   const projectSpinRate = THREE.MathUtils.degToRad(15);
   const wasInProjects = useRef(false);
-  
 
   const { viewport } = useThree(); // ← { width, height } in world units
   const w = viewport.width; // recomputed every resize
 
-  // handy helpers
   const heroX = -w * 0.18; // 18 % left of centre
-  const projectsX = w * 0.2; // 15 % right of centre
+  const projectsX = w * 0.22; // 15 % right of centre
 
   const scroll = useScroll();
-  const REF_W = 14;
+  const REF_W = 14
 
   // anims
   useFrame(({ clock }, dt) => {
@@ -58,10 +56,11 @@ function ScrollScene({
     // Tablets wait after spinning
     if (inProjects && !wasInProjects.current) {
       (window as any).section2EntryTime = clock.getElapsedTime();
-      (window as any).setActiveProject?.("Keydocs");
+      (window as any).setActiveProject?.("KeyDocs"); // ← sets "KeyDocs" when entering
+      idleTime.current = 0;
     } else if (!inProjects && wasInProjects.current) {
       delete (window as any).section2EntryTime;
-      (window as any).resetActiveProject?.();
+      (window as any).resetActiveProject?.(); // ← resets to ""
     }
 
     wasInProjects.current = inProjects;
@@ -87,7 +86,7 @@ function ScrollScene({
       dt
     );
 
-    // spin board
+    // spin board targets
     let YTarget = groupRef.current.rotation.y;
     if (inProjects) YTarget = spinTargetY;
     else if (inHero) YTarget = 0;
@@ -110,12 +109,13 @@ function ScrollScene({
     }
 
     // idle anim
+    let ZTarget = groupRef.current.rotation.z;
     if (inProjects) {
       const fade = THREE.MathUtils.clamp(idleTime.current / 2, 0, 1);
-      const liftY = 0.5 * fade; // ≤ 1 unit
+      const liftY = 0.5 * fade;
       const bobY = Math.sin(idleTime.current * 1.8) * 0.035 * fade;
-      const yawAdd = projectSpinRate * dt * fade; // constant spin
-      const rollZ =
+      const yawAdd = projectSpinRate * dt * fade;
+      ZTarget =
         Math.sin(idleTime.current * 1.6) * THREE.MathUtils.degToRad(1) * fade;
 
       boardGroup.current.position.y = THREE.MathUtils.damp(
@@ -126,12 +126,42 @@ function ScrollScene({
       );
 
       groupRef.current.rotation.y += yawAdd;
-      groupRef.current.rotation.z = rollZ;
     } else {
-      // y = 0 outside of proj
       boardGroup.current.position.y = THREE.MathUtils.damp(
         boardGroup.current.position.y,
         0,
+        4,
+        dt
+      );
+    }
+
+    groupRef.current.rotation.z = THREE.MathUtils.damp(
+      groupRef.current.rotation.z,
+      ZTarget,
+      4,
+      dt
+    );
+
+    if (!inContact) {
+      boardGroup.current.position.x = THREE.MathUtils.damp(
+        boardGroup.current.position.x,
+        inProjects ? projectsX : heroX,
+        4,
+        dt
+      );
+    }
+
+    if (inHero) {
+      boardGroup.current.position.z = THREE.MathUtils.damp(
+        boardGroup.current.position.z,
+        0,
+        4,
+        dt
+      );
+    } else if (inProjects) {
+      boardGroup.current.position.z = THREE.MathUtils.damp(
+        boardGroup.current.position.z,
+        1,
         4,
         dt
       );
@@ -162,7 +192,7 @@ function ScrollScene({
       // hold at z = 4
       boardGroup.current.position.z = THREE.MathUtils.damp(
         boardGroup.current.position.z,
-        1,
+        0,
         4,
         dt
       );
@@ -180,7 +210,7 @@ function ScrollScene({
       const targetY = viewport.height * yNorm;
       const targetZ = 1;
       const targetX = 0;
-      
+
       // boardGroup.current.position.set(0, targetY, 1);
       // anims to fixed pos
       boardGroup.current.position.x = THREE.MathUtils.damp(
@@ -237,9 +267,8 @@ function ScrollScene({
 }
 
 export default function App() {
-  const projectCycle = ["Keydocs", "Carer Manager Plus", "SmartBoard"];
-  const [autoProjectIndex] = useState(0);
-  const [userOverride, setUserOverride] = useState<string | null>(null);
+  const projectCycle = ["KeyDocs", "Carer Manager Plus", "SmartBoard"];
+  const [userOverride, setUserOverride] = useState<string>("");
   const anchorRef = useRef<HTMLDivElement>(null);
 
   const [pages, setPages] = useState(3);
@@ -257,12 +286,25 @@ export default function App() {
 
   // unselect project
   useEffect(() => {
-    (window as any).resetActiveProject = () => setUserOverride(null);
+    (window as any).resetActiveProject = () => setUserOverride("");
     (window as any).setActiveProject = (project: string) =>
       setUserOverride(project);
   }, []);
 
-  const activeProject = userOverride ?? projectCycle[autoProjectIndex];
+  const activeProject = userOverride;
+
+  const projectNames = ["KeyDocs", "Carer Manager Plus", "SmartBoard"];
+  useEffect(() => {
+    if (!userOverride) return;
+
+    const nextTimer = setTimeout(() => {
+      const currentIndex = projectNames.indexOf(userOverride);
+      const nextIndex = (currentIndex + 1) % projectNames.length;
+      (window as any).setActiveProject?.(projectNames[nextIndex]);
+    }, 3500);
+
+    return () => clearTimeout(nextTimer);
+  });
 
   return (
     <div className="page-root">
