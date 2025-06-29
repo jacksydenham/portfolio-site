@@ -82,13 +82,25 @@ section { position: relative; }
 section::after {
   content: "";
   position: absolute;
-  width: 100vw;
-  left: 0;   
-  right: 0;
+  left: 0;
   bottom: 0;
-  height: 1px;
-  background: rgba(221,221,221,.3);
+  transform: translateY(20px);
+  width: 1px;
+  height: 40px;
+  background: rgba(221, 221, 221, 0.3);
 }
+
+section::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  transform: translateX(1px);
+  width: 20px;
+  height: 1px;
+  background: rgba(221, 221, 221, 0.3);
+}
+
 
 /* --- HERO WRAPPER -------------------------------------------------- */
 .hero {
@@ -168,7 +180,7 @@ section::after {
 .project-card {
   position: relative;
   width: 450px;
-  height: 162px;
+  height: auto;
   padding: 1.125rem 1.575rem;
   font-size: 1.2rem;
   border-radius: 12px;
@@ -176,13 +188,39 @@ section::after {
   color: #eee;
   border: 1px solid rgba(255,255,255,0.06);
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   font-weight: 500;
   user-select: none;
   cursor: pointer;
   --c1: #05864a;
   --c2: #c56a14;
   --c3: #0c6ac2;
+}
+
+.card-title {
+  font-size: 1.45rem;
+  font-weight: 600;
+  margin: 0 0 0.4rem 0;
+  line-height: 1;
+}
+
+.card-desc {
+  list-style-type: disc;
+  padding-left: 1.15rem;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: #6e737c;
+}
+
+  .card-desc ul {
+  margin-top: 0.25rem; 
+  padding-left: 1.25rem;
+  list-style-type: circle;
+}
+
+.card-desc > li + li {
+  margin-top: 0.75rem;
 }
 
 /* ─── shared base for BOTH glows ─────────────────────────── */
@@ -247,27 +285,103 @@ section::after {
 
 .contact {
   display: flex;
-  height: inherit;
-  position: relative;
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
+  gap: 3rem;
+  height: inherit;
   padding: 4.75rem;
-  overflow: visible;
+  position: relative;
   z-index: 0;
 }
 
 .contact-box {
-  height: 360px;
+  height: auto;
   width: 700px;
-  background:#111;
-  border:2px solid #555;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#eee;
-  font-size:1.5rem;
+  background: rgba(17, 17, 17, 0.65);
+  border: 2px solid #555;
+  border-radius: 12px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  color: #eee;
+  font-size: 1rem;
+  box-shadow: 0 0 30px rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  overflow: hidden;
 }
 
+.contact-heading {
+  margin-bottom: 0rem;
+}
+
+.contact-heading h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #eee;
+  font: 'Montserrat', sans-serif;
+  font-weight: 600;
+}
+
+.contact-heading p {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+  color: #aaa;
+  line-height: 1.4;
+}
+
+.contact-box input,
+.contact-box textarea {
+  padding: 0.8rem 0.5rem;
+  border: none;
+  font-family:  'Courier New', Courier, monospace;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: #eee;
+  font-size: 1rem;
+  resize: none;
+  outline: none;
+}
+
+.contact-box input::placeholder,
+.contact-box textarea::placeholder {
+  color: #999;
+}
+
+.contact-box button {
+  position: relative;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #666;
+  border-radius: 8px;
+  background: transparent;
+  color: #eee;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.contact-box button:hover {
+  border-color: #00c853;
+  box-shadow: 0 0 8px rgba(0, 200, 83, 0.6),
+  0 0 24px rgb(0, 187, 200);
+}
+
+.contact-box button.glow-animate {
+  animation: glow-burst 2s ease-out forwards;
+}
+
+@keyframes glow-burst {
+  0% {
+    box-shadow: 0 0 24px rgba(0, 255, 170, 0.8),
+                0 0 64px rgba(0, 255, 170, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 800px rgba(0, 255, 170, 0),
+                0 0 800px rgba(0, 255, 170, 0);
+  }
+}
 
 .l-frame {
   width: 500px;

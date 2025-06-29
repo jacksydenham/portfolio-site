@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import "@fontsource/bebas-neue/400.css";
 import TabletBoard from "./components/TabletBoard";
 import StarFieldCanvas from "./components/StarParticles";
+import toast, { Toaster } from "react-hot-toast";
 
 function ScrollScene({
   activeProject,
@@ -21,11 +22,13 @@ function ScrollScene({
   activeProject: string;
   anchorRef: React.RefObject<HTMLDivElement | null>;
 }) {
+  const pxToWorld = (px: number) => (px / window.innerHeight) * viewport.height;
+
   // window height based positioning
-  const pxToWorld = (px: number, vh: number) => (px / window.innerHeight) * vh;
   const HERO_Y_OFFSET_PX = 320;
   const CONTACT_Y_OFFSET_PX = 0;
-  const CONTACT_X_OFFSET_PX = 215;
+  const PROJECT_LABEL_PX = { x: 180, y: 80 };
+  const HERO_LABEL_PX = { x: -375, y: 20 };
 
   const boardWrapper = useRef<THREE.Group>(null);
   const boardGroup = useRef<THREE.Group>(null);
@@ -46,8 +49,7 @@ function ScrollScene({
   const w = viewport.width;
 
   // scaled hero board y pos
-  const heroBaseY =
-    viewport.height / 2 - pxToWorld(HERO_Y_OFFSET_PX, viewport.height) - 0.5;
+  const heroBaseY = viewport.height / 2 - pxToWorld(HERO_Y_OFFSET_PX) - 0.5;
   const projectsBaseY = 0;
   const REF_W = 14;
 
@@ -58,8 +60,7 @@ function ScrollScene({
   // board x disatcne from centre in sections
   const heroX = -w * 0.26;
   const projectsX = w * 0.22;
-  const contactX =
-    -viewport.width / 2.35 + pxToWorld(CONTACT_X_OFFSET_PX, viewport.height);
+  const contactX = w * -0.282;
 
   // anims
   useFrame(({ clock }, dt) => {
@@ -67,9 +68,19 @@ function ScrollScene({
 
     const { width } = viewport;
     const scale = width / REF_W;
-    /* label size & offset relative to board */
-    projectsLabelRef.current?.scale.setScalar(scale * 0.4);
-    heroLabelRef.current?.scale.setScalar(scale * 0.4);
+
+    projectsLabelRef.current?.scale.setScalar(0.4);
+    heroLabelRef.current?.scale.setScalar(0.4);
+    projectsLabelRef.current?.position.set(
+      pxToWorld(PROJECT_LABEL_PX.x) / scale,
+      pxToWorld(PROJECT_LABEL_PX.y) / scale,
+      0
+    );
+    heroLabelRef.current?.position.set(
+      pxToWorld(HERO_LABEL_PX.x) / scale,
+      pxToWorld(HERO_LABEL_PX.y) / scale,
+      0
+    );
 
     boardGroup.current.scale.setScalar(scale);
 
@@ -104,8 +115,8 @@ function ScrollScene({
     let targetTiltX = THREE.MathUtils.degToRad(70);
     if (inProjects) {
       targetTiltX = THREE.MathUtils.degToRad(5);
-    } else if (boardAnimTime.current < 3) {
-      const t = boardAnimTime.current / 3;
+    } else if (boardAnimTime.current < 2) {
+      const t = boardAnimTime.current / 2;
       const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
       targetTiltX = THREE.MathUtils.lerp(
         THREE.MathUtils.degToRad(0),
@@ -242,8 +253,8 @@ function ScrollScene({
 
       // contact destination
       const targetY =
-        -viewport.height / 2 + pxToWorld(CONTACT_Y_OFFSET_PX, viewport.height);
-      const targetZ = 0.5;
+        -viewport.height / 2 + pxToWorld(CONTACT_Y_OFFSET_PX) + 0.32;
+      const targetZ = 0.4;
       const targetX = contactX;
 
       // anims to fixed pos
@@ -300,14 +311,13 @@ function ScrollScene({
         <Text
           ref={projectsLabelRef as any}
           font="/fonts/Monts/Montserrat-ExtraBold.ttf"
-          fontSize={2.35}
+          fontSize={1.35}
           lineHeight={4}
           anchorX="center"
           anchorY="top"
           outlineWidth={0.02}
           outlineColor="#ffffff"
           rotation={[-Math.PI / 2, 45, Math.PI / 2]} // flat on board
-          position={[1.8, 0.8, 0]}
         >
           PROJECTS
         </Text>
@@ -315,7 +325,7 @@ function ScrollScene({
         <Text
           ref={heroLabelRef as any}
           font="/fonts/Monts/Montserrat-ExtraBold.ttf"
-          fontSize={2.35}
+          fontSize={1.35}
           lineHeight={4}
           anchorX="center"
           anchorY="top"
@@ -325,7 +335,6 @@ function ScrollScene({
           material-transparent
           material-depthWrite={false}
           rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-          position={[-3.7, 0.2, 0]}
         >
           SKILLS
         </Text>
@@ -345,9 +354,13 @@ export default function App() {
   const [isHovering, setIsHovering] = useState(false);
   const [pages, setPages] = useState(3);
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+
   useEffect(() => {
     const recalculate = () => {
-      const sectionHeights = 800 + 800 + 340;
+      const sectionHeights = 800 + 800 + 380;
       setPages(sectionHeights / window.innerHeight);
     };
 
@@ -389,6 +402,22 @@ export default function App() {
     KeyDocs: ["#2b79d7", "#0541F8", "#5ECBFF"],
     "Carer Manager Plus": ["#e67e22", "#bf5700", "#FFE0B2"],
     SmartBoard: ["#d32f2f", "#a40000", "#ff6f61"],
+  };
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim() || !message.trim()) {
+      toast.error("Please fill in every field.");
+      return;
+    }
+
+    const btn = e.currentTarget;
+    btn.classList.add("glow-animate");
+    toast.success("Message sent!");
+
+    setTimeout(() => {
+      btn.classList.remove("glow-animate");
+    }, 2000);
   };
 
   return (
@@ -448,20 +477,97 @@ export default function App() {
                           setUserOverride(activeProject);
                         }}
                       >
-                        <h3>{project}</h3>
+                        <h3 className="card-title">{project}</h3>
+        {project === "KeyDocs" && (
+          <ul className="card-desc">
+            <li>
+              Purpose: end-to-end doc control
+              <ul>
+                <li>Convert any file → PDF, stamp revision footer</li>
+                <li>Enforce version sequence & retention rules</li>
+              </ul>
+            </li>
+            <li>
+              SharePoint integration
+              <ul>
+                <li>Stores PDFs in version-controlled libraries</li>
+                <li>Surfaced via custom SPFx web-parts</li>
+              </ul>
+            </li>
+            <li>
+              Stack
+              <ul>
+                <li>React / Next.js UI (Shadcn components)</li>
+                <li>tRPC + Zod for type-safe API validation</li>
+                <li>Prisma ORM ↔ Dataverse tables</li>
+              </ul>
+            </li>
+            <li>
+              Workflow automation
+              <ul>
+                <li>Power Automate triggers on upload & approval</li>
+                <li>Email alerts & audit logging</li>
+              </ul>
+            </li>
+          </ul>
+        )}
                       </div>
                     );
                   })}
                 </section>
 
                 <section className="contact">
+                  {/* Left: contact card frame */}
                   <div className="l-frame">
                     <div className="l-corner tl" />
                     <div className="l-corner tr" />
                     <div className="l-corner bl" />
                     <div className="l-corner br" />
                   </div>
-                  <div className="contact-box">contact form coming soon…</div>
+
+                  {/* Right: contact form */}
+                  <div className="contact-box">
+                    <div className="contact-heading">
+                      <h2>Contact Me</h2>
+                      <p>
+                        {`This form will send me an email and I'll be in touch!`}
+                      </p>
+                    </div>
+                    <Toaster
+                      position="top-right"
+                      toastOptions={{
+                        style: {
+                          margin: "16px",
+                          background: "#111",
+                          color: "#fff",
+                          border: "1px solid #333",
+                        },
+                      }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Your name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                    <input
+                      type="email"
+                      placeholder="Your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <textarea
+                      rows={4}
+                      placeholder="Your message"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                    />
+                    <div className="form-actions">
+                      <button type="submit" onClick={handleClick}>
+                        Send
+                      </button>
+                    </div>
+                  </div>
                 </section>
                 <section className="board-anchor">
                   <div ref={anchorRef} className="board-anchor" />
