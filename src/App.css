@@ -210,6 +210,7 @@ section::before {
   font-weight: 600;
   margin: 0;
   line-height: 1;
+  align-self: center;
 }
 
 .card-subtitle {
