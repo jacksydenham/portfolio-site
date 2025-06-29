@@ -29,7 +29,7 @@ export default function TabletInstance({
   isHovered,
   setHoveredCategory,
 }: Props) {
-  const { nodes } = useGLTF("/models/Tablet.glb") as any;
+  const { nodes } = useGLTF("/models/TabletShaded.glb") as any;
 
   // texture tablets
   const fileName = `${name}.png`;
@@ -62,7 +62,7 @@ export default function TabletInstance({
     // fuckass delay on section 2 entry
     const elapsed = clock.getElapsedTime();
     const entryTime = (window as any).section2EntryTime as number | undefined;
-    const inDelayGate = entryTime !== undefined && elapsed - entryTime < 0.5;
+    const inDelayGate = entryTime !== undefined && elapsed - entryTime < 0.35;
 
     const hoverActive = isHovered && ((isProjects && !inDelayGate) || isHero);
 
@@ -176,16 +176,20 @@ export default function TabletInstance({
         setHoveredCategory?.(null);
       }}
     >
-      <meshBasicMaterial
+      <meshPhysicalMaterial
         ref={materialRef}
         map={texture}
+        metalness={0.7}
+        roughness={1}
+        clearcoat={0.2}
+        clearcoatRoughness={1}
         side={THREE.DoubleSide}
-        toneMapped={false}
+        emissive={"#111111"}
+        emissiveIntensity={0.1}
         transparent
-        opacity={0}
       />
     </mesh>
   );
 }
 
-useGLTF.preload("/models/Tablet.glb");
+useGLTF.preload("/models/TabletShaded.glb");

@@ -1,11 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ScrollControls, Scroll, useScroll, Stats } from "@react-three/drei";
+import {
+  ScrollControls,
+  Scroll,
+  useScroll,
+  Stats,
+  Text,
+} from "@react-three/drei";
 import "./App.css";
 import { useEffect, useRef, useState } from "react";
 import "@fontsource/bebas-neue/400.css";
 import TabletBoard from "./components/TabletBoard";
+import StarFieldCanvas from "./components/StarParticles";
 
 function ScrollScene({
   activeProject,
@@ -20,9 +27,10 @@ function ScrollScene({
   const CONTACT_Y_OFFSET_PX = 0;
   const CONTACT_X_OFFSET_PX = 215;
 
-  const groupRef = useRef<THREE.Group>(null);
+  const boardWrapper = useRef<THREE.Group>(null);
   const boardGroup = useRef<THREE.Group>(null);
-
+  const projectsLabelRef = useRef<THREE.Mesh>(null);
+  const heroLabelRef = useRef<THREE.Mesh>(null);
   const boardAnimTime = useRef(0);
   const idleTime = useRef(0);
   const hasSpun = useRef(false);
@@ -39,26 +47,30 @@ function ScrollScene({
 
   // scaled hero board y pos
   const heroBaseY =
-    viewport.height / 2 - pxToWorld(HERO_Y_OFFSET_PX, viewport.height) - 0.2;
+    viewport.height / 2 - pxToWorld(HERO_Y_OFFSET_PX, viewport.height) - 0.5;
   const projectsBaseY = 0;
   const REF_W = 14;
 
   // section breakpoints
   const heroEnd = 0.05;
-  const projectsEnd = 0.88;
+  const projectsEnd = 0.95;
 
   // board x disatcne from centre in sections
-  const heroX = -w * 0.18;
+  const heroX = -w * 0.26;
   const projectsX = w * 0.22;
   const contactX =
     -viewport.width / 2.35 + pxToWorld(CONTACT_X_OFFSET_PX, viewport.height);
 
   // anims
   useFrame(({ clock }, dt) => {
-    if (!boardGroup.current || !groupRef.current) return;
+    if (!boardGroup.current || !boardGroup.current) return;
 
     const { width } = viewport;
     const scale = width / REF_W;
+    /* label size & offset relative to board */
+    projectsLabelRef.current?.scale.setScalar(scale * 0.4);
+    heroLabelRef.current?.scale.setScalar(scale * 0.4);
+
     boardGroup.current.scale.setScalar(scale);
 
     // time trackers
@@ -68,12 +80,16 @@ function ScrollScene({
     const scrollY = scroll.offset;
     const inHero = scrollY < heroEnd;
     const inProjects = scrollY >= heroEnd && scrollY < projectsEnd;
+    (window as any).inProjects = inProjects;
     const inContact = scrollY >= projectsEnd;
 
     // Tablets wait after spinning / active project set
     if (inProjects && !wasInProjects.current) {
       (window as any).section2EntryTime = clock.getElapsedTime();
-      (window as any).setActiveProject?.("KeyDocs");
+
+      setTimeout(() => {
+        (window as any).setActiveProject?.("KeyDocs");
+      }, 350);
       idleTime.current = 0;
     } else if (!inProjects && wasInProjects.current) {
       delete (window as any).section2EntryTime;
@@ -82,6 +98,8 @@ function ScrollScene({
 
     wasInProjects.current = inProjects;
 
+    projectsLabelRef.current!.visible = inProjects;
+    heroLabelRef.current!.visible = inHero;
     // tilt board on x
     let targetTiltX = THREE.MathUtils.degToRad(70);
     if (inProjects) {
@@ -96,22 +114,22 @@ function ScrollScene({
       );
     }
 
-    groupRef.current.rotation.x = THREE.MathUtils.damp(
-      groupRef.current.rotation.x,
+    boardGroup.current.rotation.x = THREE.MathUtils.damp(
+      boardGroup.current.rotation.x,
       targetTiltX,
       3,
       dt
     );
 
     // spin board targets
-    let YTarget = groupRef.current.rotation.y;
+    let YTarget = boardGroup.current.rotation.y;
     if (inProjects) YTarget = spinTargetY;
     else if (inHero) YTarget = 0;
     else if (inContact) YTarget = 0;
 
     // ease to default y orientation
-    groupRef.current.rotation.y = THREE.MathUtils.damp(
-      groupRef.current.rotation.y,
+    boardGroup.current.rotation.y = THREE.MathUtils.damp(
+      boardGroup.current.rotation.y,
       YTarget,
       4,
       dt
@@ -120,14 +138,14 @@ function ScrollScene({
     // fuckass check for sonic Tablet
     if (
       !hasSpun.current &&
-      Math.abs(groupRef.current.rotation.y - spinTargetY) < 0.05
+      Math.abs(boardGroup.current.rotation.y - spinTargetY) < 0.05
     ) {
       hasSpun.current = true;
     }
 
     // idle anim
     const LIFT_Y_UNITS = 0.5;
-    let ZTarget = groupRef.current.rotation.z;
+    let ZTarget = boardGroup.current.rotation.z;
 
     if (inProjects) {
       const fade = THREE.MathUtils.clamp(idleTime.current / 2, 0, 1);
@@ -151,7 +169,7 @@ function ScrollScene({
         dt
       );
 
-      groupRef.current.rotation.y += yawAdd;
+      boardGroup.current.rotation.y += yawAdd;
     } else {
       boardGroup.current.position.y = THREE.MathUtils.damp(
         boardGroup.current.position.y,
@@ -161,8 +179,8 @@ function ScrollScene({
       );
     }
 
-    groupRef.current.rotation.z = THREE.MathUtils.damp(
-      groupRef.current.rotation.z,
+    boardGroup.current.rotation.z = THREE.MathUtils.damp(
+      boardGroup.current.rotation.z,
       ZTarget,
       4,
       dt
@@ -249,14 +267,14 @@ function ScrollScene({
       );
 
       // contact rotations
-      groupRef.current.rotation.x = THREE.MathUtils.damp(
-        groupRef.current.rotation.x,
+      boardGroup.current.rotation.x = THREE.MathUtils.damp(
+        boardGroup.current.rotation.x,
         1.35,
         1,
         dt
       );
-      groupRef.current.rotation.z = THREE.MathUtils.damp(
-        groupRef.current.rotation.z,
+      boardGroup.current.rotation.z = THREE.MathUtils.damp(
+        boardGroup.current.rotation.z,
         THREE.MathUtils.degToRad(180),
         4,
         dt
@@ -265,8 +283,9 @@ function ScrollScene({
   });
 
   return (
-    <group ref={boardGroup}>
-      <group ref={groupRef} position={[0, -0.4, 0]} rotation={[0, 0, 0]}>
+    <group ref={boardWrapper}>
+      {/* board + label rotate together */}
+      <group ref={boardGroup} position={[0, -0.4, 0]}>
         <TabletBoard
           currentSection={
             scroll.offset < heroEnd
@@ -277,13 +296,49 @@ function ScrollScene({
           }
           activeProject={activeProject}
         />
+
+        <Text
+          ref={projectsLabelRef as any}
+          font="/fonts/Monts/Montserrat-ExtraBold.ttf"
+          fontSize={2.35}
+          lineHeight={4}
+          anchorX="center"
+          anchorY="top"
+          outlineWidth={0.02}
+          outlineColor="#ffffff"
+          rotation={[-Math.PI / 2, 45, Math.PI / 2]} // flat on board
+          position={[1.8, 0.8, 0]}
+        >
+          PROJECTS
+        </Text>
+
+        <Text
+          ref={heroLabelRef as any}
+          font="/fonts/Monts/Montserrat-ExtraBold.ttf"
+          fontSize={2.35}
+          lineHeight={4}
+          anchorX="center"
+          anchorY="top"
+          outlineWidth={0.02}
+          outlineColor="#ffffff"
+          fillOpacity={0}
+          material-transparent
+          material-depthWrite={false}
+          rotation={[-Math.PI / 2, 0, Math.PI / 2]}
+          position={[-3.7, 0.2, 0]}
+        >
+          SKILLS
+        </Text>
       </group>
+
+      <Text position={[0, 0, -50]} fontSize={0.1}>
+        init
+      </Text>
     </group>
   );
 }
 
 export default function App() {
-  const projectCycle = ["KeyDocs", "Carer Manager Plus", "SmartBoard"];
   const [userOverride, setUserOverride] = useState<string>("");
   const anchorRef = useRef<HTMLDivElement>(null);
 
@@ -312,7 +367,7 @@ export default function App() {
 
   useEffect(() => {
     if (!userOverride || isHovering) return;
-    
+
     const projectNames = ["KeyDocs", "Carer Manager Plus", "SmartBoard"];
     const nextTimer = setTimeout(() => {
       const currentIndex = projectNames.indexOf(userOverride);
@@ -323,27 +378,36 @@ export default function App() {
     return () => clearTimeout(nextTimer);
   }, [userOverride, isHovering]);
 
+  type ProjectName = "KeyDocs" | "Carer Manager Plus" | "SmartBoard";
+  const projectCycle: ProjectName[] = [
+    "KeyDocs",
+    "Carer Manager Plus",
+    "SmartBoard",
+  ];
+
+  const projectColours: Record<ProjectName, [string, string, string]> = {
+    KeyDocs: ["#2b79d7", "#0541F8", "#5ECBFF"],
+    "Carer Manager Plus": ["#e67e22", "#bf5700", "#FFE0B2"],
+    SmartBoard: ["#d32f2f", "#a40000", "#ff6f61"],
+  };
+
   return (
     <div className="page-root">
+      <StarFieldCanvas />
       <div className="canvas-column">
         <Canvas
           camera={{ position: [0, 2, 6], fov: 50 }}
           gl={{ powerPreference: "low-power", antialias: false }}
           dpr={[1, Math.min(window.devicePixelRatio, 1.5)]}
         >
-          <ambientLight intensity={0.5} />
+          <ambientLight intensity={0.35} />
+          <directionalLight position={[5, 10, 5]} intensity={4} />
           <directionalLight
-            castShadow
-            position={[5, 10, 5]}
-            intensity={1.5}
-            shadow-mapSize-width={1024}
-            shadow-mapSize-height={1024}
-            shadow-camera-far={50}
-            shadow-camera-left={-10}
-            shadow-camera-right={10}
-            shadow-camera-top={10}
-            shadow-camera-bottom={-10}
+            position={[-20, -4, 4]}
+            intensity={1}
+            color={"#e0e0ff"}
           />
+
           <Stats />
 
           <ScrollControls pages={pages}>
@@ -360,23 +424,34 @@ export default function App() {
                 </section>
 
                 <section className="projects">
-                  {projectCycle.map((project) => (
-                    <div
-                      key={project}
-                      className={`project-card ${
-                        activeProject === project ? "active" : ""
-                      }`}
-                      onMouseEnter={() => {
-                        setUserOverride(project);
-                        setIsHovering(true);
-                      }}
-                      onMouseLeave={() => {
-                        setIsHovering(false);
-                      }}
-                    >
-                      <h3>{project}</h3>
-                    </div>
-                  ))}
+                  {projectCycle.map((project) => {
+                    const [c1, c2, c3] = projectColours[project];
+                    return (
+                      <div
+                        key={project}
+                        className={`project-card ${
+                          activeProject === project ? "active" : ""
+                        }`}
+                        style={
+                          {
+                            "--c1": c1,
+                            "--c2": c2,
+                            "--c3": c3,
+                          } as React.CSSProperties
+                        }
+                        onMouseEnter={() => {
+                          if (!(window as any).inProjects) return;
+                          setUserOverride(project);
+                          setIsHovering(true);
+                        }}
+                        onMouseLeave={() => {
+                          setUserOverride(activeProject);
+                        }}
+                      >
+                        <h3>{project}</h3>
+                      </div>
+                    );
+                  })}
                 </section>
 
                 <section className="contact">

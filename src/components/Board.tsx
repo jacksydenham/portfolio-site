@@ -22,7 +22,13 @@ const Board = forwardRef<THREE.Mesh, BoardProps>(function Board(
       scale={scale}
       receiveShadow
     >
-      <meshPhongMaterial color="#ffffff" shininess={80} />
+      <meshStandardMaterial
+        metalness={1}
+        roughness={0.4}
+        color={"#dfe3e6"}
+        emissive={"#222222"}
+        emissiveIntensity={0.2}
+      />
     </mesh>
   );
 });

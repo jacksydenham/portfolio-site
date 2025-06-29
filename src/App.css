@@ -7,13 +7,13 @@ html, body {
   width: 100%;
   height: 100%;
   overflow-y: auto; 
-  background-color: #0d0d0d;
+  background-color: transparent;
 }
 
 .page-root {
   position: relative;
   width: 100%;
-  background: #0d0d0d;
+  background: transparent;
 }
 
 .canvas-column {
@@ -25,8 +25,9 @@ html, body {
   height: 100vh;
   pointer-events: none;
   z-index: 0;
-  background-color: #0d0d0d;
+  background: transparent;
 }
+
 
 .canvas-column canvas {
   width: 100% !important;
@@ -179,54 +180,69 @@ section::after {
   font-weight: 500;
   user-select: none;
   cursor: pointer;
+  --c1: #05864a;
+  --c2: #c56a14;
+  --c3: #0c6ac2;
 }
 
-.project-card:hover {
-  background: #1a1a1a;
-}
-
-.project-card.active {
-  background: #0e0e0e;
-  border-color: transparent;
-}
-
-/* outer glow */
-.project-card.active::before {
+/* ─── shared base for BOTH glows ─────────────────────────── */
+.project-card::before,
+.project-card::after {
   content: "";
   position: absolute;
-  inset: -20px;
+  inset: -2px;
   border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity .35s ease, transform .35s ease;
+}
+
+.project-card::before {
   background: linear-gradient(
     to bottom right,
-    rgba(59, 130, 246, 0.4),
-    rgba(108, 68, 255, 0.3),
-    rgba(236, 72, 153, 0.2)
+    var(--c1),
+    var(--c2),
+    var(--c3)
   );
-  filter: blur(40px);
+  background-size: 300% 300%;
+  animation: glowShift 3s ease-in-out infinite;
+  filter: blur(35px);
   z-index: -2;
-  pointer-events: none;
+}
+
+/* ─── INNER glow (multi-colour, animated) ────────────────── */
+.project-card::after {
+  background: linear-gradient(135deg, var(--c1), var(--c2), var(--c3), var(--c1));
+  background-size: 300% 300%;
+  animation: innerGlowShift 4s ease-in-out infinite;
+  mix-blend-mode: screen;
+  box-shadow:
+    0 0 4px var(--c2),
+    0 0 8px var(--c3),
+    0 0 12px var(--c2);
+  z-index: -1;
+}
+
+/* ─── ACTIVE state: simply raise opacity + scale ─────────── */
+.project-card.active::before,
+.project-card.active::after {
+  opacity: 1;
+  transform: scale(1);
 }
 
 
-/* inner bloom */
-.project-card.active::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  pointer-events:none;
-  z-index:-1;
 
-  box-shadow:
-     0 0 3px   1px  rgba(59,130,246,.9),
-     0 0 6px   2px  rgba(108,68,255,.7),
-     0 0 12px  4px  rgba(236,72,153,.55);
+@keyframes glowShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
-  border-image:linear-gradient(135deg,
-              #3b82f6 0%,
-              #6366f1 30%,
-              #a855f7 65%,
-              #ec4899 100%) 1;
+@keyframes innerGlowShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .contact {
