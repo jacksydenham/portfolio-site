@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as THREE from "three";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import {
   ScrollControls,
   Scroll,
@@ -37,10 +37,22 @@ function ScrollScene({
   const boardAnimTime = useRef(0);
   const idleTime = useRef(0);
   const hasSpun = useRef(false);
+  const previewRef = useRef<THREE.Mesh>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [opacity] = useState(0);
 
-  const spinTargetY = Math.PI * 1.25;
+  const spinTargetY = Math.PI * 1.2;
   const projectSpinRate = THREE.MathUtils.degToRad(15);
   const wasInProjects = useRef(false);
+
+  const slideTextures = useLoader(THREE.TextureLoader, [
+    "/textures/mgs3.png",
+    "/textures/aintnoway.png",
+  ]);
+  slideTextures.forEach((t) => {
+    t.flipY = false;
+    t.colorSpace = THREE.SRGBColorSpace;
+  });
 
   const scroll = useScroll();
 
@@ -59,7 +71,7 @@ function ScrollScene({
 
   // board x disatcne from centre in sections
   const heroX = -w * 0.26;
-  const projectsX = w * 0.22;
+  const projectsX = w * 0.2;
   const contactX = w * -0.282;
 
   // anims
@@ -201,7 +213,7 @@ function ScrollScene({
       boardGroup.current.position.x = THREE.MathUtils.damp(
         boardGroup.current.position.x,
         inProjects ? projectsX : heroX,
-        4,
+        1,
         dt
       );
     }
@@ -291,12 +303,36 @@ function ScrollScene({
         dt
       );
     }
+
+    // project images opacity
+    if (previewRef.current) {
+      const mat = previewRef.current.material as THREE.MeshStandardMaterial;
+
+      // fade opacity
+      const targetOpacity = activeProject === "KeyDocs" ? 1 : 0;
+      mat.opacity = THREE.MathUtils.damp(mat.opacity, targetOpacity, 4, dt);
+
+      // update texture if changed
+      if (mat.map !== slideTextures[currentSlide]) {
+        mat.map = slideTextures[currentSlide];
+        mat.needsUpdate = true;
+      }
+    }
   });
+
+  useEffect(() => {
+    if (activeProject !== "KeyDocs") return;
+
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slideTextures.length);
+    }, 4000); // change every 4s
+
+    return () => clearInterval(interval);
+  }, [activeProject, slideTextures.length]);
 
   return (
     <group ref={boardWrapper}>
-      {/* board + label rotate together */}
-      <group ref={boardGroup} position={[0, -0.4, 0]}>
+      <group ref={boardGroup} position={[2, heroBaseY, 0]}>
         <TabletBoard
           currentSection={
             scroll.offset < heroEnd
@@ -307,6 +343,25 @@ function ScrollScene({
           }
           activeProject={activeProject}
         />
+
+        {
+          <group>
+            <mesh
+              position={[0, 1.4, 2.2]}
+              rotation={[Math.PI * 2, Math.PI * 2, Math.PI]}
+              ref={previewRef}
+            >
+              <planeGeometry args={[4, 2]} />
+              <meshStandardMaterial
+                side={THREE.DoubleSide}
+                metalness={0.9}
+                roughness={0.8}
+                transparent
+                opacity={opacity}
+              />
+            </mesh>
+          </group>
+        }
 
         <Text
           ref={projectsLabelRef as any}
@@ -477,40 +532,53 @@ export default function App() {
                           setUserOverride(activeProject);
                         }}
                       >
-                        <h3 className="card-title">{project}</h3>
-        {project === "KeyDocs" && (
-          <ul className="card-desc">
-            <li>
-              Purpose: end-to-end doc control
-              <ul>
-                <li>Convert any file → PDF, stamp revision footer</li>
-                <li>Enforce version sequence & retention rules</li>
-              </ul>
-            </li>
-            <li>
-              SharePoint integration
-              <ul>
-                <li>Stores PDFs in version-controlled libraries</li>
-                <li>Surfaced via custom SPFx web-parts</li>
-              </ul>
-            </li>
-            <li>
-              Stack
-              <ul>
-                <li>React / Next.js UI (Shadcn components)</li>
-                <li>tRPC + Zod for type-safe API validation</li>
-                <li>Prisma ORM ↔ Dataverse tables</li>
-              </ul>
-            </li>
-            <li>
-              Workflow automation
-              <ul>
-                <li>Power Automate triggers on upload & approval</li>
-                <li>Email alerts & audit logging</li>
-              </ul>
-            </li>
-          </ul>
-        )}
+                        <div className="card-header">
+                          <h3 className="card-title">{project}</h3>
+                          {project === "KeyDocs" && (
+                            <span className="card-subtitle">Astral IP</span>
+                          )}
+                        </div>{" "}
+                        {project === "KeyDocs" && (
+                          <ul className="card-desc">
+                            <li>
+                              Purpose: end-to-end doc control
+                              <ul>
+                                <li>
+                                  Convert any file → PDF, stamp revision footer
+                                </li>
+                                <li>
+                                  Enforce version sequence & retention rules
+                                </li>
+                              </ul>
+                            </li>
+                            <li>
+                              SharePoint integration
+                              <ul>
+                                <li>
+                                  Stores PDFs in version-controlled libraries
+                                </li>
+                                <li>Surfaced via custom SPFx web-parts</li>
+                              </ul>
+                            </li>
+                            <li>
+                              Stack
+                              <ul>
+                                <li>React / Next.js UI (Shadcn components)</li>
+                                <li>tRPC + Zod for type-safe API validation</li>
+                                <li>Prisma ORM ↔ Dataverse tables</li>
+                              </ul>
+                            </li>
+                            <li>
+                              Workflow automation
+                              <ul>
+                                <li>
+                                  Power Automate triggers on upload & approval
+                                </li>
+                                <li>Email alerts & audit logging</li>
+                              </ul>
+                            </li>
+                          </ul>
+                        )}
                       </div>
                     );
                   })}
