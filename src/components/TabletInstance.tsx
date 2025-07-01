@@ -2,7 +2,7 @@
 import { useGLTF } from "@react-three/drei";
 // import { makeLetterTexture } from "./makeLetterTexture";
 import { useMemo, useRef } from "react";
-import { useFrame, useLoader, useThree } from "@react-three/fiber";
+import { useFrame, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 
 interface Props {
@@ -15,11 +15,6 @@ interface Props {
   setHoveredCategory?: (cat: string | null) => void;
 }
 
-function yLookAt(source: THREE.Object3D, target: THREE.Vector3) {
-  const v1 = new THREE.Vector3().subVectors(target, source.position);
-  return Math.atan2(v1.x, v1.z); // yaw angle in radians
-}
-
 export default function TabletInstance({
   name,
   position,
@@ -29,7 +24,7 @@ export default function TabletInstance({
   isHovered,
   setHoveredCategory,
 }: Props) {
-  const { nodes } = useGLTF("/models/TabletShaded.glb") as any;
+  const { nodes } = useGLTF("/models/Badge.glb") as any;
 
   // texture tablets
   const fileName = `${name}.png`;
@@ -37,7 +32,7 @@ export default function TabletInstance({
   const texture = useLoader(THREE.TextureLoader, `/textures/${fileName}`);
   texture.flipY = false;
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.rotation = Math.PI / 2;
+  texture.rotation = 0;
   texture.center.set(0.5, 0.5);
 
   const delay = useMemo(() => Math.random() * 1.5, []);
@@ -54,19 +49,16 @@ export default function TabletInstance({
   const angularVelocity = useRef(0);
   const wasHovered = useRef(false);
 
-  const { camera } = useThree();
-
   useFrame(({ clock }, dt) => {
     if (!ref.current || !materialRef.current) return;
 
-    // fuckass delay on section 2 entry
     const elapsed = clock.getElapsedTime();
     const entryTime = (window as any).section2EntryTime as number | undefined;
     const inDelayGate = entryTime !== undefined && elapsed - entryTime < 0.35;
 
     const hoverActive = isHovered && ((isProjects && !inDelayGate) || isHero);
 
-    // initial drop-in animation
+    // Drop-in animation
     if (startTime.current === null) startTime.current = elapsed;
     const dropT = elapsed - startTime.current;
     const progress = Math.min(Math.max((dropT - delay) * 2, 0), 1);
@@ -93,60 +85,53 @@ export default function TabletInstance({
       basePosition.current.z
     );
 
-    // point yaw to cam
-    const targetYaw = hoverActive ? yLookAt(ref.current, camera.position) : 0;
-    ref.current.rotation.x = THREE.MathUtils.damp(
-      ref.current.rotation.x,
-      targetYaw,
-      6,
-      dt
-    );
-
-    // hover shit
-    const justStartedHover = hoverActive && !wasHovered.current;
     wasHovered.current = hoverActive;
 
     if (hoverActive) {
-      if (justStartedHover) {
-        angularVelocity.current = 10;
-      }
-
-      if (setHoveredCategory) {
-        const toCam = new THREE.Vector3()
-          .subVectors(camera.position, ref.current.position)
-          .normalize();
-
-        // decreasing spin speed
-        const quatTarget = new THREE.Quaternion().setFromUnitVectors(
-          new THREE.Vector3(0, 1, 0),
-          toCam
+      if (isHero && setHoveredCategory) {
+        // no rotation during hero category hover
+        ref.current.rotation.set(0, 0, 0);
+      } else if (isProjects) {
+        ref.current.rotation.x = THREE.MathUtils.damp(
+          ref.current.rotation.x,
+          -Math.PI / 2,
+          6,
+          dt
         );
-        ref.current.quaternion.slerp(quatTarget, 0.1);
-      } else {
-        ref.current.rotation.y += dt * angularVelocity.current;
+
+        ref.current.rotation.z =
+          (ref.current.rotation.z + dt * angularVelocity.current) %
+          (Math.PI * 2);
         angularVelocity.current = THREE.MathUtils.damp(
           angularVelocity.current,
-          2,
+          0.5,
           2,
           dt
         );
 
-        ref.current.rotation.z = THREE.MathUtils.damp(
-          ref.current.rotation.z,
-          THREE.MathUtils.degToRad(90),
-          6,
+        ref.current.rotation.y = THREE.MathUtils.damp(
+          ref.current.rotation.y,
+          -Math.PI,
+          4,
           dt
         );
       }
     } else {
+      // reset orientation
       angularVelocity.current = 0;
 
-      if (setHoveredCategory) {
+      if (setHoveredCategory && isHero) {
         ref.current.quaternion.slerp(new THREE.Quaternion(), 0.1);
       } else {
         ref.current.rotation.x = THREE.MathUtils.damp(
           ref.current.rotation.x,
           0,
+          6,
+          dt
+        );
+        ref.current.rotation.y = THREE.MathUtils.damp(
+          ref.current.rotation.y,
+          -Math.PI,
           6,
           dt
         );
@@ -165,7 +150,7 @@ export default function TabletInstance({
   return (
     <mesh
       ref={ref}
-      geometry={nodes.Tablet.geometry}
+      geometry={nodes.Badge.geometry}
       scale={scale}
       onPointerOver={(e) => {
         e.stopPropagation();
@@ -179,9 +164,9 @@ export default function TabletInstance({
       <meshPhysicalMaterial
         ref={materialRef}
         map={texture}
-        metalness={0.7}
-        roughness={1}
-        clearcoat={0.2}
+        metalness={0.1}
+        roughness={0.5}
+        clearcoat={0.4}
         clearcoatRoughness={1}
         side={THREE.DoubleSide}
         emissive={"#111111"}
@@ -192,4 +177,4 @@ export default function TabletInstance({
   );
 }
 
-useGLTF.preload("/models/TabletShaded.glb");
+useGLTF.preload("/models/Badge.glb");

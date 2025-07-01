@@ -104,6 +104,7 @@ section::before {
 
 /* --- HERO WRAPPER -------------------------------------------------- */
 .hero {
+  position: relative;
   display: flex;
   align-items: flex-start;
   pointer-events: none;   
@@ -118,8 +119,10 @@ section::before {
   font-weight: 400;
   margin: 0;
   color: transparent;
-  -webkit-text-stroke: 2px #aaa;
-  
+  outline: #555;
+  background: linear-gradient(to bottom, #00ffc3 0%, #000000 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 .hero-role {
@@ -131,39 +134,75 @@ section::before {
   width: 205px;
 }
 
+.hero-role span {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 6rem;
+  letter-spacing: 0.02em;
+  line-height: 0.68;
+  padding-top: 10px;
+}
+
 .hero-role .full {
   font-size: 131px;
   font-weight: 400;
-  color: transparent;
-  -webkit-text-stroke: 2px #aaa;
+  background: linear-gradient(to bottom, #00af86 0%, #000000 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .hero-role .stack {
   font-size: 97px;
   font-weight: 400;
-  color: transparent;
-  -webkit-text-stroke: 2px #aaa;
+  background: linear-gradient(to bottom, #009b77 0%, #000000 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   height: 5rem; 
-}
-
-
-.hero-role span {
-  font-family: "Bebas Neue", sans-serif;
-  font-size: 6rem;
-  letter-spacing: 0.02em;
-  color: transparent;
-  -webkit-text-stroke: 2px #aaa;  text-align: right;
-  line-height: 0.75;
-}
-
-/* optional: let JS set an exact square at runtime */
-.hero-name {
-  --name-height: 14rem; /* fallback */
 }
 
 @keyframes subtitleFade {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+.skills-info-box {
+  position: absolute;
+  top: 42%;
+  left: 45%;
+
+  width: 650px;
+  height: 250px;
+  background: rgba(17, 17, 17, 0.65);
+  border: 2px solid #555;
+  border-radius: 12px;
+  padding: 1.75rem 1.5rem;
+  backdrop-filter: blur(4px);
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  color: #eee;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.95rem;
+
+  pointer-events: auto;
+  margin-left: 0;
+}
+
+.skills-info-heading {
+  margin: 0;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 2.25rem;
+  letter-spacing: 0.04em;
+  color: #0ff;
+  text-shadow: 0 0 6px #0ff;
+}
+
+.skills-info-text {
+  margin: 0;
+  line-height: 1.45;
+  color: #ccc;
 }
 
 /* ---------- PROJECTS LIST ---------- */
@@ -175,6 +214,17 @@ section::before {
   padding: 4.75rem;
   overflow: visible;
   z-index: 0;
+}
+
+.image-toggle {
+  background: transparent;
+  color: #aaa;
+  border: 1px solid #555;
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  margin-bottom: 0rem;
+  cursor: pointer;
 }
 
 .project-card {

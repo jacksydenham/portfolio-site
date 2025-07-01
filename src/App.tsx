@@ -18,9 +18,11 @@ import toast, { Toaster } from "react-hot-toast";
 function ScrollScene({
   activeProject,
   anchorRef,
+  showPreview,
 }: {
   activeProject: string;
   anchorRef: React.RefObject<HTMLDivElement | null>;
+  showPreview: boolean;
 }) {
   const pxToWorld = (px: number) => (px / window.innerHeight) * viewport.height;
 
@@ -71,7 +73,7 @@ function ScrollScene({
 
   // board x disatcne from centre in sections
   const heroX = -w * 0.26;
-  const projectsX = w * 0.2;
+  const projectsX = w * 0.165;
   const contactX = w * -0.282;
 
   // anims
@@ -112,7 +114,7 @@ function ScrollScene({
 
       setTimeout(() => {
         (window as any).setActiveProject?.("KeyDocs");
-      }, 350);
+      }, 100);
       idleTime.current = 0;
     } else if (!inProjects && wasInProjects.current) {
       delete (window as any).section2EntryTime;
@@ -187,7 +189,7 @@ function ScrollScene({
 
       boardGroup.current.position.z = THREE.MathUtils.damp(
         boardGroup.current.position.z,
-        1,
+        1.75,
         4,
         dt
       );
@@ -344,7 +346,7 @@ function ScrollScene({
           activeProject={activeProject}
         />
 
-        {
+        {showPreview && (
           <group>
             <mesh
               position={[0, 1.4, 2.2]}
@@ -361,7 +363,7 @@ function ScrollScene({
               />
             </mesh>
           </group>
-        }
+        )}
 
         <Text
           ref={projectsLabelRef as any}
@@ -408,6 +410,7 @@ export default function App() {
 
   const [isHovering, setIsHovering] = useState(false);
   const [pages, setPages] = useState(3);
+  const [showPreview, setShowPreview] = useState(false);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -495,7 +498,11 @@ export default function App() {
           <Stats />
 
           <ScrollControls pages={pages}>
-            <ScrollScene activeProject={activeProject} anchorRef={anchorRef} />
+            <ScrollScene
+              activeProject={activeProject}
+              anchorRef={anchorRef}
+              showPreview={showPreview}
+            />
             <Scroll html>
               <div className="content-shell">
                 <section className="hero">
@@ -505,9 +512,22 @@ export default function App() {
                     <span className="full">FULL</span>
                     <span className="stack">STACK</span>
                   </div>
+
+                  <div className="skills-info-box">
+                    <h3 className="skills-info-heading">SKILL INFO</h3>
+                    <p className="skills-info-text">
+                      {"Hover to see its category."}
+                    </p>
+                  </div>
                 </section>
 
                 <section className="projects">
+                  <button
+                    onClick={() => setShowPreview((prev) => !prev)}
+                    className="image-toggle"
+                  >
+                    {showPreview ? "Hide Preview" : "Show Preview"}
+                  </button>
                   {projectCycle.map((project) => {
                     const [c1, c2, c3] = projectColours[project];
                     return (

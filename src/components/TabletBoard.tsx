@@ -25,8 +25,8 @@ export default function TabletBoard({
     const height = box.max.z - box.min.z;
 
     setGaps({
-      gapX: (width / (cols - 1)) * 0.72,
-      gapY: (height / (rows - 1)) * 0.65,
+      gapX: (width / (cols - 1)) * 0.78,
+      gapY: (height / (rows - 1)) * 0.68,
     });
   }, []);
 
@@ -46,7 +46,7 @@ export default function TabletBoard({
               name={name}
               position={[
                 (gridX - (cols - 1) / 2) * gaps.gapX,
-                0.2,
+                0.15,
                 (gridY - (rows - 1) / 2) * gaps.gapY,
               ]}
               currentSection={currentSection}
