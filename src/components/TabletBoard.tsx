@@ -7,9 +7,13 @@ import * as THREE from "three";
 export default function TabletBoard({
   currentSection,
   activeProject,
+  setActiveTriggers,
+  setHoveredTabletName,
 }: {
   currentSection: "hero" | "projects" | "contact";
   activeProject: string;
+  setActiveTriggers: (t: string[] | null) => void;  
+  setHoveredTabletName: (name: string | null) => void;
 }) {
   const boardRef = useRef<THREE.Mesh>(null);
   const [gaps, setGaps] = useState<{ gapX: number; gapY: number } | null>(null);
@@ -34,7 +38,7 @@ export default function TabletBoard({
     <group>
       <Board ref={boardRef} position={[0, 0, 0]} scale={1.5} />
       {gaps &&
-        TabletMeta.map(({ name, categories, gridX, gridY, projects }) => {
+        TabletMeta.map(({ name, categories, triggers, gridX, gridY, projects }) => {
           const isHovered =
             currentSection === "hero"
               ? hoveredCategory !== null && categories.includes(hoveredCategory)
@@ -52,11 +56,13 @@ export default function TabletBoard({
               currentSection={currentSection}
               scale={0.25}
               categories={categories}
+              triggers={triggers}
               isHovered={isHovered}
               setHoveredCategory={
                 currentSection !== "projects" ? setHoveredCategory : undefined
               }
-
+              setActiveTriggers={setActiveTriggers}
+              setHoveredTabletName={setHoveredTabletName}
             />
           );
         })}

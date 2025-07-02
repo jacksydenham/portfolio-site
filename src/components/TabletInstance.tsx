@@ -11,9 +11,16 @@ interface Props {
   scale?: number;
   currentSection: "hero" | "projects" | "contact";
   categories: string[];
+  triggers: string[];
   isHovered: boolean;
   setHoveredCategory?: (cat: string | null) => void;
+  setHoverSkill?: (s: string | null) => void;
+  setActiveTriggers: (t: string[] | null) => void;  
+  setHoveredTabletName: (name: string | null) => void;
 }
+// Use window object to store hover state for global access
+(window as any).hoveredTabletName = null;
+(window as any).hoveredTabletTriggers = null;
 
 export default function TabletInstance({
   name,
@@ -21,8 +28,12 @@ export default function TabletInstance({
   scale = 1,
   currentSection,
   categories,
+  triggers,
   isHovered,
   setHoveredCategory,
+  setHoverSkill,
+  setActiveTriggers,
+  setHoveredTabletName,
 }: Props) {
   const { nodes } = useGLTF("/models/Badge.glb") as any;
 
@@ -56,7 +67,15 @@ export default function TabletInstance({
     const entryTime = (window as any).section2EntryTime as number | undefined;
     const inDelayGate = entryTime !== undefined && elapsed - entryTime < 0.35;
 
-    const hoverActive = isHovered && ((isProjects && !inDelayGate) || isHero);
+// ── inside TabletInstance, just above hoverActive ──────────────
+const heroTriggerMatch =
+  isHero &&
+  (window as any).hoveredTabletTriggers !== null &&
+  categories.some((c) => (window as any).hoveredTabletTriggers!.includes(c));
+
+// replace the original hoverActive line with this
+const hoverActive =
+  (isHovered || heroTriggerMatch) && ((isProjects && !inDelayGate) || isHero);
 
     // Drop-in animation
     if (startTime.current === null) startTime.current = elapsed;
@@ -65,9 +84,13 @@ export default function TabletInstance({
     const eased = THREE.MathUtils.smoothstep(progress, 0, 1);
 
     const targetY = basePosition.current.y;
-    const hoverLift = hoverActive ? 0.3 : 0;
-    materialRef.current.opacity = eased;
-
+    const hoverLift = hoverActive
+      ? isHero
+        ? 0.15
+        : isProjects
+        ? 0.3
+        : 0
+      : 0;
     const animatedY = THREE.MathUtils.damp(
       ref.current.position.y,
       targetY + hoverLift,
@@ -143,6 +166,29 @@ export default function TabletInstance({
         );
       }
     }
+
+    // hide other tablets based on first category
+    const shouldHide =
+      isHero &&
+      (window as any).hoveredTabletName !== null &&
+      (window as any).hoveredTabletName !== name &&
+      (window as any).hoveredTabletTriggers !== null &&
+      !categories.some((cat) => (window as any).hoveredTabletTriggers!.includes(cat));
+
+    const targetOpacity = shouldHide ? 0.15 : eased;
+    materialRef.current.opacity = THREE.MathUtils.damp(
+      materialRef.current.opacity,
+      targetOpacity,
+      8,
+      dt
+    );
+
+    materialRef.current.opacity = THREE.MathUtils.damp(
+      materialRef.current.opacity,
+      targetOpacity,
+      8,
+      dt
+    );
   });
 
   console.log(texture);
@@ -154,11 +200,23 @@ export default function TabletInstance({
       scale={scale}
       onPointerOver={(e) => {
         e.stopPropagation();
-        setHoveredCategory?.(categories[0]);
+        (window as any).hoveredTabletName = name;
+        (window as any).hoveredTabletTriggers = triggers;
+        setHoveredCategory?.(triggers[0] ?? null);
+        setHoverSkill?.(name);
+        setHoveredTabletName?.(name);
+        setActiveTriggers?.(triggers);  
       }}
       onPointerOut={(e) => {
         e.stopPropagation();
+        if ((window as any).hoveredTabletName === name) {
+          (window as any).hoveredTabletName = null;
+          (window as any).hoveredTabletTriggers = null;
+        }
         setHoveredCategory?.(null);
+        setHoverSkill?.(null); 
+        setHoveredTabletName?.(null);
+        setActiveTriggers(null);
       }}
     >
       <meshPhysicalMaterial
@@ -172,6 +230,7 @@ export default function TabletInstance({
         emissive={"#111111"}
         emissiveIntensity={0.1}
         transparent
+        opacity={0}
       />
     </mesh>
   );

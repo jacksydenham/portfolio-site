@@ -14,15 +14,21 @@ import "@fontsource/bebas-neue/400.css";
 import TabletBoard from "./components/TabletBoard";
 import StarFieldCanvas from "./components/StarParticles";
 import toast, { Toaster } from "react-hot-toast";
+import { curatedGroups, type CuratedGroup } from "./skillGroups";
+import { TabletMeta } from "./components/TabletData";
 
 function ScrollScene({
   activeProject,
   anchorRef,
   showPreview,
+  setActiveTriggers,
+  setHoveredTabletName,
 }: {
   activeProject: string;
   anchorRef: React.RefObject<HTMLDivElement | null>;
   showPreview: boolean;
+  setActiveTriggers: (t: string[] | null) => void;
+  setHoveredTabletName: (name: string | null) => void;
 }) {
   const pxToWorld = (px: number) => (px / window.innerHeight) * viewport.height;
 
@@ -38,7 +44,6 @@ function ScrollScene({
   const heroLabelRef = useRef<THREE.Mesh>(null);
   const boardAnimTime = useRef(0);
   const idleTime = useRef(0);
-  const hasSpun = useRef(false);
   const previewRef = useRef<THREE.Mesh>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [opacity] = useState(0);
@@ -63,7 +68,7 @@ function ScrollScene({
   const w = viewport.width;
 
   // scaled hero board y pos
-  const heroBaseY = viewport.height / 2 - pxToWorld(HERO_Y_OFFSET_PX) - 0.5;
+  const heroBaseY = viewport.height / 2 - pxToWorld(HERO_Y_OFFSET_PX) - 0.55;
   const projectsBaseY = 0;
   const REF_W = 14;
 
@@ -106,6 +111,7 @@ function ScrollScene({
     const inHero = scrollY < heroEnd;
     const inProjects = scrollY >= heroEnd && scrollY < projectsEnd;
     (window as any).inProjects = inProjects;
+    (window as any).inHero = inHero;
     const inContact = scrollY >= projectsEnd;
 
     // Tablets wait after spinning / active project set
@@ -159,14 +165,6 @@ function ScrollScene({
       4,
       dt
     );
-
-    // fuckass check for sonic Tablet
-    if (
-      !hasSpun.current &&
-      Math.abs(boardGroup.current.rotation.y - spinTargetY) < 0.05
-    ) {
-      hasSpun.current = true;
-    }
 
     // idle anim
     const LIFT_Y_UNITS = 0.5;
@@ -300,7 +298,7 @@ function ScrollScene({
       );
       boardGroup.current.rotation.z = THREE.MathUtils.damp(
         boardGroup.current.rotation.z,
-        THREE.MathUtils.degToRad(180),
+        -THREE.MathUtils.degToRad(180),
         4,
         dt
       );
@@ -344,6 +342,8 @@ function ScrollScene({
               : "contact"
           }
           activeProject={activeProject}
+          setActiveTriggers={setActiveTriggers}
+          setHoveredTabletName={setHoveredTabletName}
         />
 
         {showPreview && (
@@ -416,6 +416,12 @@ export default function App() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
+  const [activeTriggers, setActiveTriggers] = useState<string[] | null>(null);
+  const [curated, setCurated] = useState<CuratedGroup[]>([]);
+  const [hoveredTabletName, setHoveredTabletName] = useState<string | null>(
+    null
+  );
+
   useEffect(() => {
     const recalculate = () => {
       const sectionHeights = 800 + 800 + 380;
@@ -444,10 +450,47 @@ export default function App() {
       const currentIndex = projectNames.indexOf(userOverride);
       const nextIndex = (currentIndex + 1) % projectNames.length;
       (window as any).setActiveProject?.(projectNames[nextIndex]);
-    }, 3500);
+    }, 3000);
 
     return () => clearTimeout(nextTimer);
   }, [userOverride, isHovering]);
+
+  // typa shit they actually teach at uni WOW!
+  useEffect(() => {
+    const inHero = (window as any).inHero;
+    if (!activeTriggers || !inHero) {
+      setCurated([]);
+      return;
+    }
+
+    const activeNames = TabletMeta.filter((t) =>
+      t.categories.some((c) => activeTriggers.includes(c))
+    ).map((t) => t.name);
+
+    const matches = curatedGroups.filter((g) =>
+      g.items.every((n) => activeNames.includes(n))
+    );
+
+    const hoveredMeta = hoveredTabletName
+      ? TabletMeta.find((t) => t.name === hoveredTabletName)
+      : null;
+
+    let final: CuratedGroup[];
+    if (hoveredMeta) {
+      const primary = curatedGroups.find(
+        (g) => g.title === hoveredMeta.primarySkill
+      );
+      if (primary) {
+        final = [primary, ...matches.filter((g) => g.title !== primary.title)];
+      } else {
+        final = matches;
+      }
+    } else {
+      final = matches;
+    }
+
+    setCurated(final);
+  }, [activeTriggers, hoveredTabletName]);
 
   type ProjectName = "KeyDocs" | "Carer Manager Plus" | "SmartBoard";
   const projectCycle: ProjectName[] = [
@@ -502,6 +545,8 @@ export default function App() {
               activeProject={activeProject}
               anchorRef={anchorRef}
               showPreview={showPreview}
+              setActiveTriggers={setActiveTriggers}
+              setHoveredTabletName={setHoveredTabletName}
             />
             <Scroll html>
               <div className="content-shell">
@@ -514,10 +559,40 @@ export default function App() {
                   </div>
 
                   <div className="skills-info-box">
-                    <h3 className="skills-info-heading">SKILL INFO</h3>
-                    <p className="skills-info-text">
-                      {"Hover to see its category."}
-                    </p>
+                    {curated.length > 0 ? (
+                      <>
+                        {/* primary group */}
+                        <h3 className="skills-info-heading">
+                          {curated[0].title}
+                        </h3>
+                        <p className="skills-info-text">{curated[0].blurb}</p>
+
+                        {/* supplementary groups */}
+                        {curated.slice(1).map((g) => (
+                          <div key={g.title} className="skills-supplementary">
+                            <h4 className="skills-supp-heading">{g.title}</h4>
+                            <p className="skills-supp-text">{g.blurb}</p>
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        <h3 className="skills-info-heading">
+                          Explore My Skills
+                        </h3>
+                        <p className="skills-info-text">
+                          Hover over a tablet to reveal the technologies I use
+                          and how they fit together.
+                        </p>
+                        <p
+                          className="skills-supp-text"
+                          style={{ marginTop: "1rem" }}
+                        >
+                          Each tablet glows when selected — try interacting to
+                          uncover more.
+                        </p>
+                      </>
+                    )}
                   </div>
                 </section>
 
@@ -550,6 +625,7 @@ export default function App() {
                         }}
                         onMouseLeave={() => {
                           setUserOverride(activeProject);
+                          setUserOverride(project);
                         }}
                       >
                         <div className="card-header">
