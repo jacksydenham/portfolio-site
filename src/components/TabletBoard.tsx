@@ -54,7 +54,7 @@ export default function TabletBoard({
                 (gridY - (rows - 1) / 2) * gaps.gapY,
               ]}
               currentSection={currentSection}
-              scale={0.25}
+              scale={0.26}
               categories={categories}
               triggers={triggers}
               isHovered={isHovered}

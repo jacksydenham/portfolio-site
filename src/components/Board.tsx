@@ -13,14 +13,14 @@ const Board = forwardRef<THREE.Mesh, BoardProps>(function Board(
   { position = [0, 0, 0], scale = 5 },
   ref
 ) {
-  const { nodes } = useGLTF("/models/SqBoard.glb") as any;
+  const { nodes } = useGLTF("/models/BoardR.glb") as any;
 
   const cardTex = useLoader(THREE.TextureLoader, "/textures/cardMin.png");
   cardTex.flipY = true;
   cardTex.colorSpace = THREE.SRGBColorSpace;
 
   const bbox = new THREE.Box3().setFromBufferAttribute(
-    nodes.SqBoard.geometry.attributes.position
+    nodes.BoardR.geometry.attributes.position
   );
   const size = new THREE.Vector3();
   bbox.getSize(size);
@@ -28,7 +28,7 @@ const Board = forwardRef<THREE.Mesh, BoardProps>(function Board(
   return (
     <group ref={ref}>
       <mesh
-        geometry={nodes.SqBoard.geometry}
+        geometry={nodes.BoardR.geometry}
         position={position}
         scale={scale}
         receiveShadow
@@ -55,4 +55,4 @@ const Board = forwardRef<THREE.Mesh, BoardProps>(function Board(
 
 export default Board;
 
-useGLTF.preload("/models/SqBoard.glb");
+useGLTF.preload("/models/BoardR.glb");

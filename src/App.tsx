@@ -16,6 +16,14 @@ import StarFieldCanvas from "./components/StarParticles";
 import toast, { Toaster } from "react-hot-toast";
 import { curatedGroups, type CuratedGroup } from "./skillGroups";
 import { TabletMeta } from "./components/TabletData";
+import {
+  BOARD_REF_WIDTH_UNITS,
+  CONTACT_Y_OFFSET_PX,
+  HERO_LABEL_POS,
+  HERO_Y_OFFSET_PX,
+  PROJECT_LABEL_POS,
+  SCROLL_BREAKS,
+} from "./config/config";
 
 function ScrollScene({
   activeProject,
@@ -31,12 +39,6 @@ function ScrollScene({
   setHoveredTabletName: (name: string | null) => void;
 }) {
   const pxToWorld = (px: number) => (px / window.innerHeight) * viewport.height;
-
-  // window height based positioning
-  const HERO_Y_OFFSET_PX = 320;
-  const CONTACT_Y_OFFSET_PX = 0;
-  const PROJECT_LABEL_PX = { x: 180, y: 80 };
-  const HERO_LABEL_PX = { x: -375, y: 20 };
 
   const boardWrapper = useRef<THREE.Group>(null);
   const boardGroup = useRef<THREE.Group>(null);
@@ -70,11 +72,6 @@ function ScrollScene({
   // scaled hero board y pos
   const heroBaseY = viewport.height / 2 - pxToWorld(HERO_Y_OFFSET_PX) - 0.55;
   const projectsBaseY = 0;
-  const REF_W = 14;
-
-  // section breakpoints
-  const heroEnd = 0.05;
-  const projectsEnd = 0.95;
 
   // board x disatcne from centre in sections
   const heroX = -w * 0.26;
@@ -86,18 +83,18 @@ function ScrollScene({
     if (!boardGroup.current || !boardGroup.current) return;
 
     const { width } = viewport;
-    const scale = width / REF_W;
+    const scale = width / BOARD_REF_WIDTH_UNITS;
 
     projectsLabelRef.current?.scale.setScalar(0.4);
     heroLabelRef.current?.scale.setScalar(0.4);
     projectsLabelRef.current?.position.set(
-      pxToWorld(PROJECT_LABEL_PX.x) / scale,
-      pxToWorld(PROJECT_LABEL_PX.y) / scale,
+      pxToWorld(PROJECT_LABEL_POS.x) / scale,
+      pxToWorld(PROJECT_LABEL_POS.y) / scale,
       0
     );
     heroLabelRef.current?.position.set(
-      pxToWorld(HERO_LABEL_PX.x) / scale,
-      pxToWorld(HERO_LABEL_PX.y) / scale,
+      pxToWorld(HERO_LABEL_POS.x) / scale,
+      pxToWorld(HERO_LABEL_POS.y) / scale,
       0
     );
 
@@ -108,11 +105,12 @@ function ScrollScene({
     idleTime.current += dt;
 
     const scrollY = scroll.offset;
-    const inHero = scrollY < heroEnd;
-    const inProjects = scrollY >= heroEnd && scrollY < projectsEnd;
+    const inHero = scrollY < SCROLL_BREAKS.heroEnd;
+    const inProjects =
+      scrollY >= SCROLL_BREAKS.heroEnd && scrollY < SCROLL_BREAKS.projectsEnd;
     (window as any).inProjects = inProjects;
     (window as any).inHero = inHero;
-    const inContact = scrollY >= projectsEnd;
+    const inContact = scrollY >= SCROLL_BREAKS.projectsEnd;
 
     // Tablets wait after spinning / active project set
     if (inProjects && !wasInProjects.current) {
@@ -335,9 +333,9 @@ function ScrollScene({
       <group ref={boardGroup} position={[2, heroBaseY, 0]}>
         <TabletBoard
           currentSection={
-            scroll.offset < heroEnd
+            scroll.offset < SCROLL_BREAKS.heroEnd
               ? "hero"
-              : scroll.offset < projectsEnd
+              : scroll.offset < SCROLL_BREAKS.projectsEnd
               ? "projects"
               : "contact"
           }
@@ -373,7 +371,8 @@ function ScrollScene({
           anchorX="center"
           anchorY="top"
           outlineWidth={0.02}
-          outlineColor="#ffffff"
+          outlineColor="#ccc"
+          color="#ccc"
           rotation={[-Math.PI / 2, 45, Math.PI / 2]} // flat on board
         >
           PROJECTS
@@ -387,7 +386,7 @@ function ScrollScene({
           anchorX="center"
           anchorY="top"
           outlineWidth={0.02}
-          outlineColor="#ffffff"
+          outlineColor="#ccc"
           fillOpacity={0}
           material-transparent
           material-depthWrite={false}
@@ -421,6 +420,23 @@ export default function App() {
   const [hoveredTabletName, setHoveredTabletName] = useState<string | null>(
     null
   );
+  
+  // const [hasHovered, setHasHovered] = useState(false);
+  // const funFacts = [
+  //   "💀 I have a 2.6 GPA!!",
+  //   "😛 I'm a fraud",
+  //   "👨‍🦯 0 classs/lectures attended in 2024, 8 distinctions.",
+  //   "🤠 I can't sustain a healthy relationship",
+  //   "🎧 My go-to coding soundtrack is raw backshots 10 hours.",
+  // ];
+  // const [factIndex, setFactIndex] = useState(0);
+  // 
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     setFactIndex((i) => (i + 1) % funFacts.length);
+  //   }, 4000); // switch every 4s
+  //   return () => clearInterval(timer);
+  // }, [funFacts.length]);
 
   useEffect(() => {
     const recalculate = () => {
@@ -478,7 +494,8 @@ export default function App() {
     let final: CuratedGroup[];
     if (hoveredMeta) {
       const primary = curatedGroups.find(
-        (g) => g.title === hoveredMeta.primarySkill
+        (g) => g.title === hoveredMeta.primarySkill,
+        // setHasHovered(true)
       );
       if (primary) {
         final = [primary, ...matches.filter((g) => g.title !== primary.title)];
@@ -502,7 +519,11 @@ export default function App() {
   const projectColours: Record<ProjectName, [string, string, string]> = {
     KeyDocs: ["#2b79d7", "#0541F8", "#5ECBFF"],
     "Carer Manager Plus": ["#e67e22", "#bf5700", "#FFE0B2"],
-    SmartBoard: ["#d32f2f", "#a40000", "#ff6f61"],
+    SmartBoard: [
+      "var(--theme-color)",
+      "var(--theme-color)",
+      "var(--theme-color)",
+    ],
   };
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -577,20 +598,33 @@ export default function App() {
                       </>
                     ) : (
                       <>
-                        <h3 className="skills-info-heading">
-                          Explore My Skills
-                        </h3>
-                        <p className="skills-info-text">
-                          Hover over a tablet to reveal the technologies I use
-                          and how they fit together.
-                        </p>
-                        <p
-                          className="skills-supp-text"
-                          style={{ marginTop: "1rem" }}
-                        >
-                          Each tablet glows when selected — try interacting to
-                          uncover more.
-                        </p>
+                        <div>
+                          <h2 className="skills-info-heading">About Me</h2>
+
+                          <p className="skills-info-text">
+                            I'm a final-year Software Engineering student at
+                            RMIT and Full Stack Developer. During my first
+                            professional role at Astral Consulting, I mastered
+                            integrating complex environments, combining multiple
+                            custom react web apps with a sharepoint automation
+                            processes built in Power Automate. I thrive on
+                            weaving AI-driven features into modern web
+                            applications. I excel in agile teams, taking
+                            end-to-end ownership to ship production-ready
+                            software.
+                          </p>
+                        </div>
+                        {/* {hasHovered === false ? ( */}
+                          <div className="hint-card">
+                            Hover over icons to explore my skills!
+                          </div>
+                        {/* ) : (
+                          <div className="hint-card next-step">
+                            <span key={factIndex} className="fun-fact">
+                              {funFacts[factIndex]}
+                            </span>
+                          </div>
+                        )} */}
                       </>
                     )}
                   </div>
