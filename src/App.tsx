@@ -216,7 +216,7 @@ function ScrollScene({
       dt
     );
 
-    if (!inContact) {
+    if (inHero || inProjects) {
       boardGroup.current.position.x = THREE.MathUtils.damp(
         boardGroup.current.position.x,
         inProjects ? projectsX : heroX,
@@ -255,15 +255,15 @@ function ScrollScene({
     // showcase anims
     if (inShowcase && boardGroup.current) {
       // your desired world-unit endpoint:
-      const targetPos = { x: 3, y: 0, z: 2 };
+      const targetPos = { x: 4.2, y: 0, z: 0 };
       // clean radians: rotate flat (–90°) then spin to face us ( +90° )
-      const targetRot = { x: -Math.PI / 2, y: Math.PI / 2, z: 0 };
+      const targetRot = { x: -Math.PI / 2, y: Math.PI / 0.4, z: Math.PI / 1.9 };
 
       // damp position on all three axes
       boardGroup.current.position.x = THREE.MathUtils.damp(
         boardGroup.current.position.x,
         targetPos.x,
-        4,
+        3,
         dt
       );
       boardGroup.current.position.y = THREE.MathUtils.damp(
