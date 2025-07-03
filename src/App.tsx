@@ -28,6 +28,8 @@ import {
   SCROLL_BREAKS,
   sHeight,
 } from "./config/config";
+import ShowcaseCarousel from "./components/ShowcaseCarousel";
+import { showcaseItems } from "./showcaseItems";
 
 function ScrollScene({
   activeProject,
@@ -114,9 +116,10 @@ function ScrollScene({
       scrollY >= SCROLL_BREAKS.heroEnd && scrollY < SCROLL_BREAKS.projectsEnd;
     (window as any).inProjects = inProjects;
     (window as any).inHero = inHero;
-    const inContact = scrollY >= SCROLL_BREAKS.projectsEnd;
-
     const showcaseStart = SCROLL_BREAKS.projectsEnd;
+    const showcaseEnd = SCROLL_BREAKS.showcaseEnd;
+    const inShowcase = scrollY >= showcaseStart && scrollY < showcaseEnd;
+    const inContact = scrollY >= SCROLL_BREAKS.showcaseEnd;
 
     // Tablets wait after spinning / active project set
     if (inProjects && !wasInProjects.current) {
@@ -197,7 +200,7 @@ function ScrollScene({
       );
 
       boardGroup.current.rotation.y += yawAdd;
-    } else {
+    } else if (inHero) {
       boardGroup.current.position.y = THREE.MathUtils.damp(
         boardGroup.current.position.y,
         heroBaseY,
@@ -217,7 +220,7 @@ function ScrollScene({
       boardGroup.current.position.x = THREE.MathUtils.damp(
         boardGroup.current.position.x,
         inProjects ? projectsX : heroX,
-        1,
+        4,
         dt
       );
     }
@@ -230,19 +233,6 @@ function ScrollScene({
         dt
       );
     }
-
-    // board pos
-    // -- X --
-    if (!inContact) {
-      // project or hero
-      boardGroup.current.position.x = THREE.MathUtils.damp(
-        boardGroup.current.position.x,
-        inProjects ? projectsX : heroX,
-        4,
-        dt
-      );
-    }
-
     // -- Z --
     if (inHero) {
       // always ease back to the front (z = 0)
@@ -263,24 +253,51 @@ function ScrollScene({
     }
 
     // showcase anims
-    if (scrollY >= showcaseStart && boardGroup.current) {
-      // normalize 0→1 from start of showcase to end of contact (which is 1)
-      const p = THREE.MathUtils.clamp(
-        (scrollY - showcaseStart) / (1 - showcaseStart),
-        0,
-        1
+    if (inShowcase && boardGroup.current) {
+      // your desired world-unit endpoint:
+      const targetPos = { x: 3, y: 0, z: 2 };
+      // clean radians: rotate flat (–90°) then spin to face us ( +90° )
+      const targetRot = { x: -Math.PI / 2, y: Math.PI / 2, z: 0 };
+
+      // damp position on all three axes
+      boardGroup.current.position.x = THREE.MathUtils.damp(
+        boardGroup.current.position.x,
+        targetPos.x,
+        4,
+        dt
+      );
+      boardGroup.current.position.y = THREE.MathUtils.damp(
+        boardGroup.current.position.y,
+        targetPos.y,
+        4,
+        dt
+      );
+      boardGroup.current.position.z = THREE.MathUtils.damp(
+        boardGroup.current.position.z,
+        targetPos.z,
+        4,
+        dt
       );
 
-      // your target bottom‐of‐screen world Y
-const bottomY = -viewport.height / 2 + pxToWorld( 200 );
-
-      // start at projectsBaseY, lerp down as p goes 0→1
-      boardGroup.current.position.y = THREE.MathUtils.lerp(
-        projectsBaseY,
-        -bottomY,
-        p
+      // damp rotation on all three axes
+      boardGroup.current.rotation.x = THREE.MathUtils.damp(
+        boardGroup.current.rotation.x,
+        targetRot.x,
+        4,
+        dt
       );
-
+      boardGroup.current.rotation.y = THREE.MathUtils.damp(
+        boardGroup.current.rotation.y,
+        targetRot.y,
+        4,
+        dt
+      );
+      boardGroup.current.rotation.z = THREE.MathUtils.damp(
+        boardGroup.current.rotation.z,
+        targetRot.z,
+        4,
+        dt
+      );
     }
 
     // stick board to contact
@@ -740,21 +757,9 @@ export default function App() {
                   })}
                 </section>
 
-                <section className="showcase" style={{ height: "300px" }}>
-                  {/* placeholder content – swap this with whatever you like */}
-                  <div
-                    style={{
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#555",
-                    }}
-                  >
-                    Your Showcase Section (300 px tall)
-                  </div>
+                <section className="showcase">
+                  <ShowcaseCarousel items={showcaseItems} />
                 </section>
-
                 <section className="contact">
                   {/* Left: contact card frame */}
                   <div className="l-frame">

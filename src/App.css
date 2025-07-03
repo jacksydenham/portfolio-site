@@ -432,6 +432,183 @@ section::before {
   100% { background-position: 0% 50%; }
 }
 
+.showcase {
+  padding: 76px;
+  padding-right: 304px;
+}
+/* Carousel container */
+.showcase-carousel {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  background: rgba(17,17,17,0.85);
+  border-radius: 1rem;
+  padding: 2rem;
+  padding-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  color: #eee;
+}
+
+.carousel-nav {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  width: 100%;
+  height: a;           
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.carousel-nav button {
+  pointer-events: auto;     
+  background: none;
+  border: none;
+  width: 3rem;             
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--theme-color);
+  cursor: pointer;
+  transition: transform 0.2s, color 0.2s;
+  transform: translateY(-20px);
+  outline: none;
+}
+
+.carousel-nav button:hover {
+  transform: translateY(-20px) scale(1.2);
+  color: #fff;
+}
+
+
+.carousel-viewport {
+  overflow: hidden;
+  width: 100%;
+}
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.carousel-item {
+  flex: 0 0 100%;
+  margin-top: 2rem;
+}
+
+
+.showcase-layout {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto 1fr;  
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 2rem;
+}
+
+.showcase-title {       
+  grid-column: 1;      
+  grid-row: 1;           
+  margin: 0; 
+  margin-top: 1rem; 
+}
+
+.showcase-card {
+  background: rgba(255,255,255,0.05);
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  backdrop-filter: blur(4px);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.showcase-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.6);
+}
+
+.showcase-card.intro {
+  grid-column: 1;
+  grid-row: 2;
+  height: 115px;
+}
+
+.showcase-card.full {
+  height: 200px;
+  grid-row: 1 / span 2;
+}
+
+
+.showcase-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.showcase-challenges {
+  margin-top: 0.5rem;
+}
+
+
+/* Typography */
+.showcase-carousel h2 {
+  font-size: 36px;
+  color: var(--theme-color) ;
+  text-shadow: 0 0 6px var(--theme-color) ;
+  font-family: "Bebas Neue", sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.showcase-carousel h3, .showcase-carousel h4 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.showcase-carousel h4 {
+  font-size: 1.25rem;
+  color: #ccc;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.showcase-carousel p {
+  color: #ddd;
+  line-height: 1.5;
+}
+
+.showcase-carousel ul {
+  list-style: disc inside;
+  margin: 0;
+  padding: 0;
+}
+
+.showcase-carousel ul li {
+  margin-bottom: 0.5rem;
+}
+
+.showcase-impact {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #333;
+  font-size: 1.05rem;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .showcase-columns {
+    flex-direction: column;
+  }
+  .carousel-nav {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
+
+
 .contact {
   display: flex;
   flex-direction: row;
@@ -456,7 +633,6 @@ section::before {
   gap: 1.25rem;
   color: #eee;
   font-size: 1rem;
-  box-shadow: 0 0 30px rgba(0,0,0,0.4);
   backdrop-filter: blur(4px);
   overflow: hidden;
 }

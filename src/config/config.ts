@@ -2,7 +2,7 @@
 
 // === ScrollScene layout offsets (in px) ===
 export const HERO_Y_OFFSET_PX = 320;
-export const CONTACT_Y_OFFSET_PX = 0;
+export const CONTACT_Y_OFFSET_PX = 260;
 export const PROJECT_LABEL_POS = { x: 180, y: 80 };
 export const HERO_LABEL_POS = { x: -375, y: 20 };
 
@@ -11,9 +11,9 @@ export const BOARD_REF_WIDTH_UNITS = 14;
 
 
 export const hHeight = 100;  // hero
-export const pHeight = 1000;  // projects
-export const sHeight = 300;  // showcase
-export const cHeight = 900;  // contact
+export const pHeight = 1200;  // projects
+export const sHeight = 1300;  // showcase
+export const cHeight = 100;  // contact
 export const tHeight = hHeight + pHeight + sHeight + cHeight;
 export const SCROLL_BREAKS = {
   heroEnd:      hHeight / tHeight,
