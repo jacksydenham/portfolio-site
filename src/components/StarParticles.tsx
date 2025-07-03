@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { STARFIELD_SETTINGS } from "../config/config";
 
 interface Star {
   x: number;
@@ -11,9 +12,9 @@ interface Star {
 }
 
 export default function StarFieldCanvas({
-  spawnRate = 0.000003,
-  maxSpeed = 20,
-  maxSize = 2.5,
+  spawnRate = STARFIELD_SETTINGS.spawnRate,
+  maxSpeed = STARFIELD_SETTINGS.maxSpeed,
+  maxSize = STARFIELD_SETTINGS.maxSize,
 }: {
   spawnRate?: number;
   maxSpeed?: number;

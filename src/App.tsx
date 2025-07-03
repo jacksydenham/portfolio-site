@@ -18,11 +18,15 @@ import { curatedGroups, type CuratedGroup } from "./skillGroups";
 import { TabletMeta } from "./components/TabletData";
 import {
   BOARD_REF_WIDTH_UNITS,
+  cHeight,
   CONTACT_Y_OFFSET_PX,
   HERO_LABEL_POS,
   HERO_Y_OFFSET_PX,
+  hHeight,
+  pHeight,
   PROJECT_LABEL_POS,
   SCROLL_BREAKS,
+  sHeight,
 } from "./config/config";
 
 function ScrollScene({
@@ -111,6 +115,8 @@ function ScrollScene({
     (window as any).inProjects = inProjects;
     (window as any).inHero = inHero;
     const inContact = scrollY >= SCROLL_BREAKS.projectsEnd;
+
+    const showcaseStart = SCROLL_BREAKS.projectsEnd;
 
     // Tablets wait after spinning / active project set
     if (inProjects && !wasInProjects.current) {
@@ -254,6 +260,27 @@ function ScrollScene({
         1,
         dt
       );
+    }
+
+    // showcase anims
+    if (scrollY >= showcaseStart && boardGroup.current) {
+      // normalize 0→1 from start of showcase to end of contact (which is 1)
+      const p = THREE.MathUtils.clamp(
+        (scrollY - showcaseStart) / (1 - showcaseStart),
+        0,
+        1
+      );
+
+      // your target bottom‐of‐screen world Y
+const bottomY = -viewport.height / 2 + pxToWorld( 200 );
+
+      // start at projectsBaseY, lerp down as p goes 0→1
+      boardGroup.current.position.y = THREE.MathUtils.lerp(
+        projectsBaseY,
+        -bottomY,
+        p
+      );
+
     }
 
     // stick board to contact
@@ -420,7 +447,7 @@ export default function App() {
   const [hoveredTabletName, setHoveredTabletName] = useState<string | null>(
     null
   );
-  
+
   // const [hasHovered, setHasHovered] = useState(false);
   // const funFacts = [
   //   "💀 I have a 2.6 GPA!!",
@@ -430,7 +457,7 @@ export default function App() {
   //   "🎧 My go-to coding soundtrack is raw backshots 10 hours.",
   // ];
   // const [factIndex, setFactIndex] = useState(0);
-  // 
+  //
   // useEffect(() => {
   //   const timer = setInterval(() => {
   //     setFactIndex((i) => (i + 1) % funFacts.length);
@@ -440,10 +467,9 @@ export default function App() {
 
   useEffect(() => {
     const recalculate = () => {
-      const sectionHeights = 800 + 800 + 380;
-      setPages(sectionHeights / window.innerHeight);
+      const totalPixels = hHeight + pHeight + sHeight + cHeight;
+      setPages(totalPixels / window.innerHeight);
     };
-
     recalculate();
     window.addEventListener("resize", recalculate);
     return () => window.removeEventListener("resize", recalculate);
@@ -494,7 +520,7 @@ export default function App() {
     let final: CuratedGroup[];
     if (hoveredMeta) {
       const primary = curatedGroups.find(
-        (g) => g.title === hoveredMeta.primarySkill,
+        (g) => g.title === hoveredMeta.primarySkill
         // setHasHovered(true)
       );
       if (primary) {
@@ -615,9 +641,9 @@ export default function App() {
                           </p>
                         </div>
                         {/* {hasHovered === false ? ( */}
-                          <div className="hint-card">
-                            Hover over icons to explore my skills!
-                          </div>
+                        <div className="hint-card">
+                          Hover over icons to explore my skills!
+                        </div>
                         {/* ) : (
                           <div className="hint-card next-step">
                             <span key={factIndex} className="fun-fact">
@@ -712,6 +738,21 @@ export default function App() {
                       </div>
                     );
                   })}
+                </section>
+
+                <section className="showcase" style={{ height: "300px" }}>
+                  {/* placeholder content – swap this with whatever you like */}
+                  <div
+                    style={{
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#555",
+                    }}
+                  >
+                    Your Showcase Section (300 px tall)
+                  </div>
                 </section>
 
                 <section className="contact">
