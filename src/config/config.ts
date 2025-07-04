@@ -2,7 +2,7 @@
 
 // === ScrollScene layout offsets (in px) ===
 export const HERO_Y_OFFSET_PX = 352;
-export const CONTACT_Y_OFFSET_PX = 260;
+export const CONTACT_Y_OFFSET_PX = -200;
 export const PROJECT_LABEL_POS = { x: 180, y: 80 };
 export const HERO_LABEL_POS = { x: -375, y: 20 };
 

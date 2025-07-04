@@ -30,6 +30,7 @@ import {
 } from "./config/config";
 import ShowcaseCarousel from "./components/ShowcaseCarousel";
 import { showcaseItems } from "./showcaseItems";
+import TestimonialStrip from "./components/Testiomonials";
 
 function ScrollScene({
   activeProject,
@@ -456,22 +457,6 @@ export default function App() {
     null
   );
 
-  function ContactButton() {
-    const scrollData = useScroll();
-    return (
-      <a
-        className="hero-btn hero-email"
-        aria-label="Contact me"
-        onClick={() =>
-          scrollData.el.scrollTo({
-            top: scrollData.el.scrollHeight,
-            behavior: "auto",
-          })
-        }
-      />
-    );
-  }
-
   useEffect(() => {
     const recalculate = () => {
       const totalPixels = hHeight + pHeight + sHeight + cHeight;
@@ -575,6 +560,22 @@ export default function App() {
     }, 2000);
   };
 
+  function ContactButton() {
+    const scrollData = useScroll();
+    return (
+      <a
+        className="hero-btn hero-email"
+        aria-label="Contact me"
+        onClick={() =>
+          scrollData.el.scrollTo({
+            top: scrollData.el.scrollHeight,
+            behavior: "auto",
+          })
+        }
+      />
+    );
+  }
+
   return (
     <div className="page-root">
       <StarFieldCanvas />
@@ -616,9 +617,8 @@ export default function App() {
                       <div className="hero-links">
                         {/* Download résumé */}
                         <a
-                          href="/JackSydenham_CV.pdf"
+                          href="/Jack Sydenham FSD Resume 2025.pdf"
                           download
-                          aria-label="Download résumé (PDF)"
                           className="hero-btn hero-cv"
                         />
 
@@ -627,7 +627,6 @@ export default function App() {
                           href="https://github.com/JackSydenham"
                           target="_blank"
                           rel="noopener"
-                          aria-label="GitHub"
                           className="hero-btn hero-github"
                         />
 
@@ -685,17 +684,9 @@ export default function App() {
                             software.
                           </p>
                         </div>
-                        {/* {hasHovered === false ? ( */}
                         <div className="hint-card">
                           Hover over icons to explore my skills!
                         </div>
-                        {/* ) : (
-                          <div className="hint-card next-step">
-                            <span key={factIndex} className="fun-fact">
-                              {funFacts[factIndex]}
-                            </span>
-                          </div>
-                        )} */}
                       </>
                     )}
                   </div>
@@ -780,9 +771,13 @@ export default function App() {
                 </section>
 
                 <section className="showcase">
-                  <h2 className="showcase-section-title">Technical Showcase</h2>
+                  <h2 className="showcase-section-title">
+                    Technical Highlights
+                  </h2>
                   <ShowcaseCarousel items={showcaseItems} />
                 </section>
+
+                <TestimonialStrip />
 
                 <section className="contact">
                   {/* Left: contact card frame */}

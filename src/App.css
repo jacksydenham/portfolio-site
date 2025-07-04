@@ -119,16 +119,16 @@ section::before {
 .hero {
   position: relative;
   display: flex;
-  align-items: flex-start;
+  align-items: flex;
+  padding-inline-start: 36px;
   pointer-events: none;   
   height: 650px;  
-  margin-left: 25px;
 }
 
 /* --- NAME ---------------------------------------------------------- */
 .hero-name {
   font-family: "Bebas Neue", sans-serif;
-  font-size:240px;
+  font-size: 228px;
   margin: 0;
   color: transparent;
   outline: #777;
@@ -137,12 +137,51 @@ section::before {
   background-clip: text;
 }
 
+.hero-role span {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 6rem;
+  letter-spacing: 0.02em;
+  line-height: 0.6;
+  margin-left: 28px;
+  padding-top: 18px;
+}
+
+.hero-role .full {
+  transform: translateY(18px);
+  font-size: 152px;
+  font-weight: 400;
+  background: linear-gradient(to bottom, #555 20%, #000000 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  height: 7rem;
+}
+
+.hero-role {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 258px;
+  width: 205px;
+}
+
+.hero-role .stack {
+  font-size: 114px;
+  font-weight: 400;
+  background: linear-gradient(to bottom, #555 0%, #000000 110%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  height: 5rem; 
+}
+
 .hero-subline {
   position: absolute;
   display: flex;
   align-items: center;
   gap: 1rem;      
-  width: 1180px;
+  width: 1120px;
   flex-wrap: wrap;
   margin-top: -4.3rem;
   margin-left: 2px;
@@ -153,10 +192,10 @@ section::before {
   font-family: "Montserrat", sans-serif;
   font-weight: 100;
   font-size: 1.5rem;
-  color: #555;
+  color: #777;
   text-transform: none;
   white-space: nowrap;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
   margin-left: 3px;
 }
 
@@ -178,12 +217,11 @@ section::before {
   border: 2px solid #000;
   border-radius: 8px;
   cursor: pointer;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: background-color 0.25s ease;
 }
 
 .hero-btn:hover {
-  border-color: var(--theme-color);
-  box-shadow: 0 0 18px var(--theme-color);
+  background-color: #222;
 }
 
 /* individual icons (swap paths/extensions to your actual files) */
@@ -192,41 +230,6 @@ section::before {
 .hero-linkedin { background-image: url("/images/linked.png"); }
 .hero-email    { background-image: url("/images/mail.png"); }
 
-.hero-role {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 258px;
-  width: 205px;
-}
-
-.hero-role span {
-  font-family: "Bebas Neue", sans-serif;
-  font-size: 6rem;
-  letter-spacing: 0.02em;
-  line-height: 0.68;
-  padding-top: 10px;
-}
-
-.hero-role .full {
-  font-size: 131px;
-  font-weight: 400;
-  background: linear-gradient(to bottom, #555 20%, #000000 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hero-role .stack {
-  font-size: 97px;
-  font-weight: 400;
-  background: linear-gradient(to bottom, #555 0%, #000000 82%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  height: 5rem; 
-}
 
 @keyframes subtitleFade {
   from { opacity: 0; transform: translateY(20px); }
@@ -382,6 +385,7 @@ section::before {
   padding: 1.125rem 1.575rem;
   font-size: 1.2rem;
   border-radius: 12px;
+  background: transparent; /* Alt + down for aura */
   background: #111;
   color: #eee;
   border: 1px solid rgba(255,255,255,0.06);
@@ -611,7 +615,6 @@ section::before {
   grid-row: 1 / span 2;
 }
 
-
 .showcase-columns {
   display: flex;
   flex-wrap: wrap;
@@ -623,7 +626,6 @@ section::before {
 .showcase-challenges {
   margin-top: 0.5rem;
 }
-
 
 /* Typography */
 .showcase-carousel h2 {
@@ -709,8 +711,6 @@ section::before {
   box-shadow: 0 4px 16px rgba(0,0,0,0.6);
 }
 
-
-
 .showcase-impact {
   margin-top: 1.5rem;
   padding-top: 1rem;
@@ -729,6 +729,95 @@ section::before {
   }
 }
 
+.testimonials .section-heading {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  font-size: 3rem;
+  text-transform: uppercase;
+  text-align: center;
+  color: #ccc;
+  margin-bottom: 8px;
+}
+
+figure { margin: 0; }
+
+/* whole track = vertical stack, centred horizontally */
+.testimonials.thin .testi-track {
+  padding-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  overflow: visible;
+}
+
+/* wide + ultra-thin card */
+.testimonials.thin .testi-card {
+  width: 1000px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  backdrop-filter: blur(4px);
+  background: rgba(17,17,17,0.65);
+  border: 2px solid #555;
+  border-radius: 12px;
+
+}
+/* avatar stays small */
+.testimonials.thin .testi-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 15%;
+  object-fit: cover;
+}
+
+/* one-line quote, ellipsis if too long */
+.testimonials.thin .testi-card blockquote {
+  flex: 1;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+/* name & role right-aligned */
+.testimonials.thin .testi-card figcaption {
+  min-width: 140px;
+  text-align: right;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.testimonials.thin .testi-card figcaption span {
+  display: block;
+  font-size: 0.7rem;
+  color: #666;
+}
+
+.testimonials.thin .testi-card blockquote {
+  position: relative;
+  flex: 1;
+  padding-left: 1.1rem;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.testimonials.thin .testi-card blockquote::before {
+  content: "“";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-55%);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--theme-color);
+}
 
 
 .contact {
@@ -800,35 +889,19 @@ section::before {
 .btn {
   position: relative;
   padding: 0.75rem 1.5rem;
-  border: 1px solid #666;
   border-radius: 8px;
-  background: transparent;
+  border: #222;
+  outline: 1px solid #222 ;
+  background-color: transparent;
   color: #eee;
   font-weight: 600;
   cursor: pointer;
-  outline: none;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: background-color 0.25s ease;
 }
 
 .contact-box button:hover,
 .btn:hover {
-  border-color: var(--theme-color);
-  box-shadow: 0 0 24px var(--theme-color)
-}
-
-.contact-box button.glow-animate{
-  animation: glow-burst 2s ease-out forwards;
-}
-
-@keyframes glow-burst {
-  0% {
-    box-shadow: 0 0 24px var(--theme-color),
-                0 0 64px rgba(0, 255, 170, 0.6);
-  }
-  100% {
-    box-shadow: 0 0 800px rgba(0, 255, 170, 0),
-                0 0 800px rgba(0, 255, 170, 0);
-  }
+  background-color: #222;
 }
 
 .l-frame {
