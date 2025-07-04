@@ -3,6 +3,19 @@ html, body {
   height: 100%;
 }
 
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Monts/Montserrat-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Monts/Montserrat-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
 :root {
   --theme-color: #00e9ff;
   --accent-dark:  #009bdd;
@@ -116,7 +129,6 @@ section::before {
 .hero-name {
   font-family: "Bebas Neue", sans-serif;
   font-size:240px;
-  font-weight: 400;
   margin: 0;
   color: transparent;
   outline: #777;
@@ -182,7 +194,6 @@ section::before {
   display: flex;
   flex-direction: column;
   color: #eee;
-  font-family: "Montserrat", sans-serif;
 
   pointer-events: auto;
 }
@@ -236,6 +247,7 @@ section::before {
   box-shadow: 0 4px 8px rgba(0,0,0,0.5);
   color: #ccc;
   font-size: 1.25rem;
+  font-weight: 600;
   animation: pulse 2.5s ease-in-out infinite;
 }
 
@@ -418,8 +430,6 @@ section::before {
   transform: scale(1);
 }
 
-
-
 @keyframes glowShift {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
@@ -432,34 +442,39 @@ section::before {
   100% { background-position: 0% 50%; }
 }
 
-.showcase {
-  padding: 76px;
-  padding-right: 304px;
+.showcase-section-title {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  font-size: 3rem; 
+  color: #ccc;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 0rem;
 }
+
 /* Carousel container */
 .showcase-carousel {
   position: relative;
   width: 100%;
-  max-width: 1200px;
-  background: rgba(17,17,17,0.85);
-  border-radius: 1rem;
-  padding: 2rem;
-  padding-bottom: 20px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
   color: #eee;
+  padding-bottom: 2rem;
 }
 
 .carousel-nav {
   position: absolute;
   top: 1rem;
   left: 0;
-  width: 100%;
+  right: 0;
+  width: 96.3%;
+  padding: 0 1.6rem;
   height: a;           
   display: flex;
   justify-content: space-between;
   align-items: center;
+  justify-items: center;
   pointer-events: none;
   z-index: 10;
+  height: 100%;
 }
 
 .carousel-nav button {
@@ -473,31 +488,37 @@ section::before {
   font-size: 2rem;
   color: var(--theme-color);
   cursor: pointer;
-  transition: transform 0.2s, color 0.2s;
-  transform: translateY(-20px);
   outline: none;
+  transition: transform 0.2s, color 0.2s;
 }
 
 .carousel-nav button:hover {
-  transform: translateY(-20px) scale(1.2);
+  transform: scale(1.2);
   color: #fff;
 }
 
-
 .carousel-viewport {
   overflow: hidden;
-  width: 100%;
+  padding-left: 4rem;
+  padding-right: 4rem;
+  width: auto;
 }
+
 .carousel-track {
   display: flex;
+  gap: 0rem;               /* optional gutter between cards */
   transition: transform 0.5s ease-in-out;
 }
 
 .carousel-item {
-  flex: 0 0 100%;
-  margin-top: 2rem;
+  /* 100vw minus 7rem of “peek” space */
+  flex: 0 0 calc(100vw - 31.5rem);
+  /* center each slide by giving it half the peek on each side */
+  margin: 0.5rem 1rem 0;
+  background: rgba(17,17,17,0.85);
+  border-radius: 1rem;
+  padding: 2rem;
 }
-
 
 .showcase-layout {
   display: grid;
@@ -521,17 +542,12 @@ section::before {
   border-radius: 0.75rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.35);
   backdrop-filter: blur(4px);
-  transition: transform .3s ease, box-shadow .3s ease;
-}
-.showcase-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.6);
 }
 
 .showcase-card.intro {
   grid-column: 1;
   grid-row: 2;
-  height: 115px;
+  height: 114px;
 }
 
 .showcase-card.full {
@@ -576,18 +592,68 @@ section::before {
 
 .showcase-carousel p {
   color: #ddd;
-  line-height: 1.5;
+  margin: 0.2em;
 }
 
 .showcase-carousel ul {
   list-style: disc inside;
   margin: 0;
-  padding: 0;
+  padding-inline-start: 1.25rem;
+  list-style-position: outside; 
 }
 
 .showcase-carousel ul li {
   margin-bottom: 0.5rem;
 }
+
+.lowerRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  margin-top: 2rem;
+}
+
+.showcase-images {
+  display: flex;
+  gap: 1rem;
+  justify-content: end;
+}
+
+.showcase-image {
+  flex: 1;
+  max-width: 46%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.showcase-image.hoverable:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.6);
+}
+
+/* --- lightbox styles --- */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.lightbox-image {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+}
+
+
 
 .showcase-impact {
   margin-top: 1.5rem;

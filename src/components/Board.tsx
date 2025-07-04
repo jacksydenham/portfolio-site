@@ -44,7 +44,7 @@ const Board = forwardRef<THREE.Mesh, BoardProps>(function Board(
 
       <mesh
         rotation={[Math.PI / 2, 0, Math.PI]}
-        position={[0, 0.07, 0]}
+        position={[0, 0.02, 0]}
       >
         <planeGeometry args={[size.x * scale * 0.9, size.z * scale * 0.9]} />
         <meshStandardMaterial map={cardTex} />

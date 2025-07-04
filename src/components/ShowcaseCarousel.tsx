@@ -9,6 +9,7 @@ export interface ShowcaseItem {
   section2: string[];
   challenges: { title: string; description: string }[];
   impact: string;
+  images?: string[];
 }
 
 interface ShowcaseCarouselProps {
@@ -17,6 +18,8 @@ interface ShowcaseCarouselProps {
 
 export default function ShowcaseCarousel({ items }: ShowcaseCarouselProps) {
   const [current, setCurrent] = useState(0);
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+
   const prev = () => setCurrent((c) => (c === 0 ? items.length - 1 : c - 1));
   const next = () => setCurrent((c) => (c === items.length - 1 ? 0 : c + 1));
 
@@ -62,16 +65,58 @@ export default function ShowcaseCarousel({ items }: ShowcaseCarouselProps) {
                 </div>
               </div>
 
-              {/* challenges + impact */}
-              <div className="showcase-challenges">
-                <h3>Key Challenges Solved</h3>
-                <ul>
-                  {item.challenges.map((c, j) => (
-                    <li key={j}>
-                      <strong>{c.title}:</strong> {c.description}
-                    </li>
-                  ))}
-                </ul>
+              <div className="lowerRow">
+                {/* challenges + impact */}
+                <div className="showcase-challenges">
+                  <h3>Key Challenges Solved</h3>
+                  <ul>
+                    {item.challenges.map((c, j) => (
+                      <li key={j}>
+                        <strong>{c.title}:</strong> {c.description}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="showcase-images">
+                  {Array.from({ length: 2 }).map((_, idx) => {
+                    const hasRealImage = !!item.images?.[idx];
+                    const src = hasRealImage
+                      ? item.images![idx]
+                      : "/images/placeholder.png";
+
+                    return (
+                      <img
+                        key={idx}
+                        src={src}
+                        alt={`${item.title} screenshot ${idx + 1}`}
+                        className={`showcase-image${
+                          hasRealImage ? " hoverable" : ""
+                        }`}
+                        {...(hasRealImage
+                          ? {
+                              onClick: () => setLightboxSrc(src),
+                              style: { cursor: "pointer" },
+                            }
+                          : { style: { cursor: "default", backdropFilter: "blur(4px)" } })}
+                      />
+                    );
+                  })}
+                </div>
+
+                {lightboxSrc && (
+                  <div
+                    className="lightbox-overlay"
+                    onClick={() => setLightboxSrc(null)}
+                  >
+                    <img
+                      className="lightbox-image"
+                      src={lightboxSrc}
+                      alt="Enlarged screenshot"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="showcase-impact">

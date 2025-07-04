@@ -34,13 +34,11 @@ import { showcaseItems } from "./showcaseItems";
 function ScrollScene({
   activeProject,
   anchorRef,
-  showPreview,
   setActiveTriggers,
   setHoveredTabletName,
 }: {
   activeProject: string;
   anchorRef: React.RefObject<HTMLDivElement | null>;
-  showPreview: boolean;
   setActiveTriggers: (t: string[] | null) => void;
   setHoveredTabletName: (name: string | null) => void;
 }) {
@@ -54,7 +52,7 @@ function ScrollScene({
   const idleTime = useRef(0);
   const previewRef = useRef<THREE.Mesh>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [opacity] = useState(0);
+  const showStartRef = useRef<number | null>(null);
 
   const spinTargetY = Math.PI * 1.2;
   const projectSpinRate = THREE.MathUtils.degToRad(15);
@@ -151,19 +149,20 @@ function ScrollScene({
         eased
       );
     }
-
-    boardGroup.current.rotation.x = THREE.MathUtils.damp(
-      boardGroup.current.rotation.x,
-      targetTiltX,
-      3,
-      dt
-    );
+    if (inHero) {
+      boardGroup.current.rotation.x = THREE.MathUtils.damp(
+        boardGroup.current.rotation.x,
+        targetTiltX,
+        3,
+        dt
+      );
+    }
 
     // spin board targets
     let YTarget = boardGroup.current.rotation.y;
     if (inProjects) YTarget = spinTargetY;
     else if (inHero) YTarget = 0;
-    else if (inContact) YTarget = 0;
+    else if (inContact) YTarget = 6.28;
 
     // ease to default y orientation
     boardGroup.current.rotation.y = THREE.MathUtils.damp(
@@ -195,6 +194,13 @@ function ScrollScene({
       boardGroup.current.position.z = THREE.MathUtils.damp(
         boardGroup.current.position.z,
         1.75,
+        4,
+        dt
+      );
+
+      boardGroup.current.rotation.x = THREE.MathUtils.damp(
+        boardGroup.current.rotation.x,
+        0.1,
         4,
         dt
       );
@@ -254,16 +260,30 @@ function ScrollScene({
 
     // showcase anims
     if (inShowcase && boardGroup.current) {
-      // your desired world-unit endpoint:
-      const targetPos = { x: 4.2, y: 0, z: 0 };
-      // clean radians: rotate flat (–90°) then spin to face us ( +90° )
-      const targetRot = { x: -Math.PI / 2, y: Math.PI / 0.4, z: Math.PI / 1.9 };
+      const elapsed = clock.getElapsedTime();
 
-      // damp position on all three axes
+      // 2) record entry time once
+      if (showStartRef.current === null) {
+        showStartRef.current = elapsed;
+      }
+
+      // 3) how long since we entered, capped at 1s
+      const sinceShow = Math.min(elapsed - showStartRef.current, 1);
+
+      // 4) spin speed ramps down from 1.0 → 0.01 over that 1 second
+      const initialSpeed = -1.6;
+      const finalSpeed = -0.04;
+      const t = sinceShow;
+      const easeOutQuad = 1 - (1 - t) * (1 - t);
+      const spinSpeed =
+        initialSpeed + (finalSpeed - initialSpeed) * easeOutQuad;
+      boardGroup.current.rotation.y += dt * spinSpeed;
+      // 5) now apply your damped pose…
+      const targetPos = { x: 0.75, y: 0, z: 2 };
       boardGroup.current.position.x = THREE.MathUtils.damp(
         boardGroup.current.position.x,
         targetPos.x,
-        3,
+        4,
         dt
       );
       boardGroup.current.position.y = THREE.MathUtils.damp(
@@ -279,25 +299,26 @@ function ScrollScene({
         dt
       );
 
-      // damp rotation on all three axes
+      const targetRotX = 0;
+      const targetRotZ = 0;
       boardGroup.current.rotation.x = THREE.MathUtils.damp(
         boardGroup.current.rotation.x,
-        targetRot.x,
-        4,
-        dt
-      );
-      boardGroup.current.rotation.y = THREE.MathUtils.damp(
-        boardGroup.current.rotation.y,
-        targetRot.y,
+        targetRotX,
         4,
         dt
       );
       boardGroup.current.rotation.z = THREE.MathUtils.damp(
         boardGroup.current.rotation.z,
-        targetRot.z,
+        targetRotZ,
         4,
         dt
       );
+
+      // 6) continuous Y‐axis spin with our time-decaying speed
+      boardGroup.current.rotation.y += dt * spinSpeed;
+    } else {
+      // reset when leaving showcase
+      showStartRef.current = null;
     }
 
     // stick board to contact
@@ -334,14 +355,14 @@ function ScrollScene({
       // contact rotations
       boardGroup.current.rotation.x = THREE.MathUtils.damp(
         boardGroup.current.rotation.x,
-        1.35,
-        1,
+        1.25,
+        2,
         dt
       );
       boardGroup.current.rotation.z = THREE.MathUtils.damp(
         boardGroup.current.rotation.z,
-        -THREE.MathUtils.degToRad(180),
-        4,
+        THREE.MathUtils.degToRad(180),
+        3,
         dt
       );
     }
@@ -387,25 +408,6 @@ function ScrollScene({
           setActiveTriggers={setActiveTriggers}
           setHoveredTabletName={setHoveredTabletName}
         />
-
-        {showPreview && (
-          <group>
-            <mesh
-              position={[0, 1.4, 2.2]}
-              rotation={[Math.PI * 2, Math.PI * 2, Math.PI]}
-              ref={previewRef}
-            >
-              <planeGeometry args={[4, 2]} />
-              <meshStandardMaterial
-                side={THREE.DoubleSide}
-                metalness={0.9}
-                roughness={0.8}
-                transparent
-                opacity={opacity}
-              />
-            </mesh>
-          </group>
-        )}
 
         <Text
           ref={projectsLabelRef as any}
@@ -453,7 +455,6 @@ export default function App() {
 
   const [isHovering, setIsHovering] = useState(false);
   const [pages, setPages] = useState(3);
-  const [showPreview, setShowPreview] = useState(false);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -608,7 +609,6 @@ export default function App() {
             <ScrollScene
               activeProject={activeProject}
               anchorRef={anchorRef}
-              showPreview={showPreview}
               setActiveTriggers={setActiveTriggers}
               setHoveredTabletName={setHoveredTabletName}
             />
@@ -674,12 +674,6 @@ export default function App() {
                 </section>
 
                 <section className="projects">
-                  <button
-                    onClick={() => setShowPreview((prev) => !prev)}
-                    className="image-toggle"
-                  >
-                    {showPreview ? "Hide Preview" : "Show Preview"}
-                  </button>
                   {projectCycle.map((project) => {
                     const [c1, c2, c3] = projectColours[project];
                     return (
@@ -758,8 +752,10 @@ export default function App() {
                 </section>
 
                 <section className="showcase">
+                   <h2 className="showcase-section-title">Technical Showcase</h2>
                   <ShowcaseCarousel items={showcaseItems} />
                 </section>
+
                 <section className="contact">
                   {/* Left: contact card frame */}
                   <div className="l-frame">
