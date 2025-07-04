@@ -262,15 +262,12 @@ function ScrollScene({
     if (inShowcase && boardGroup.current) {
       const elapsed = clock.getElapsedTime();
 
-      // 2) record entry time once
       if (showStartRef.current === null) {
         showStartRef.current = elapsed;
       }
 
-      // 3) how long since we entered, capped at 1s
       const sinceShow = Math.min(elapsed - showStartRef.current, 1);
 
-      // 4) spin speed ramps down from 1.0 → 0.01 over that 1 second
       const initialSpeed = -1.6;
       const finalSpeed = -0.04;
       const t = sinceShow;
@@ -278,7 +275,6 @@ function ScrollScene({
       const spinSpeed =
         initialSpeed + (finalSpeed - initialSpeed) * easeOutQuad;
       boardGroup.current.rotation.y += dt * spinSpeed;
-      // 5) now apply your damped pose…
       const targetPos = { x: 0.75, y: 0, z: 2 };
       boardGroup.current.position.x = THREE.MathUtils.damp(
         boardGroup.current.position.x,
@@ -314,25 +310,19 @@ function ScrollScene({
         dt
       );
 
-      // 6) continuous Y‐axis spin with our time-decaying speed
       boardGroup.current.rotation.y += dt * spinSpeed;
     } else {
-      // reset when leaving showcase
       showStartRef.current = null;
     }
 
-    // stick board to contact
     if (inContact && anchorRef.current) {
-      // lock scaling
       boardGroup.current.scale.setScalar(scale);
 
-      // contact destination
       const targetY =
         -viewport.height / 2 + pxToWorld(CONTACT_Y_OFFSET_PX) + 0.32;
       const targetZ = 0.4;
       const targetX = contactX;
 
-      // anims to fixed pos
       boardGroup.current.position.x = THREE.MathUtils.damp(
         boardGroup.current.position.x,
         targetX,
@@ -466,22 +456,21 @@ export default function App() {
     null
   );
 
-  // const [hasHovered, setHasHovered] = useState(false);
-  // const funFacts = [
-  //   "💀 I have a 2.6 GPA!!",
-  //   "😛 I'm a fraud",
-  //   "👨‍🦯 0 classs/lectures attended in 2024, 8 distinctions.",
-  //   "🤠 I can't sustain a healthy relationship",
-  //   "🎧 My go-to coding soundtrack is raw backshots 10 hours.",
-  // ];
-  // const [factIndex, setFactIndex] = useState(0);
-  //
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     setFactIndex((i) => (i + 1) % funFacts.length);
-  //   }, 4000); // switch every 4s
-  //   return () => clearInterval(timer);
-  // }, [funFacts.length]);
+  function ContactButton() {
+    const scrollData = useScroll();
+    return (
+      <a
+        className="hero-btn hero-email"
+        aria-label="Contact me"
+        onClick={() =>
+          scrollData.el.scrollTo({
+            top: scrollData.el.scrollHeight,
+            behavior: "auto",
+          })
+        }
+      />
+    );
+  }
 
   useEffect(() => {
     const recalculate = () => {
@@ -615,7 +604,46 @@ export default function App() {
             <Scroll html>
               <div className="content-shell">
                 <section className="hero">
-                  <h1 className="hero-name">Jack Sydenham</h1>
+                  <div className="hero-heading">
+                    <h1 className="hero-name">Jack Sydenham</h1>
+
+                    {/* subtitle + action icons share one row */}
+                    <div className="hero-subline">
+                      <h2 className="hero-subtitle">
+                        End-to-End Integrations&nbsp;&amp;&nbsp;Cloud Automation
+                      </h2>
+
+                      <div className="hero-links">
+                        {/* Download résumé */}
+                        <a
+                          href="/JackSydenham_CV.pdf"
+                          download
+                          aria-label="Download résumé (PDF)"
+                          className="hero-btn hero-cv"
+                        />
+
+                        {/* GitHub */}
+                        <a
+                          href="https://github.com/JackSydenham"
+                          target="_blank"
+                          rel="noopener"
+                          aria-label="GitHub"
+                          className="hero-btn hero-github"
+                        />
+
+                        {/* LinkedIn */}
+                        <a
+                          href="https://www.linkedin.com/in/jack-sydenham-bb5a25284/"
+                          target="_blank"
+                          rel="noopener"
+                          aria-label="LinkedIn"
+                          className="hero-btn hero-linkedin"
+                        />
+
+                        <ContactButton />
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="hero-role">
                     <span className="full">FULL</span>
@@ -752,7 +780,7 @@ export default function App() {
                 </section>
 
                 <section className="showcase">
-                   <h2 className="showcase-section-title">Technical Showcase</h2>
+                  <h2 className="showcase-section-title">Technical Showcase</h2>
                   <ShowcaseCarousel items={showcaseItems} />
                 </section>
 
@@ -770,7 +798,7 @@ export default function App() {
                     <div className="contact-heading">
                       <h2>Contact Me</h2>
                       <p>
-                        {`This form will send me an email and I'll be in touch!`}
+                        {`Send me an email via this form and I'll be in touch!`}
                       </p>
                     </div>
                     <Toaster
@@ -798,7 +826,7 @@ export default function App() {
                     />
                     <textarea
                       rows={4}
-                      placeholder="Your message"
+                      placeholder="Message"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                     />
