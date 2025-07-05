@@ -32,6 +32,8 @@ import ShowcaseCarousel from "./components/ShowcaseCarousel";
 import { showcaseItems } from "./showcaseItems";
 import TestimonialStrip from "./components/Testiomonials";
 import emailjs from "@emailjs/browser";
+import ProjectCard from "./components/ProjectCard";
+import { projects } from "./projectData";
 
 function ScrollScene({
   activeProject,
@@ -81,7 +83,7 @@ function ScrollScene({
 
   // board x disatcne from centre in sections
   const heroX = -w * 0.26;
-  const projectsX = w * 0.165;
+  const projectsX = w * 0.18;
   const contactX = w * -0.282;
 
   // anims
@@ -254,7 +256,7 @@ function ScrollScene({
       // hold at z = 4
       boardGroup.current.position.z = THREE.MathUtils.damp(
         boardGroup.current.position.z,
-        0,
+        -1,
         1,
         dt
       );
@@ -445,7 +447,6 @@ export default function App() {
   const [userOverride, setUserOverride] = useState<string>("");
   const anchorRef = useRef<HTMLDivElement>(null);
 
-  const [isHovering, setIsHovering] = useState(false);
   const [pages, setPages] = useState(3);
 
   const [name, setName] = useState("");
@@ -476,19 +477,6 @@ export default function App() {
   }, []);
 
   const activeProject = userOverride;
-
-  useEffect(() => {
-    if (!userOverride || isHovering) return;
-
-    const projectNames = ["KeyDocs", "Carer Manager Plus", "SmartBoard"];
-    const nextTimer = setTimeout(() => {
-      const currentIndex = projectNames.indexOf(userOverride);
-      const nextIndex = (currentIndex + 1) % projectNames.length;
-      (window as any).setActiveProject?.(projectNames[nextIndex]);
-    }, 3000);
-
-    return () => clearTimeout(nextTimer);
-  }, [userOverride, isHovering]);
 
   // typa shit they actually teach at uni WOW!
   useEffect(() => {
@@ -527,23 +515,6 @@ export default function App() {
 
     setCurated(final);
   }, [activeTriggers, hoveredTabletName]);
-
-  type ProjectName = "KeyDocs" | "Carer Manager Plus" | "SmartBoard";
-  const projectCycle: ProjectName[] = [
-    "KeyDocs",
-    "Carer Manager Plus",
-    "SmartBoard",
-  ];
-
-  const projectColours: Record<ProjectName, [string, string, string]> = {
-    KeyDocs: ["#2b79d7", "#0541F8", "#5ECBFF"],
-    "Carer Manager Plus": ["#e67e22", "#bf5700", "#FFE0B2"],
-    SmartBoard: [
-      "var(--theme-color)",
-      "var(--theme-color)",
-      "var(--theme-color)",
-    ],
-  };
 
   const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -719,81 +690,16 @@ export default function App() {
                 </section>
 
                 <section className="projects">
-                  {projectCycle.map((project) => {
-                    const [c1, c2, c3] = projectColours[project];
-                    return (
-                      <div
-                        key={project}
-                        className={`project-card ${
-                          activeProject === project ? "active" : ""
-                        }`}
-                        style={
-                          {
-                            "--c1": c1,
-                            "--c2": c2,
-                            "--c3": c3,
-                          } as React.CSSProperties
-                        }
-                        onMouseEnter={() => {
-                          if (!(window as any).inProjects) return;
-                          setUserOverride(project);
-                          setIsHovering(true);
-                        }}
-                        onMouseLeave={() => {
-                          setUserOverride(activeProject);
-                          setUserOverride(project);
-                        }}
-                      >
-                        <div className="card-header">
-                          <h3 className="card-title">{project}</h3>
-                          {project === "KeyDocs" && (
-                            <span className="card-subtitle">Astral IP</span>
-                          )}
-                        </div>{" "}
-                        {project === "KeyDocs" && (
-                          <ul className="card-desc">
-                            <li>
-                              Purpose: end-to-end doc control
-                              <ul>
-                                <li>
-                                  Convert any file → PDF, stamp revision footer
-                                </li>
-                                <li>
-                                  Enforce version sequence & retention rules
-                                </li>
-                              </ul>
-                            </li>
-                            <li>
-                              SharePoint integration
-                              <ul>
-                                <li>
-                                  Stores PDFs in version-controlled libraries
-                                </li>
-                                <li>Surfaced via custom SPFx web-parts</li>
-                              </ul>
-                            </li>
-                            <li>
-                              Stack
-                              <ul>
-                                <li>React / Next.js UI (Shadcn components)</li>
-                                <li>tRPC + Zod for type-safe API validation</li>
-                                <li>Prisma ORM ↔ Dataverse tables</li>
-                              </ul>
-                            </li>
-                            <li>
-                              Workflow automation
-                              <ul>
-                                <li>
-                                  Power Automate triggers on upload & approval
-                                </li>
-                                <li>Email alerts & audit logging</li>
-                              </ul>
-                            </li>
-                          </ul>
-                        )}
-                      </div>
-                    );
-                  })}
+                  {projects.map((proj) => (
+                    <ProjectCard
+                      key={proj.title}
+                      data={proj}
+                      isActive={activeProject === proj.title}
+                      inProjects={Boolean((window as any).inProjects)}
+                      onMouseEnter={() => setUserOverride(proj.title)}
+                      onMouseLeave={() => setUserOverride(activeProject)}
+                    />
+                  ))}
                 </section>
 
                 <section className="showcase">

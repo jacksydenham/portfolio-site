@@ -35,7 +35,7 @@ export default function TabletInstance({
   setActiveTriggers,
   setHoveredTabletName,
 }: Props) {
-  const { nodes } = useGLTF("/models/Badge.glb") as any;
+  const { nodes } = useGLTF("/models/Tablet2.glb") as any;
 
   // texture tablets
   const fileName = `${name}.png`;
@@ -43,7 +43,7 @@ export default function TabletInstance({
   const texture = useLoader(THREE.TextureLoader, `/textures/${fileName}`);
   texture.flipY = false;
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.rotation = 0;
+  texture.rotation = Math.PI;
   texture.center.set(0.5, 0.5);
 
   const delay = useMemo(() => Math.random() * 1.5, []);
@@ -233,4 +233,4 @@ export default function TabletInstance({
   );
 }
 
-useGLTF.preload("/models/Badge.glb");
+useGLTF.preload("/models/Tablet2.glb");
