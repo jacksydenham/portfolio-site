@@ -9,90 +9,90 @@ export const curatedGroups: CuratedGroup[] = [
     title: "Core UI Components",
     items: ["React", "DevExtreme", "ShadCN"],
     blurb:
-      "At the heart of every polished interface are React, DevExtreme and ShadCN. React drives declarative rendering, DevExtreme handles data-dense grids and charts, and ShadCN (with Radix) provides accessible, themeable primitives that speed up UI development.",
+      "React-driven rendering of DevExtreme's enterprise-grade grids and ShadCN primitives enables rapid delivery of real-time interfaces with fully accessible, themeable UI components.",
   },
   {
     title: "Frontend Frameworks",
     items: ["React", "Next.js", "SPFx", "DevExtreme", "ShadCN"],
     blurb:
-      "Next.js and React deliver a modern, server-rendered frontend—while SPFx brings that same React code into SharePoint. DevExtreme adds enterprise-grade data widgets, and ShadCN gives you the building blocks for custom design systems.",
+      "Integrate Next.js/React server-rendered front-ends with exisitng ecosystems like SharePoint via SPFx, and enrich them with DevExtreme data widgets or custom ShadCN components.",
   },
   {
     title: "Design & Prototyping",
     items: ["Figma"],
     blurb:
-      "Design files live in Figma: from low-fi wireframes to pixel-perfect prototypes, complete with shared design tokens, auto-layout systems and collaborative review tools for rapid iteration.",
+      "Mock and iterate UI designs in Figma through collaborative review processes, creating quick feedback cycles.",
   },
   {
     title: "Backend Core",
-    items: ["Node.js"],
+    items: ["Node.js", "Redis"],
     blurb:
-      "Node.js powers the server side with event-driven, non-blocking I/O—ideal for streaming files, handling WebSocket streams, or running heavy compute tasks in AWS Lambda or similar environments.",
+      "Build event-driven Node.js backends with REST APIs, real-time WebSocket messaging, Redis caching, and serverless computation workloads.",
   },
   {
     title: "API & Integration Toolkit",
-    items: ["Node.js", "tRPC", "Postman"],
+    items: ["Node.js", "tRPC", "Redis"],
     blurb:
-      "tRPC gives you end-to-end typesafe APIs in Node.js. Postman collections become living documentation and regression tests, ensuring every endpoint behaves exactly as promised.",
+      "Design type-safe tRPC and REST APIs in Node.js with Redis caching to create high performance integrate layers.",
   },
   {
     title: "Programming Languages",
     items: ["JSTS", "Java", "Python", "CPP"],
     blurb:
-      "From TypeScript (JSTS) through Java and Python to performance-critical C++, a consistent coding style and shared logging/metrics conventions keep multi-runtime projects maintainable and debuggable.",
+      "Fluent in JavaScript, TypeScript, Java, Python, and C++, with extensive experience adapting to new languages as integration requirements call for it.",
   },
   {
     title: "Data Modeling",
     items: ["SQL", "Prisma", "Dataverse"],
     blurb:
-      "Your relational core lives in SQL Server or Postgres, modeled in Prisma for type-safe queries. Dataverse mirrors that same schema in Microsoft 365, making Power Apps and Automate integrations seamless.",
+      "Model relational data in SQL databases with Prisma for type-safe queries, and mirror schemas in data services like Dataverse for seamless Power Platform integration.",
   },
   {
     title: "Schema & Validation",
     items: ["Zod"],
     blurb:
-      "Zod sits at every API boundary and form, validating inputs in Node.js or the browser. You get runtime safety and generate accurate TypeScript types with zero extra boilerplate.",
+      "Define and enforce runtime and TypeScript schemas with Zod for robust input validation across both APIs and UIs.",
   },
   {
     title: "Serverless Platforms",
     items: ["Next.js", "Power Automate", "Vercel", "AWS"],
     blurb:
-      "Edge functions on Vercel and AWS Lambda handle SSR, file transforms, and background jobs. Power Automate orchestrates long-running flows—no servers to patch or scale.",
+      "Utilise Next.js API routes, Vercel Edge and AWS Lambda for serverless SSR, file transforms, and background tasks, and automate cloud workflows with Power Automate.",
   },
   {
     title: "Cloud Hosting",
     items: ["Vercel", "AWS"],
     blurb:
-      "Vercel delivers global CDN and edge compute for SSR and static assets. AWS covers heavy lifting—Lambda, S3, RDS—ensuring workloads run where they fit best.",
+      "Deploy SSR and static assets on Vercel's global CDN, and offload processing and storage to cloud platforms (e.g., AWS Lambda, S3, and RDS).",
   },
   {
     title: "Platform Extensions",
     items: ["SharePoint"],
     blurb:
-      "Custom code runs inside SharePoint via SPFx web-parts and extensions, giving intranet users new functionality without leaving the Microsoft 365 shell.",
+      "Extend existing intranets with web-parts and extensions like SPFx to deliver seamless custom functionality.",
   },
   {
     title: "Business Process Automation",
     items: ["Power Automate"],
     blurb:
-      "Power Automate listens to SharePoint/Dataverse events, then executes approval workflows, sends emails, and logs audit trails—connecting business users to automated pipelines.",
+      "Leverage cloud automation to drive event-based workflows, triggering approvals, notifications, and audit logs from enterprise data sources.",
   },
   {
     title: "Collaborative Workflows",
     items: ["Teams"],
     blurb:
-      "MS Teams is your hub for collaboration: stand-ups, code reviews, and release demos happen in Teams channels—integrated with Azure Pipelines and GitHub notifications.",
+      "Use of communication channels to quickly resolve issues and keep projects on track through team coordination, built on years of experience in customer service.",
   },
   {
     title: "SDLC & Project Management",
-    items: ["Teams", "Jira", "GitHub", "Postman"],
+    items: ["Teams", "Jira", "GitHub"],
     blurb:
-      "GitHub Actions build, lint, and deploy. Jira drives sprint planning and issue tracking. Teams hosts stand-ups and demos. Postman collections serve as living API specs.",
+      "Manage the entire SDLC using Jira for sprint planning and issue tracking, and GitHub for version control, pull-request reviews, and CI/CD practices to ensure reliable, on time releases.",
   },
   {
     title: "Version Control",
     items: ["GitHub"],
     blurb:
-      "A robust Git-based workflow in GitHub—including pull requests, branch protections, and CI ensures code quality and traceability across the entire team.",
+      "Git-driven version control with structured branching strategies, pull requests, and commit conventions to maintain code history and expedite onboarding processes.",
   },
 ];

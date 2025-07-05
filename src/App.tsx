@@ -31,6 +31,7 @@ import {
 import ShowcaseCarousel from "./components/ShowcaseCarousel";
 import { showcaseItems } from "./showcaseItems";
 import TestimonialStrip from "./components/Testiomonials";
+import emailjs from "@emailjs/browser";
 
 function ScrollScene({
   activeProject,
@@ -544,20 +545,45 @@ export default function App() {
     ],
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (!name.trim() || !email.trim() || !message.trim()) {
       toast.error("Please fill in every field.");
       return;
     }
 
-    const btn = e.currentTarget;
-    btn.classList.add("glow-animate");
-    toast.success("Message sent!");
+    const form = e.currentTarget;
+    const btn = form.querySelector("button");
+    btn?.classList.add("glow-animate");
 
-    setTimeout(() => {
-      btn.classList.remove("glow-animate");
-    }, 2000);
+    emailjs
+      .send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID!,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID!,
+        {
+          name,
+          email,
+          message,
+          title: `Portfolio Contact: ${name}`,
+          time: new Date().toLocaleString(),
+          reply_to: email,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY!
+      )
+      .then(() => {
+        toast.success("Message sent!");
+        setName("");
+        setEmail("");
+        setMessage("");
+      })
+      .catch((err) => {
+        toast.error("Oops, something went wrong.");
+        console.error("EmailJS error:", err.text || err);
+      })
+      .finally(() => {
+        setTimeout(() => btn?.classList.remove("glow-animate"), 2000);
+      });
   };
 
   function ContactButton() {
@@ -789,7 +815,7 @@ export default function App() {
                   </div>
 
                   {/* Right: contact form */}
-                  <div className="contact-box">
+                  <form className="contact-box" onSubmit={sendEmail}>
                     <div className="contact-heading">
                       <h2>Contact Me</h2>
                       <p>
@@ -826,11 +852,9 @@ export default function App() {
                       onChange={(e) => setMessage(e.target.value)}
                     />
                     <div className="form-actions">
-                      <button type="submit" onClick={handleClick}>
-                        Send
-                      </button>
+                      <button type="submit">Send</button>
                     </div>
-                  </div>
+                  </form>
                 </section>
                 <section className="board-anchor">
                   <div ref={anchorRef} className="board-anchor" />

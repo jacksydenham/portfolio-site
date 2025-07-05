@@ -192,7 +192,7 @@ section::before {
   font-family: "Montserrat", sans-serif;
   font-weight: 100;
   font-size: 1.5rem;
-  color: #777;
+  color: #555;
   text-transform: none;
   white-space: nowrap;
   letter-spacing: 0.15em;
@@ -763,7 +763,6 @@ figure { margin: 0; }
   background: rgba(17,17,17,0.65);
   border: 2px solid #555;
   border-radius: 12px;
-
 }
 /* avatar stays small */
 .testimonials.thin .testi-avatar {
@@ -802,8 +801,8 @@ figure { margin: 0; }
   flex: 1;
   padding-left: 1.1rem;
   font-style: italic;
-  white-space: nowrap;
-  overflow: hidden;
+  white-space: wrap;
+  overflow: wrap;
   text-overflow: ellipsis;
   margin: 0;
 }
@@ -812,7 +811,7 @@ figure { margin: 0; }
   content: "“";
   position: absolute;
   left: 0;
-  top: 50%;
+  top: 20%;
   transform: translateY(-55%);
   font-size: 2rem;
   line-height: 1;

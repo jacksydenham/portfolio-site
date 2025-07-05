@@ -5,14 +5,14 @@ const testimonials = [
     role: "KeyDocs Technical Lead, Astral Consulting",
     avatar: "/images/jordan.png",
     quote:
-      "I'm Jordan.",
+      "Jack went above and beyond by tackling and completing dozens of Jira tickets in a single sprint. It earned him a well-deserved applause in our retrospective.",
     },
   {
     name: "Dr. Golnoush Abaei",
     role: "Coordinator, RMIT Software Engineering",
     avatar: "images/golnoush.png",
     quote:
-      "He's legit got a 2.6 gpa.",
+      "He's legit got a 2.6 gpa idek why we let him into the course. im cappin hes goated hire him fr he'll carry ",
   },
 ];
 
