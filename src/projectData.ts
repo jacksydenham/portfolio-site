@@ -124,7 +124,7 @@ export const projects: ProjectData[] = [
           { title: "React 18 • TypeScript • DevExtreme UI" },
           { title: "Node.js 16 / Express middleware" },
           { title: "SQL Server database" },
-          { title: "4 × 2-week Scrum sprints with twice-weekly client demos" },
+          { title: "4 x 2-week Scrum sprints with twice-weekly client demos" },
         ],
       },
     ],
