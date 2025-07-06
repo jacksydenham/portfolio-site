@@ -669,16 +669,15 @@ export default function App() {
                           <h2 className="skills-info-heading">About Me</h2>
 
                           <p className="skills-info-text">
-                            I'm a final-year Software Engineering student at
-                            RMIT and Full Stack Developer. During my first
-                            professional role at Astral Consulting, I mastered
-                            integrating complex environments, combining multiple
-                            custom react web apps with a sharepoint automation
-                            processes built in Power Automate. I thrive on
-                            weaving AI-driven features into modern web
-                            applications. I excel in agile teams, taking
-                            end-to-end ownership to ship production-ready
-                            software.
+                            Final year Software Engineering student at RMIT
+                            specialising in Full Stack Development. During my
+                            first professional role at Astral Consulting, I
+                            integrated complex environments, connecting custom
+                            React web apps with SharePoint workflows via Power
+                            Automate. I thrive on weaving cloud-driven features
+                            into modern web applications and excel in agile
+                            teams, owning work end-to-end to ship
+                            production-ready software.
                           </p>
                         </div>
                         <div className="hint-card">

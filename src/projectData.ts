@@ -64,7 +64,10 @@ export const projects: ProjectData[] = [
       {
         title: "Governance & Notifications",
         children: [
-          { title: "Comprehensive audit logging (see Technical Highlights below)" },
+          {
+            title:
+              "Comprehensive audit logging (see Technical Highlights below)",
+          },
           {
             title:
               "Power Automate triggers for email reminders & workflow alerts",
@@ -87,25 +90,42 @@ export const projects: ProjectData[] = [
     title: "Carer Manager Plus",
     logoUrl: "/images/carer.png",
     colors: ["var(--theme-color)", "var(--theme-color)", "var(--theme-color)"],
+
     subtitle: "GitHub",
-    teamSize: 6,
-    duration: "4mo",
     subtitleUrl:
       "https://github.com/jacksydenham/Carer-Manager-Plus-Admin-Portal",
+
+    teamSize: 6,
+    duration: "8 wk",
     intro:
-      "Rest API based front end to connect with live carers, arrange appointments, meetups, and host ive calls and schedule meetings for external stakleholders.",
+      "Prototype admin portal for Carer Manager Plus. Lets admins manage companies, carers, employees and system reference data, bulk-import Excel files, and generate charge-rate reports. Built with React + DevExtreme against a Node/SQL-Server REST API in four agile sprints.",
     descriptions: [
       {
-        title: "Purpose",
-        children: [{ title: "Manage care plans and rostering" }],
+        title: "Core features",
+        children: [
+          { title: "CRUD for companies, employees, carers & reference tables" },
+          { title: "Login / logout & secure password-change flow" },
+          { title: "Excel import for clients, carers and employees" },
+          { title: "Hours-charged reporting by company" },
+        ],
       },
       {
-        title: "Integration",
-        children: [{ title: "Realtime data sync with mobile app" }],
+        title: "Key integrations",
+        children: [
+          { title: "REST API layer to SQL Server" },
+          { title: "Google Places autocomplete for address fields" },
+          { title: "DevExtreme DataGrid, Form & Popup components" },
+          { title: "Swagger UI for live API docs & testing" },
+        ],
       },
       {
-        title: "Tech stack",
-        children: [{ title: "Vue 3 / Pinia / Tailwind" }],
+        title: "Tech & delivery",
+        children: [
+          { title: "React 18 • TypeScript • DevExtreme UI" },
+          { title: "Node.js 16 / Express middleware" },
+          { title: "SQL Server database" },
+          { title: "4 × 2-week Scrum sprints with twice-weekly client demos" },
+        ],
       },
     ],
   },
@@ -115,10 +135,11 @@ export const projects: ProjectData[] = [
     subtitle: "GitHub",
     teamSize: 1,
     duration: "4wk",
+    intro: "Jira-styled task management dashboard with task creation and off-site storage for user-based continuity.",
     descriptions: [
       {
         title: "Purpose",
-        children: [{ title: "Interactive classroom dashboard" }],
+        children: [{ title: "Interactive task dashboard" }],
       },
       {
         title: "Features",

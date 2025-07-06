@@ -675,6 +675,7 @@ section::before {
 
 .showcase-challenges {
   margin-top: 0.5rem;
+  width: 110%;
 }
 
 /* Typography */
@@ -699,8 +700,9 @@ section::before {
 }
 
 .showcase-carousel p {
-  color: #ddd;
   margin: 0.2em;
+  color: #ddd;
+  font-weight: 500;
 }
 
 .showcase-carousel ul {
@@ -712,6 +714,8 @@ section::before {
 
 .showcase-carousel ul li {
   margin-bottom: 0.5rem;
+  color: #ddd;
+
 }
 
 .lowerRow {
