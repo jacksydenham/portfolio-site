@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ScrollControls, Scroll, useScroll, Stats, Text, } from "@react-three/drei";
+import { ScrollControls, Scroll, useScroll, Text, } from "@react-three/drei";
 import "./App.css";
 import { useEffect, useRef, useState } from "react";
 import "@fontsource/bebas-neue/400.css";
@@ -313,8 +313,6 @@ export default function App() {
             intensity={1}
             color={"#e0e0ff"}
           />
-
-          <Stats />
 
           <ScrollControls pages={pages}>
             <ScrollScene
