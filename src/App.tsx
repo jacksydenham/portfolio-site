@@ -87,9 +87,9 @@ function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredT
     let targetTiltX = THREE.MathUtils.degToRad(70);
     if (inProjects) {
       targetTiltX = THREE.MathUtils.degToRad(5);
-    } else if (boardAnimTime.current < 2) {
-      const t = boardAnimTime.current / 2;
-      const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    } else if (boardAnimTime.current < 1.8) {
+      const t = boardAnimTime.current / 1.8;
+      const eased = t < 0.5 ? 1.8 * t * t : -1 + (4 - 2 * t) * t;
       targetTiltX = THREE.MathUtils.lerp( THREE.MathUtils.degToRad(0), THREE.MathUtils.degToRad(70), eased );
     }
 
@@ -249,7 +249,6 @@ export default function App() {
   
   // typa shit they actually teach at uni WOW!
   useEffect(() => {
-
     const inHero = (window as any).inHero;
     if (!activeTriggers || !inHero) { setCurated([]); return; }
 
@@ -260,7 +259,7 @@ export default function App() {
     let final: CuratedGroup[];
     if (hoveredMeta) {
       const primary = curatedGroups.find((g) => g.title === hoveredMeta.primarySkill);
-      if (primary) { final = [primary, ...matches.filter((g) => g.title !== primary.title)]} 
+      if (primary) { final = [primary, ...matches.filter((g) => g.title !== primary.title)] } 
       else { final = matches }
     } else { final = matches }
 

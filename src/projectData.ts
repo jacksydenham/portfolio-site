@@ -130,22 +130,15 @@ export const projects: ProjectData[] = [
     ],
   },
   {
-    title: "SmartBoard",
+    title: "More Coming Soon",
     colors: ["#28a745", "#1e7e34", "#c3e6cb"],
-    subtitle: "GitHub",
-    teamSize: 1,
-    duration: "4wk",
-    intro: "Jira-styled task management dashboard with task creation and off-site storage for user-based continuity.",
+    subtitle: "",
+    intro: "I'll be adding more projects as I complete them among my studies",
     descriptions: [
       {
-        title: "Purpose",
-        children: [{ title: "Interactive task dashboard" }],
+        title: "Filler",
+        children: [{ title: "Filler text" }],
       },
-      {
-        title: "Features",
-        children: [{ title: "Live annotations & feedback" }],
-      },
-      { title: "Stack", children: [{ title: "Electron / React Three Fiber" }] },
     ],
   },
 ];

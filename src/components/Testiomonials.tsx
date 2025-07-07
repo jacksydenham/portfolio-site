@@ -12,7 +12,7 @@ const testimonials = [
     role: "Coordinator, RMIT Software Engineering",
     avatar: "images/golnoush.png",
     quote:
-      "He's legit got a 2.6 gpa idek why we let him into the course. im cappin hes goated hire him fr he'll carry ",
+      "WIP - Trusted Reference - Waiting on email response for tesitmonail.",
   },
 ];
 
