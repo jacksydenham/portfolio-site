@@ -148,7 +148,7 @@ function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredT
       
       boardGroup.current.rotation.y += dt * spinSpeed;
       boardGroup.current.rotation.x = THREE.MathUtils.damp( boardGroup.current.rotation.x, 0, 4, dt );
-      boardGroup.current.rotation.z = THREE.MathUtils.damp( boardGroup.current.rotation.z, 0, 4, dt );
+      boardGroup.current.rotation.z = THREE.MathUtils.damp( boardGroup.current.rotation.z, 0, 6, dt );
 
     } else { showStartRef.current = null }
 

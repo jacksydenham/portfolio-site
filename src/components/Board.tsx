@@ -18,6 +18,7 @@ const Board = forwardRef<THREE.Mesh, BoardProps>(function Board(
   const cardTex = useLoader(THREE.TextureLoader, "/textures/cardMin.png");
   cardTex.flipY = true;
   cardTex.colorSpace = THREE.SRGBColorSpace;
+  cardTex.anisotropy = 16;
 
   const bbox = new THREE.Box3().setFromBufferAttribute(
     nodes.BoardR.geometry.attributes.position
