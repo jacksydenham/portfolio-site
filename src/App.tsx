@@ -55,8 +55,8 @@ function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredT
     boardGroup.current.scale.setScalar(scale);
     projectsLabelRef.current?.scale.setScalar(0.4);
     heroLabelRef.current?.scale.setScalar(0.4);
-    projectsLabelRef.current?.position.set( pxToWorld(PROJECT_LABEL_POS.x) / scale, pxToWorld(PROJECT_LABEL_POS.y) / scale, 0 );
-    heroLabelRef.current?.position.set( pxToWorld(HERO_LABEL_POS.x) / scale, pxToWorld(HERO_LABEL_POS.y) / scale, 0 );
+    projectsLabelRef.current?.position.set( pxToWorld(PROJECT_LABEL_POS.x) * 0.8 / scale, pxToWorld(PROJECT_LABEL_POS.y) * 0.8 / scale, 0 );
+    heroLabelRef.current?.position.set( pxToWorld(HERO_LABEL_POS.x) * 0.8 / scale, pxToWorld(HERO_LABEL_POS.y) * 0.8 / scale, 0 );
 
     // time trackers
     boardAnimTime.current += dt;
