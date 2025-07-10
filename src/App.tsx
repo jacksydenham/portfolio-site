@@ -219,6 +219,7 @@ function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredT
 
 export default function App() {
   const anchorRef = useRef<HTMLDivElement>(null);
+  const [showQrOverlay, setShowQrOverlay] = useState(false)
   
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -230,6 +231,13 @@ export default function App() {
   const [curated, setCurated] = useState<CuratedGroup[]>([]);
   const [hoveredTabletName, setHoveredTabletName] = useState<string | null>(null);
   
+ useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const cameFromQR = params.get("qr") === "1";
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (cameFromQR && isMobile) setShowQrOverlay(true);
+  }, []);
+
   // calc scroll pos
   useEffect(() => {
     const recalculate = () => {
@@ -472,7 +480,24 @@ export default function App() {
             </Scroll>
           </ScrollControls>
         </Canvas>
-      </div>
+      </div>   
+        {showQrOverlay && (
+          <div className="mobile-qr-overlay">
+            <div className="mobile-qr-dialog">
+              <h1>😅 Sorry for baiting but...</h1>
+              <p>
+                The 3D env cooks any attempt at mobile scaling<br/>
+                You should probably get your laptop...
+              </p>
+              <button
+                className="mobile-qr-close"
+                onClick={() => setShowQrOverlay(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
     </div>
   );
 }
