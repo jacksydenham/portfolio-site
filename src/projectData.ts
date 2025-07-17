@@ -130,14 +130,55 @@ export const projects: ProjectData[] = [
     ],
   },
   {
-    title: "More Coming Soon",
-    colors: ["#28a745", "#1e7e34", "#c3e6cb"],
-    subtitle: "",
-    intro: "I'll be adding more projects as I complete them among my studies",
+    title: "WIP - Agent Bond",
+    colors: ["#ffffffff", "#ffa600ff", "#ffffff"],
+    subtitle: "coming ~26 July",
+    subtitleUrl: "",
+    teamSize: 1,
+    duration: "~2 wk",
+    intro:
+      "Agent Bond is an AI-powered assistant that listens to Teams calls and chats, automatically actioning in Jira tasks in real-time with full transparency, connected by a live Kanban dashboard.",
     descriptions: [
       {
-        title: "Filler",
-        children: [{ title: "Filler text" }],
+        title: "Overview",
+        children: [
+          {
+            title:
+              "Analyzes live Teams transcripts & messages to identify actionable tasks",
+          },
+          {
+            title:
+              "Seamlessly integrates with Jira to create, move, and update issues",
+          },
+          {
+            title:
+              "Interactive React/Tailwind UI with simple drag-and-drop Kanban",
+          },
+        ],
+      },
+      {
+        title: "Key Features",
+        children: [
+          {
+            title:
+              "AI-driven task detection using OpenAI GPT-4 function calls",
+          },
+          {
+            title:
+              "Demo vs live mode toggle for safe functionality demonstration",
+          },
+          {
+            title: "Activity feed for tracking of all automated actions",
+          },
+        ],
+      },
+      {
+        title: "Stack & Integration",
+        children: [
+          { title: "Next.js, React, Tailwind CSS" },
+          { title: "Node.js API Routes, OpenAI API, Teams SDK" },
+          { title: "Atlassian REST API, WebSockets for live updates" },
+        ],
       },
     ],
   },

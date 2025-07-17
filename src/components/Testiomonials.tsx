@@ -8,9 +8,9 @@ const testimonials = [
       "Jack went above and beyond by tackling and completing dozens of Jira tickets in a single sprint. It earned him a well-deserved applause in our retrospective.",
     },
   {
-    name: "Dr. Golnoush Abaei",
-    role: "Coordinator, RMIT Software Engineering",
-    avatar: "images/golnoush.png",
+    name: "",
+    role: "",
+    avatar: "images/placeholder.png",
     quote:
       "WIP - Trusted Reference - Waiting on email response for tesitmonail.",
   },

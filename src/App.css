@@ -127,8 +127,8 @@ section::before {
   font-size: 228px;
   margin: 0;
   color: transparent;
-  outline: #777;
-  background: linear-gradient(to bottom, #777 0%, #000000 80%);
+  outline: #999;
+  background: linear-gradient(to bottom, #999 0%, #111 80%);
   -webkit-background-clip: text;
   background-clip: text;
 }
@@ -146,7 +146,7 @@ section::before {
   transform: translateY(18px);
   font-size: 152px;
   font-weight: 400;
-  background: linear-gradient(to bottom, #555 20%, #000000 100%);
+  background: linear-gradient(to bottom, #777 20%, #111 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -165,7 +165,7 @@ section::before {
 .hero-role .stack {
   font-size: 114px;
   font-weight: 400;
-  background: linear-gradient(to bottom, #555 0%, #000000 110%);
+  background: linear-gradient(to bottom, #777 0%, #111 110%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -188,7 +188,7 @@ section::before {
   font-family: "Montserrat", sans-serif;
   font-weight: 100;
   font-size: 1.5rem;
-  color: #555;
+  color: #777;
   text-transform: none;
   white-space: nowrap;
   letter-spacing: 0.15em;
@@ -312,7 +312,7 @@ section::before {
 }
 
 .hint-card:not(.next-step)::before {
-  content: "🡐";
+  content: "←";
   display: inline-block;
   margin-right: 0.5rem;
   margin-left: -0.5rem;
