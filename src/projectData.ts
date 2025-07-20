@@ -131,6 +131,7 @@ export const projects: ProjectData[] = [
   },
   {
     title: "WIP - Agent Bond",
+    logoUrl: "/images/agentbond.png",
     colors: ["#ffffffff", "#ffa600ff", "#ffffff"],
     subtitle: "coming ~26 July",
     subtitleUrl: "",
