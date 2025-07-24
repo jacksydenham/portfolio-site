@@ -87,6 +87,66 @@ export const projects: ProjectData[] = [
     ],
   },
   {
+    title: "Agent Bond",
+    logoUrl: "/images/agentbond.png",
+    colors: ["#ffffffff", "#ffa600ff", "#ffffff"],
+    subtitle: "GitHub / Demo",
+    subtitleUrl: "https://github.com/jacksydenham/agent-bond",
+    teamSize: 1,
+    duration: "2 wk",
+    intro:
+      "Agent Bond is an AI‑powered agent that joins your Discord voice channel, transcribes live speech via Azure Cognitive Services, then uses GPT‑4 to automatically perform Jira actions, moving or creating tasks with an approval step before execution for full transparency and security.",
+    descriptions: [
+      {
+        title: "Overview",
+        children: [
+          {
+            title:
+              "Real‑time voice transcription from custom Discord bot via Azure Speech Service",
+          },
+          {
+            title:
+              "GPT‑4 parsing of transcript into structured Jira commands",
+          },
+          {
+            title:
+              "Automatic execution of Jira actions, with toast-based user approval",
+          },
+          {
+            title:
+              "Interactive React Kanban dashboard with drag and drop to mirror live Jira board",
+          },
+        ],
+      },
+      {
+        title: "Key Features",
+        children: [
+          {
+            title:
+              "End‑to‑end automation: speech → parse → confirm → execute",
+          },
+          {
+            title:
+              "Decoupled parsing & action execution for secure OAuth cookie handling",
+          },
+          {
+            title:
+              "Activity feed for audit‑style logging of all automated and manual actions",
+          },
+        ],
+      },
+      {
+        title: "Stack & Integration",
+        children: [
+          { title: "Next.js, React, Tailwind CSS, dnd‑kit" },
+          { title: "Node.js API Routes, OpenAI GPT‑4o mini, react‑hot‑toast" },
+          { title: "discord.js, Azure Speech SDK, Express" },
+          { title: "Atlassian REST API (Jira), secure OAuth cookie flow" },
+        ],
+      },
+    ],
+  },
+  {
     title: "Carer Manager Plus",
     logoUrl: "/images/carer.png",
     colors: ["var(--theme-color)", "var(--theme-color)", "var(--theme-color)"],
@@ -125,60 +185,6 @@ export const projects: ProjectData[] = [
           { title: "Node.js 16 / Express middleware" },
           { title: "SQL Server database" },
           { title: "4 x 2-week Scrum sprints with twice-weekly client demos" },
-        ],
-      },
-    ],
-  },
-  {
-    title: "WIP - Agent Bond",
-    logoUrl: "/images/agentbond.png",
-    colors: ["#ffffffff", "#ffa600ff", "#ffffff"],
-    subtitle: "coming ~26 July",
-    subtitleUrl: "",
-    teamSize: 1,
-    duration: "~2 wk",
-    intro:
-      "Agent Bond is an AI-powered assistant that listens to Teams calls and chats, automatically actioning in Jira tasks in real-time with full transparency, connected by a live Kanban dashboard.",
-    descriptions: [
-      {
-        title: "Overview",
-        children: [
-          {
-            title:
-              "Analyzes live Teams transcripts & messages to identify actionable tasks",
-          },
-          {
-            title:
-              "Seamlessly integrates with Jira to create, move, and update issues",
-          },
-          {
-            title:
-              "Interactive React/Tailwind UI with simple drag-and-drop Kanban",
-          },
-        ],
-      },
-      {
-        title: "Key Features",
-        children: [
-          {
-            title:
-              "AI-driven task detection using OpenAI GPT-4 function calls",
-          },
-          {
-            title:
-              "Demo vs live mode toggle for safe functionality demonstration",
-          },
-          {
-            title: "Activity feed for tracking of all automated actions",
-          },
-        ],
-      },
-      {
-        title: "Stack & Integration",
-        children: [
-          { title: "Next.js, React, Tailwind CSS" },
-          { title: "Node.js API Routes, OpenAI API, Teams SDK" },
-          { title: "Atlassian REST API, WebSockets for live updates" },
         ],
       },
     ],

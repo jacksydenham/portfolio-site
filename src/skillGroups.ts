@@ -55,15 +55,15 @@ export const curatedGroups: CuratedGroup[] = [
   },
   {
     title: "Serverless Platforms",
-    items: ["Next.js", "Power Automate", "Vercel", "AWS"],
+    items: ["Next.js", "Power Automate", "Vercel", "Azure"],
     blurb:
-      "Utilise Next.js API routes, Vercel Edge and AWS Lambda for serverless SSR, file transforms, and background tasks, and automate cloud workflows with Power Automate.",
+      "Utilise Next.js API routes, Vercel Edge and Azure for serverless SSR, file transforms, and background tasks, and automate cloud workflows with Power Automate.",
   },
   {
     title: "Cloud Hosting",
-    items: ["Vercel", "AWS"],
+    items: ["Vercel", "Azure"],
     blurb:
-      "Deploy SSR and static assets on Vercel's global CDN, and offload processing and storage to cloud platforms (e.g., AWS Lambda, S3, and RDS).",
+      "Deploy SSR and static assets on Vercel's global CDN, and offload processing and storage to cloud platforms (e.g., Azure, AWS Lambda, S3, and RDS).",
   },
   {
     title: "Platform Extensions",

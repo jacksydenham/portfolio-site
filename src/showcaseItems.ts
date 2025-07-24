@@ -22,7 +22,8 @@ export const showcaseItems: ShowcaseItem[] = [
     challenges: [
       {
         title: "State coordination",
-        description: "Skill/project content, scroll & scene all driven from one store",
+        description:
+          "Skill/project content, scroll & scene all driven from one store",
       },
       {
         title: "Dynamic content",
@@ -33,8 +34,9 @@ export const showcaseItems: ShowcaseItem[] = [
         description: "Instancing + memoised R3F loop = ~0 re-renders",
       },
     ],
-    impact: "One unified frontend layer combining React, R3F, Zustand, and a scroll-based UI.",
-    images: [ "images/thisArch.png","/images/figma.png",]
+    impact:
+      "One unified frontend layer combining React, R3F, Zustand, and a scroll-based UI.",
+    images: ["images/thisArch.png", "/images/figma.png"],
   },
   {
     title: "Comprehensive Audit Logging",
@@ -58,7 +60,8 @@ export const showcaseItems: ShowcaseItem[] = [
     challenges: [
       {
         title: "Schema Flexibility",
-        description: "One table handles 26 different events with varying complexity.",
+        description:
+          "One table handles 26 different events with varying complexity.",
       },
       {
         title: "100% Coverage",
@@ -71,38 +74,43 @@ export const showcaseItems: ShowcaseItem[] = [
           "Consistent display of entries ensures natural readability.",
       },
     ],
-    impact: "Every action traceable, every review centralised, ISO 27001 compliance covered.",
+    impact:
+      "Every action traceable, every review centralised, ISO 27001 compliance covered.",
   },
   {
-    title: "End-to-End Audit EATING",
+    title: "Pivot: MS Teams to Discord",
     intro:
-      "At Astral IP I built a unified audit-log across SharePoint and our Admin Portal—so every user and system event flows through one consistent review UI.",
-
-    section1Header: "",
+      "Agent Bond was initially designed around Teams' built-in Azure transcription and custom app capability. Due to licensing restrictions, I pivoted to Discord, building a custom Azure-based bot to handle transcription.",
+    section1Header: "Teams Sidebar Prototype",
     section1: [
-      "SPFx web-parts push status changes into EATING",
-      "Power Automate EATING, routes & logs EATING",
-      "Every document auto-logs full revision history",
+      "Teams SDK + Azure Speech Service for in‑app transcription",
+      "Popup dialog via custom sidebar app to confirm suggested Jira moves/creates",
+      "Built in transcription export/accessibility",
     ],
-
-    section2Header: "",
+    section2Header: "Discord Bot & Azure STT",
     section2: [
-      "Prisma + PostgreSQL EATING all admin events",
-      "Each EATING shows Action, Target & 1-3-word summary",
-      "EATING Before ↔ After diffs for any EATING",
+      "Custom discord bot captures call Opus audio",
+      "Real-time Opus to PCM decoding and streaming into Azure Speech Service",
+      "Feeds transcripts into react based GPT parser",
+      "React toast for approval and secure Jira command production/execution separation",
     ],
-
     challenges: [
-      { title: "EATING template", description: "one schema for every action" },
       {
-        title: "Readability EATING EATING",
-        description: "terse EATING + EATING on demand",
+        title: "Enterprise Licensing",
+        description:
+          "Teams policies prevented personal external apps or hooks.",
       },
       {
-        title: "EATING UX",
-        description: "identical patterns EATING both platforms",
+        title: "Real-time Audio Process",
+        description: "Opus → PCM → Azure stream with low latency in Node.js.",
+      },
+      {
+        title: "Consistent UX",
+        description:
+          "Planned live popup confirmation maintained via React toasts.",
       },
     ],
-    impact: "100% coverage, <2 min reviews, ISO-ready.",
+    impact:
+      "The pivot maintained the seamless speech-driven actioning planned for the Teams implementation, with a seamless setup through a Discord bot invite.",
   },
 ];
