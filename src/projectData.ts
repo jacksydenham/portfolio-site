@@ -90,12 +90,13 @@ export const projects: ProjectData[] = [
     title: "Agent Bond",
     logoUrl: "/images/agentbond.png",
     colors: ["#ffffffff", "#ffa600ff", "#ffffff"],
-    subtitle: "GitHub / Demo",
+    subtitle: "GitHub",
     subtitleUrl: "https://github.com/jacksydenham/agent-bond",
     teamSize: 1,
     duration: "2 wk",
     intro:
       "Agent Bond is an AI‑powered agent that joins your Discord voice channel, transcribes live speech via Azure Cognitive Services, then uses GPT‑4 to automatically perform Jira actions, moving or creating tasks with an approval step before execution for full transparency and security.",
+    videoUrl: "https://youtu.be/jhei7UBwx9g",
     descriptions: [
       {
         title: "Overview",
@@ -105,8 +106,7 @@ export const projects: ProjectData[] = [
               "Real‑time voice transcription from custom Discord bot via Azure Speech Service",
           },
           {
-            title:
-              "GPT‑4 parsing of transcript into structured Jira commands",
+            title: "GPT‑4 parsing of transcript into structured Jira commands",
           },
           {
             title:
@@ -122,8 +122,7 @@ export const projects: ProjectData[] = [
         title: "Key Features",
         children: [
           {
-            title:
-              "End‑to‑end automation: speech → parse → confirm → execute",
+            title: "End‑to‑end automation: speech → parse → confirm → execute",
           },
           {
             title:

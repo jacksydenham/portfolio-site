@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Clock, User } from "lucide-react";
 import clsx from "clsx";
+import ReactPlayer from "react-player";
 
 export interface DescriptionItem {
   title: string;
@@ -15,6 +16,7 @@ export interface ProjectData {
   duration?: string;
   colors: [string, string, string];
   intro?: string;
+  videoUrl?: string;
   logoUrl?: string;
   descriptions: DescriptionItem[];
 }
@@ -90,6 +92,24 @@ export default function ProjectCard({
       </div>
 
       {data.intro && <p className="card-intro">{data.intro}</p>}
+
+      {/* inside ProjectCard.tsx */}
+      {data.videoUrl && (
+        <div className="showcase-video hoverable">
+          <ReactPlayer
+            src={data.videoUrl}
+            controls={false}
+            width="100%"
+            height="100%"
+            config={{
+              youtube: {
+                fs: 0,
+                rel: 0,
+              },
+            }}
+          />
+        </div>
+      )}
 
       <div className="card-desc-wrapper">
         <ul className="card-desc">

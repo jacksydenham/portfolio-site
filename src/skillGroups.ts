@@ -95,4 +95,10 @@ export const curatedGroups: CuratedGroup[] = [
     blurb:
       "Git-driven version control with structured branching strategies, pull requests, and commit conventions to maintain code history and expedite onboarding processes.",
   },
+  {
+    title: "AI Integration",
+    items: ["ChatGPT"],
+    blurb:
+      "ChatGPT Integration to power automation, enhancing user interactions by streamlining decision-making through natural language understanding and context-aware task handling.",
+  },
 ];
