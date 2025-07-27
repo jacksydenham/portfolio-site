@@ -19,7 +19,7 @@ export const TabletMeta: TabletMeta[] = [
   { name:"Node.js",        categories:["Backend","API","Integration","AI"], triggers:["Backend","API"],             primarySkill:"Backend Core",                gridX:0, gridY:1, projects:["Carer Manager Plus","Agent Bond"] },
   { name:"JSTS",           categories:["Lang","Frontend"],                  triggers:["Lang","Frontend","Backend"], primarySkill:"Programming Languages",       gridX:1, gridY:1, projects:["KeyDocs","Carer Manager Plus","Agent Bond"] },
   { name:"ChatGPT",        categories:["AI", "API"],                        triggers:["AI","Backend","API"],        primarySkill:"AI Integration",              gridX:2, gridY:1, projects:["Agent Bond"] },
-  { name:"Python",         categories:["Lang","Backend"],                   triggers:["Lang"],                      primarySkill:"Programming Languages",       gridX:3, gridY:1 },
+  { name:"Python",         categories:["Lang"],                             triggers:["Lang"],                      primarySkill:"Programming Languages",       gridX:3, gridY:1 },
   { name:"CPP",            categories:["Lang"],                             triggers:["Lang"],                      primarySkill:"Programming Languages",       gridX:4, gridY:1 },
   { name:"tRPC",           categories:["API","Integration","AI"],           triggers:["API","Integration"],         primarySkill:"API & Integration Toolkit",   gridX:5, gridY:1, projects:["KeyDocs"] },
   
