@@ -18,7 +18,7 @@ import emailjs from "@emailjs/browser";
 import ProjectCard from "./components/ProjectCard";
 import { projects } from "./projectData";
 
-function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredTabletName, }: 
+function ScrollScene({ activeProject, anchorRef, setActiveTriggers, setHoveredTabletName, }:
   { activeProject: string; anchorRef: React.RefObject<HTMLDivElement | null>; setActiveTriggers: (t: string[] | null) => void; setHoveredTabletName: (name: string | null) => void; }) {
 
   const pxToWorld = (px: number) => (px / window.innerHeight) * viewport.height;
@@ -27,24 +27,24 @@ function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredT
   const projectsLabelRef = useRef<THREE.Mesh>(null);
   const heroLabelRef = useRef<THREE.Mesh>(null);
   const showStartRef = useRef<number | null>(null);
-  
+
   const boardAnimTime = useRef(0);
   const idleTime = useRef(0);
-  
+
   const scroll = useScroll();
   const { viewport } = useThree();
   const w = viewport.width;
-  
+
   const wasInProjects = useRef(false);
   const projectSpinRate = THREE.MathUtils.degToRad(15);
   const spinTargetY = Math.PI * 1.2;
   const heroBaseY = viewport.height / 2 - pxToWorld(HERO_Y_OFFSET_PX) - 0.55;
   const projectsBaseY = 0;
-  
+
   const heroX = -w * 0.26;
   const projectsX = w * 0.18;
   const contactX = w * -0.282;
-  
+
   // anims
   useFrame(({ clock }, dt) => {
     if (!boardGroup.current || !boardGroup.current) return;
@@ -55,8 +55,8 @@ function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredT
     boardGroup.current.scale.setScalar(scale);
     projectsLabelRef.current?.scale.setScalar(0.4);
     heroLabelRef.current?.scale.setScalar(0.4);
-    projectsLabelRef.current?.position.set( pxToWorld(PROJECT_LABEL_POS.x) * 0.8 / scale, pxToWorld(PROJECT_LABEL_POS.y) * 0.8 / scale, 0 );
-    heroLabelRef.current?.position.set( pxToWorld(HERO_LABEL_POS.x) * 0.8 / scale, pxToWorld(HERO_LABEL_POS.y) * 0.8 / scale, 0 );
+    projectsLabelRef.current?.position.set(pxToWorld(PROJECT_LABEL_POS.x) * 0.8 / scale, pxToWorld(PROJECT_LABEL_POS.y) * 0.8 / scale, 0);
+    heroLabelRef.current?.position.set(pxToWorld(HERO_LABEL_POS.x) * 0.8 / scale, pxToWorld(HERO_LABEL_POS.y) * 0.8 / scale, 0);
 
     // time trackers
     boardAnimTime.current += dt;
@@ -71,7 +71,7 @@ function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredT
     // Tablets wait after spinning / active project set
     if (inProjects && !wasInProjects.current) {
       (window as any).section2EntryTime = clock.getElapsedTime();
-      setTimeout(() => {(window as any).setActiveProject?.("KeyDocs")}, 100);
+      setTimeout(() => { (window as any).setActiveProject?.("KeyDocs") }, 100);
       idleTime.current = 0;
 
     } else if (!inProjects && wasInProjects.current) {
@@ -82,7 +82,7 @@ function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredT
     wasInProjects.current = inProjects;
     projectsLabelRef.current!.visible = inProjects;
     heroLabelRef.current!.visible = inHero;
-    
+
     // tilt board on spawn
     let targetTiltX = THREE.MathUtils.degToRad(70);
     if (inProjects) {
@@ -90,10 +90,10 @@ function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredT
     } else if (boardAnimTime.current < 1.8) {
       const t = boardAnimTime.current / 1.8;
       const eased = t < 0.5 ? 1.8 * t * t : -1 + (4 - 2 * t) * t;
-      targetTiltX = THREE.MathUtils.lerp( THREE.MathUtils.degToRad(0), THREE.MathUtils.degToRad(70), eased );
+      targetTiltX = THREE.MathUtils.lerp(THREE.MathUtils.degToRad(0), THREE.MathUtils.degToRad(70), eased);
     }
 
-    if (inHero) { boardGroup.current.rotation.x = THREE.MathUtils.damp( boardGroup.current.rotation.x, targetTiltX, 3, dt ); }
+    if (inHero) { boardGroup.current.rotation.x = THREE.MathUtils.damp(boardGroup.current.rotation.x, targetTiltX, 3, dt); }
 
     // spin board targets
     let YTarget = boardGroup.current.rotation.y;
@@ -105,8 +105,8 @@ function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredT
     let ZTarget = boardGroup.current.rotation.z;
 
     // default easing
-    boardGroup.current.rotation.y = THREE.MathUtils.damp( boardGroup.current.rotation.y, YTarget, 4, dt );
-    boardGroup.current.rotation.z = THREE.MathUtils.damp( boardGroup.current.rotation.z, ZTarget, 4, dt );
+    boardGroup.current.rotation.y = THREE.MathUtils.damp(boardGroup.current.rotation.y, YTarget, 4, dt);
+    boardGroup.current.rotation.z = THREE.MathUtils.damp(boardGroup.current.rotation.z, ZTarget, 4, dt);
 
     // projects idle anim
     if (inProjects) {
@@ -115,25 +115,25 @@ function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredT
       const bobY = Math.sin(idleTime.current * 1.8) * 0.035 * fade;
       const yawAdd = projectSpinRate * dt * fade;
       ZTarget = Math.sin(idleTime.current * 1.6) * THREE.MathUtils.degToRad(1) * fade;
-      
-      boardGroup.current.position.x = THREE.MathUtils.damp( boardGroup.current.position.x, inProjects ? projectsX : heroX, 4, dt );
-      boardGroup.current.position.y = THREE.MathUtils.damp( boardGroup.current.position.y, projectsBaseY + liftY + bobY, 4, dt );
-      boardGroup.current.position.z = THREE.MathUtils.damp( boardGroup.current.position.z, 1, 4, dt );
-      boardGroup.current.rotation.x = THREE.MathUtils.damp( boardGroup.current.rotation.x, 0.1, 4, dt );
+
+      boardGroup.current.position.x = THREE.MathUtils.damp(boardGroup.current.position.x, inProjects ? projectsX : heroX, 4, dt);
+      boardGroup.current.position.y = THREE.MathUtils.damp(boardGroup.current.position.y, projectsBaseY + liftY + bobY, 4, dt);
+      boardGroup.current.position.z = THREE.MathUtils.damp(boardGroup.current.position.z, 1, 4, dt);
+      boardGroup.current.rotation.x = THREE.MathUtils.damp(boardGroup.current.rotation.x, 0.1, 4, dt);
       boardGroup.current.rotation.y += yawAdd;
-      
-    } else if (inHero) { 
-      boardGroup.current.position.x = THREE.MathUtils.damp( boardGroup.current.position.x, inProjects ? projectsX : heroX, 4, dt );
-      boardGroup.current.position.y = THREE.MathUtils.damp( boardGroup.current.position.y, heroBaseY, 4, dt);
-      boardGroup.current.position.z = THREE.MathUtils.damp( boardGroup.current.position.z, 0, 2, dt );
-    }    
-        
+
+    } else if (inHero) {
+      boardGroup.current.position.x = THREE.MathUtils.damp(boardGroup.current.position.x, inProjects ? projectsX : heroX, 4, dt);
+      boardGroup.current.position.y = THREE.MathUtils.damp(boardGroup.current.position.y, heroBaseY, 4, dt);
+      boardGroup.current.position.z = THREE.MathUtils.damp(boardGroup.current.position.z, 0, 2, dt);
+    }
+
     // showcase anims
     if (inShowcase && boardGroup.current) {
 
       const elapsed = clock.getElapsedTime();
       if (showStartRef.current === null) { showStartRef.current = elapsed }
-      
+
       const sinceShow = Math.min(elapsed - showStartRef.current, 1);
       const t = sinceShow;
       const initialSpeed = -1.6;
@@ -142,13 +142,13 @@ function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredT
       const spinSpeed = initialSpeed + (finalSpeed - initialSpeed) * easeOutQuad;
       const targetPos = { x: 0.75, y: 0, z: 2 };
 
-      boardGroup.current.position.x = THREE.MathUtils.damp( boardGroup.current.position.x, targetPos.x, 4, dt );
-      boardGroup.current.position.y = THREE.MathUtils.damp( boardGroup.current.position.y, targetPos.y, 4, dt );
-      boardGroup.current.position.z = THREE.MathUtils.damp( boardGroup.current.position.z, targetPos.z, 4, dt );
-      
+      boardGroup.current.position.x = THREE.MathUtils.damp(boardGroup.current.position.x, targetPos.x, 4, dt);
+      boardGroup.current.position.y = THREE.MathUtils.damp(boardGroup.current.position.y, targetPos.y, 4, dt);
+      boardGroup.current.position.z = THREE.MathUtils.damp(boardGroup.current.position.z, targetPos.z, 4, dt);
+
       boardGroup.current.rotation.y += dt * spinSpeed;
-      boardGroup.current.rotation.x = THREE.MathUtils.damp( boardGroup.current.rotation.x, 0, 4, dt );
-      boardGroup.current.rotation.z = THREE.MathUtils.damp( boardGroup.current.rotation.z, 0, 6, dt );
+      boardGroup.current.rotation.x = THREE.MathUtils.damp(boardGroup.current.rotation.x, 0, 4, dt);
+      boardGroup.current.rotation.z = THREE.MathUtils.damp(boardGroup.current.rotation.z, 0, 6, dt);
 
     } else { showStartRef.current = null }
 
@@ -157,85 +157,83 @@ function ScrollScene({  activeProject, anchorRef, setActiveTriggers, setHoveredT
       const targetX = contactX;
       const targetY = -viewport.height / 2 + pxToWorld(CONTACT_Y_OFFSET_PX) + 0.32;
       const targetZ = 0.4;
-      
-      boardGroup.current.position.x = THREE.MathUtils.damp( boardGroup.current.position.x, targetX, 2, dt );
-      boardGroup.current.position.y = THREE.MathUtils.damp( boardGroup.current.position.y, targetY, 4, dt );
-      boardGroup.current.position.z = THREE.MathUtils.damp( boardGroup.current.position.z, targetZ, 4, dt );
 
-      boardGroup.current.rotation.x = THREE.MathUtils.damp( boardGroup.current.rotation.x, 1.25, 2, dt );
-      boardGroup.current.rotation.z = THREE.MathUtils.damp( boardGroup.current.rotation.z, THREE.MathUtils.degToRad(180), 3, dt );
+      boardGroup.current.position.x = THREE.MathUtils.damp(boardGroup.current.position.x, targetX, 2, dt);
+      boardGroup.current.position.y = THREE.MathUtils.damp(boardGroup.current.position.y, targetY, 4, dt);
+      boardGroup.current.position.z = THREE.MathUtils.damp(boardGroup.current.position.z, targetZ, 4, dt);
+
+      boardGroup.current.rotation.x = THREE.MathUtils.damp(boardGroup.current.rotation.x, 1.25, 2, dt);
+      boardGroup.current.rotation.z = THREE.MathUtils.damp(boardGroup.current.rotation.z, THREE.MathUtils.degToRad(180), 3, dt);
     }
   });
 
   return (
-      <group ref={boardGroup} position={[2, heroBaseY, 0]}>
-        <TabletBoard
-          currentSection={
-            scroll.offset < SCROLL_BREAKS.heroEnd
-              ? "hero"
-              : scroll.offset < SCROLL_BREAKS.projectsEnd
-                ? "projects"
-                : "contact"
-          }
-          activeProject={activeProject}
-          setActiveTriggers={setActiveTriggers}
-          setHoveredTabletName={setHoveredTabletName}
-        />
+    <group ref={boardGroup} position={[2, heroBaseY, 0]}>
+      <TabletBoard
+        currentSection={
+          scroll.offset < SCROLL_BREAKS.heroEnd
+            ? "hero"
+            : scroll.offset < SCROLL_BREAKS.projectsEnd
+              ? "projects"
+              : "contact"
+        }
+        activeProject={activeProject}
+        setActiveTriggers={setActiveTriggers}
+        setHoveredTabletName={setHoveredTabletName}
+      />
 
-        <Text
-          ref={projectsLabelRef as any}
-          font="/fonts/Monts/Montserrat-ExtraBold.ttf"
-          fontSize={1.35}
-          lineHeight={4}
-          anchorX="center"
-          anchorY="top"
-          outlineWidth={0.02}
-          outlineColor="#ccc"
-          color="#ccc"
-          rotation={[-Math.PI / 2, 45, Math.PI / 2]}
-        >
-          PROJECTS
-        </Text>
+      <Text
+        ref={projectsLabelRef as any}
+        font="/fonts/Monts/Montserrat-ExtraBold.ttf"
+        fontSize={1.35}
+        lineHeight={4}
+        anchorX="center"
+        anchorY="top"
+        outlineWidth={0.02}
+        outlineColor="#ccc"
+        color="#ccc"
+        rotation={[-Math.PI / 2, 45, Math.PI / 2]}
+      >
+        PROJECTS
+      </Text>
 
-        <Text
-          ref={heroLabelRef as any}
-          font="/fonts/Monts/Montserrat-ExtraBold.ttf"
-          fontSize={1.35}
-          lineHeight={4}
-          anchorX="center"
-          anchorY="top"
-          outlineWidth={0.02}
-          outlineColor="#ccc"
-          fillOpacity={0}
-          material-transparent
-          material-depthWrite={false}
-          rotation={[-Math.PI / 2, 0, Math.PI / 2]}
-        >
-          SKILLS
-        </Text>
-      </group>
+      <Text
+        ref={heroLabelRef as any}
+        font="/fonts/Monts/Montserrat-ExtraBold.ttf"
+        fontSize={1.35}
+        lineHeight={4}
+        anchorX="center"
+        anchorY="top"
+        outlineWidth={0.02}
+        outlineColor="#ccc"
+        fillOpacity={0}
+        material-transparent
+        material-depthWrite={false}
+        rotation={[-Math.PI / 2, 0, Math.PI / 2]}
+      >
+        SKILLS
+      </Text>
+    </group>
   );
 }
 
 export default function App() {
   const anchorRef = useRef<HTMLDivElement>(null);
   const [showQrOverlay, setShowQrOverlay] = useState(false)
-  
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [pages, setPages] = useState(3);
-  
+
   const [activeProject, setActiveProject] = useState<string>("");
   const [activeTriggers, setActiveTriggers] = useState<string[] | null>(null);
   const [curated, setCurated] = useState<CuratedGroup[]>([]);
   const [hoveredTabletName, setHoveredTabletName] = useState<string | null>(null);
-  
- useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const cameFromQR = params.get("qr") === "1";
+
+  useEffect(() => {
     const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-    if (cameFromQR && isMobile) setShowQrOverlay(true);
+    if (isMobile) setShowQrOverlay(true);
   }, []);
 
   // calc scroll pos
@@ -244,17 +242,17 @@ export default function App() {
       const totalPixels = hHeight + pHeight + sHeight + cHeight;
       setPages(totalPixels / window.innerHeight);
     }; recalculate();
-    
+
     window.addEventListener("resize", recalculate);
     return () => window.removeEventListener("resize", recalculate);
   }, []);
-  
+
   // unselect project
   useEffect(() => {
     (window as any).resetActiveProject = () => setActiveProject("");
     (window as any).setActiveProject = (project: string) => setActiveProject(project);
   }, []);
-  
+
   // typa shit they actually teach at uni WOW!
   useEffect(() => {
     const inHero = (window as any).inHero;
@@ -262,12 +260,12 @@ export default function App() {
 
     const activeNames = TabletMeta.filter((t) => t.categories.some((c) => activeTriggers.includes(c))).map((t) => t.name);
     const matches = curatedGroups.filter((g) => g.items.every((n) => activeNames.includes(n)));
-    const hoveredMeta = hoveredTabletName ? TabletMeta.find((t) => t.name === hoveredTabletName): null;
+    const hoveredMeta = hoveredTabletName ? TabletMeta.find((t) => t.name === hoveredTabletName) : null;
 
     let final: CuratedGroup[];
     if (hoveredMeta) {
       const primary = curatedGroups.find((g) => g.title === hoveredMeta.primarySkill);
-      if (primary) { final = [primary, ...matches.filter((g) => g.title !== primary.title)] } 
+      if (primary) { final = [primary, ...matches.filter((g) => g.title !== primary.title)] }
       else { final = matches }
     } else { final = matches }
 
@@ -277,8 +275,8 @@ export default function App() {
   const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!name.trim() || !email.trim() || !message.trim()) { 
-      toast.error("Please fill in every field."); 
+    if (!name.trim() || !email.trim() || !message.trim()) {
+      toast.error("Please fill in every field.");
       return
     }
 
@@ -287,15 +285,15 @@ export default function App() {
     btn?.classList.add("glow-animate");
 
     emailjs
-    .send( 
-      import.meta.env.VITE_EMAILJS_SERVICE_ID!, 
-      import.meta.env.VITE_EMAILJS_TEMPLATE_ID!,
-      { name, email, message, title: `Portfolio Contact: ${name}`, time: new Date().toLocaleString(), reply_to: email },
-      import.meta.env.VITE_EMAILJS_PUBLIC_KEY!
-    )
-    .then(() => { toast.success("Message sent!"); setName(""); setEmail(""); setMessage("") })
-    .catch((err) => { toast.error("Oops, something went wrong."); console.error("EmailJS error:", err.text || err) })
-    .finally(() => { setTimeout(() => btn?.classList.remove("glow-animate"), 2000)});
+      .send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID!,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID!,
+        { name, email, message, title: `Portfolio Contact: ${name}`, time: new Date().toLocaleString(), reply_to: email },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY!
+      )
+      .then(() => { toast.success("Message sent!"); setName(""); setEmail(""); setMessage("") })
+      .catch((err) => { toast.error("Oops, something went wrong."); console.error("EmailJS error:", err.text || err) })
+      .finally(() => { setTimeout(() => btn?.classList.remove("glow-animate"), 2000) });
   };
 
   function ContactButton() {
@@ -388,9 +386,9 @@ export default function App() {
                           <h2 className="skills-info-heading">About Me</h2>
 
                           <p className="skills-info-text">
-                            Final year Software Engineering student at RMIT specialising in Full Stack Development. During my first 
+                            Final year Software Engineering student at RMIT specialising in Full Stack Development. During my first
                             professional role at Astral Consulting, I integrated complex environments, connecting custom React web
-                            apps with SharePoint workflows via Power Automate. I thrive on weaving cloud-driven features into modern 
+                            apps with SharePoint workflows via Power Automate. I thrive on weaving cloud-driven features into modern
                             web applications and excel in agile teams, owning work end-to-end to ship production-ready software.
                           </p>
                         </div>
@@ -480,24 +478,25 @@ export default function App() {
             </Scroll>
           </ScrollControls>
         </Canvas>
-      </div>   
-        {showQrOverlay && (
-          <div className="mobile-qr-overlay">
-            <div className="mobile-qr-dialog">
-              <h1>😅 Sorry for baiting but...</h1>
-              <p>
-                The 3D env cooks any attempt at mobile scaling<br/>
-                You should probably get your laptop...
-              </p>
-              <button
-                className="mobile-qr-close"
-                onClick={() => setShowQrOverlay(false)}
-              >
-                Close
-              </button>
-            </div>
+      </div>
+      {showQrOverlay && (
+        <div className="mobile-qr-overlay">
+          <div className="mobile-qr-dialog">
+            <h1>😅 Mobile Warning...</h1>
+            <p>
+              The 3D environment makes any attempt at mobile
+              scaling quite difficult<br />
+              I recommend viewing this site on a laptop or desktop
+            </p>
+            <button
+              className="mobile-qr-close"
+              onClick={() => setShowQrOverlay(false)}
+            >
+              Close
+            </button>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }
