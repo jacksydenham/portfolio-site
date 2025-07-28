@@ -2,41 +2,41 @@ import type { ShowcaseItem } from "./components/ShowcaseCarousel";
 
 export const showcaseItems: ShowcaseItem[] = [
   {
-    title: "This Portfolio's Interface",
+    title: "Pivot: MS Teams to Discord",
     intro:
-      "This site's board/tile interface is built with React Three Fiber, backed by a global store architecture, merging 3D visuals with structured frontend state management.",
-
-    section1Header: "State-Driven Architecture",
+      "Agent Bond was initially designed around Teams' built-in Azure transcription and custom app capability. Due to licensing restrictions, I pivoted to Discord, building a custom Azure-based bot to handle transcription.",
+    section1Header: "Teams Sidebar Prototype",
     section1: [
-      "Local Zustand store holds metadata for tiles, projects, skills, and scene/scroll states",
-      "Curated skill groups are derived from hover states based on categorised triggers",
-      "Scroll and 3D content respond to store state without noticeable performance drops",
+      "Teams SDK + Azure Speech Service for in‑app transcription",
+      "Popup dialog via custom sidebar app to confirm suggested Jira moves/creates",
+      "Built in transcription export/accessibility",
     ],
-
-    section2Header: "Interactive R3F Layer",
+    section2Header: "Discord Bot & Azure STT",
     section2: [
-      "Instanced tiles with custom textures allow for clear visualisation of my tech stack and practical experience",
-      "Cohesive 3D logic keeps visuals consistent across all animated states",
+      "Custom discord bot captures call Opus audio",
+      "Real-time Opus to PCM decoding and streaming into Azure Speech Service",
+      "Feeds transcripts into custom GPT parser",
+      "React toast for approval and secure Jira command production/execution separation",
     ],
-
     challenges: [
       {
-        title: "State coordination",
+        title: "Enterprise Licensing",
         description:
-          "Skill/project content, scroll & scene all driven from one store",
+          "Teams policies prevented personal external apps or hooks.",
       },
       {
-        title: "Dynamic content",
-        description: "Tile data drives both visuals and displayed content",
+        title: "Real-time Audio Process",
+        description: "Opus → PCM → Azure stream with low latency in Node.js.",
       },
       {
-        title: "Performance tuning",
-        description: "Instancing + memoised R3F loop = ~0 re-renders",
+        title: "Consistent UX",
+        description:
+          "Planned live popup confirmation maintained via React toasts.",
       },
     ],
     impact:
-      "One unified frontend layer combining React, R3F, Zustand, and a scroll-based UI.",
-    images: ["images/thisArch.png", "/images/figma.png"],
+      "The pivot maintained the seamless speech-driven actioning planned for the Teams implementation, with a seamless setup through a Discord bot invite.",
+    images: ["images/discord1.png", "/images/discord2.png"],
   },
   {
     title: "Comprehensive Audit Logging",
@@ -78,39 +78,40 @@ export const showcaseItems: ShowcaseItem[] = [
       "Every action traceable, every review centralised, ISO 27001 compliance covered.",
   },
   {
-    title: "Pivot: MS Teams to Discord",
+    title: "This Portfolio's Interface",
     intro:
-      "Agent Bond was initially designed around Teams' built-in Azure transcription and custom app capability. Due to licensing restrictions, I pivoted to Discord, building a custom Azure-based bot to handle transcription.",
-    section1Header: "Teams Sidebar Prototype",
+      "This site's board/tile interface is built with React Three Fiber, backed by a global store architecture, merging 3D visuals with structured frontend state management.",
+
+    section1Header: "State-Driven Architecture",
     section1: [
-      "Teams SDK + Azure Speech Service for in‑app transcription",
-      "Popup dialog via custom sidebar app to confirm suggested Jira moves/creates",
-      "Built in transcription export/accessibility",
+      "Local Zustand store holds metadata for tiles, projects, skills, and scene/scroll states",
+      "Curated skill groups are derived from hover states based on categorised triggers",
+      "Scroll and 3D content respond to store state without noticeable performance drops",
     ],
-    section2Header: "Discord Bot & Azure STT",
+
+    section2Header: "Interactive R3F Layer",
     section2: [
-      "Custom discord bot captures call Opus audio",
-      "Real-time Opus to PCM decoding and streaming into Azure Speech Service",
-      "Feeds transcripts into react based GPT parser",
-      "React toast for approval and secure Jira command production/execution separation",
+      "Instanced tiles with custom textures allow for clear visualisation of my tech stack and practical experience",
+      "Cohesive 3D logic keeps visuals consistent across all animated states",
     ],
+
     challenges: [
       {
-        title: "Enterprise Licensing",
+        title: "State coordination",
         description:
-          "Teams policies prevented personal external apps or hooks.",
+          "Skill/project content, scroll & scene all driven from one store",
       },
       {
-        title: "Real-time Audio Process",
-        description: "Opus → PCM → Azure stream with low latency in Node.js.",
+        title: "Dynamic content",
+        description: "Tile data drives both visuals and displayed content",
       },
       {
-        title: "Consistent UX",
-        description:
-          "Planned live popup confirmation maintained via React toasts.",
+        title: "Performance tuning",
+        description: "Instancing + memoised R3F loop = ~0 re-renders",
       },
     ],
     impact:
-      "The pivot maintained the seamless speech-driven actioning planned for the Teams implementation, with a seamless setup through a Discord bot invite.",
-  },
+      "One unified frontend layer combining React, R3F, Zustand, and a scroll-based UI.",
+    images: ["images/thisArch.png", "/images/figma.png"],
+  }
 ];

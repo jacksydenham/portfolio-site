@@ -11,8 +11,8 @@ export const BOARD_REF_WIDTH_UNITS = 14;
 
 
 export const hHeight = 100;  // hero
-export const pHeight = 1450;  // projects
-export const sHeight = 1510;  // showcase
+export const pHeight = 1700;  // projects
+export const sHeight = 1600;  // showcase
 export const cHeight = 200;  // contact
 export const tHeight = hHeight + pHeight + sHeight + cHeight;
 export const SCROLL_BREAKS = {

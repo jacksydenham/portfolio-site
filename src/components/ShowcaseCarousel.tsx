@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 export interface ShowcaseItem {
   title: string;
@@ -14,6 +15,33 @@ export interface ShowcaseItem {
 
 interface ShowcaseCarouselProps {
   items: ShowcaseItem[];
+}
+
+function Lightbox({
+  src,
+  onClose,
+}: {
+  src: string;
+  onClose: () => void;
+}) {
+  // close on esc
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return createPortal(
+    <div className="lightbox-overlay" onClick={onClose}>
+      <img
+        className="lightbox-image"
+        src={src}
+        alt="Enlarged screenshot"
+        onClick={(e) => e.stopPropagation()}
+      />
+    </div>,
+    document.body
+  );
 }
 
 export default function ShowcaseCarousel({ items }: ShowcaseCarouselProps) {
@@ -43,9 +71,11 @@ export default function ShowcaseCarousel({ items }: ShowcaseCarouselProps) {
             <div key={i} className="carousel-item">
               <div className="showcase-layout">
                 <h2 className="showcase-title">{item.title}</h2>
+
                 <div className="showcase-card intro">
                   <p>{item.intro}</p>
                 </div>
+
                 <div className="showcase-card full">
                   <h4>{item.section1Header}</h4>
                   <ul>
@@ -90,33 +120,23 @@ export default function ShowcaseCarousel({ items }: ShowcaseCarouselProps) {
                         key={idx}
                         src={src}
                         alt={`${item.title} screenshot ${idx + 1}`}
-                        className={`showcase-image${
-                          hasRealImage ? " hoverable" : ""
-                        }`}
+                        className={`showcase-image${hasRealImage ? " hoverable" : ""
+                          }`}
                         {...(hasRealImage
                           ? {
-                              onClick: () => setLightboxSrc(src),
-                              style: { cursor: "pointer" },
-                            }
-                          : { style: { cursor: "default", backdropFilter: "blur(4px)" } })}
+                            onClick: () => setLightboxSrc(src),
+                            style: { cursor: "pointer" },
+                          }
+                          : {
+                            style: {
+                              cursor: "default",
+                              backdropFilter: "blur(4px)",
+                            },
+                          })}
                       />
                     );
                   })}
                 </div>
-
-                {lightboxSrc && (
-                  <div
-                    className="lightbox-overlay"
-                    onClick={() => setLightboxSrc(null)}
-                  >
-                    <img
-                      className="lightbox-image"
-                      src={lightboxSrc}
-                      alt="Enlarged screenshot"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  </div>
-                )}
               </div>
 
               <div className="showcase-impact">
@@ -126,6 +146,10 @@ export default function ShowcaseCarousel({ items }: ShowcaseCarouselProps) {
           ))}
         </div>
       </div>
+
+      {lightboxSrc && (
+        <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
+      )}
     </div>
   );
 }
