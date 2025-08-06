@@ -1002,32 +1002,120 @@ figure { margin: 0; }
 .mobile-qr-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  padding: 1rem; /* so content isn’t touching edges on small screens */
 }
 
 .mobile-qr-dialog {
-  scale: 0.8;
+  scale: 1; /* full size for legibility */
   background: #111;
-  padding: 0.8rem;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding: 1.2rem 1rem 1.25rem;
   border-radius: 0.75rem;
-  max-width: 100%;
+  max-width: 420px;
+  width: 100%;
   text-align: center;
-  color: #eee;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+  color: #f2f2f2;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
 }
 
 .mobile-qr-dialog h1 {
   margin-top: 0;
-  font-size: 1.7rem;
+  font-size: 1.5rem;
 }
 
 .mobile-qr-dialog p {
-  font-size: 1.1rem;
-  line-height: 1.4;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.mobile-qr-dialog .video-thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  margin: 0.75rem 0 1rem;
+}
+.mobile-qr-dialog .video-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.35));
+}
+.mobile-qr-dialog .play-badge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  color: #111;
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.9rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.mobile-qr-dialog .hero-links {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 1rem 0;
+}
+
+.mobile-qr-dialog .hero-links a,
+.mobile-qr-dialog .hero-links button {
+  /* sizing */
+  flex: 1 1 auto;
+  width: clamp(44px, 12vw, 56px);
+  height: clamp(36px, 10vw, 44px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+
+  outline: none;
+  box-shadow: none;
+  text-decoration: none;
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 40% auto;
+}
+
+.mobile-qr-dialog .hero-links a:hover,
+.mobile-qr-dialog .hero-links button:hover {
+  background-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-2px);
+}
+
+/* Close button */
+.mobile-qr-close {
+  background: #da0e15;
+  width: 100%;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+.mobile-qr-close:hover {
+  background: #c0392b;
 }

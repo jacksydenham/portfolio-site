@@ -17,6 +17,7 @@ import TestimonialStrip from "./components/Testiomonials";
 import emailjs from "@emailjs/browser";
 import ProjectCard from "./components/ProjectCard";
 import { projects } from "./projectData";
+import MobileWarning from "./components/mobileWarning";
 
 function ScrollScene({ activeProject, anchorRef, setActiveTriggers, setHoveredTabletName, }:
   { activeProject: string; anchorRef: React.RefObject<HTMLDivElement | null>; setActiveTriggers: (t: string[] | null) => void; setHoveredTabletName: (name: string | null) => void; }) {
@@ -479,24 +480,7 @@ export default function App() {
           </ScrollControls>
         </Canvas>
       </div>
-      {showQrOverlay && (
-        <div className="mobile-qr-overlay">
-          <div className="mobile-qr-dialog">
-            <h1>😅 Mobile Warning...</h1>
-            <p>
-              The 3D environment makes any attempt at mobile
-              scaling quite difficult<br />
-              I recommend viewing this site on a laptop or desktop
-            </p>
-            <button
-              className="mobile-qr-close"
-              onClick={() => setShowQrOverlay(false)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      {showQrOverlay && <MobileWarning setShowQrOverlay={setShowQrOverlay} />}
     </div>
   );
 }
