@@ -1,4 +1,3 @@
-// No heavy video player; we use a lightweight YouTube thumbnail link.
 function MobileWarning({
   setShowQrOverlay,
 }: {
@@ -11,11 +10,9 @@ function MobileWarning({
   return (
     <div className="mobile-qr-overlay">
       <div className="mobile-qr-dialog" role="dialog" aria-modal="true">
-        {/* Header */}
         <h1>😅 Mobile Warning</h1>
         <p>This site uses 3D and doesn't scale well on phones. If you want to view it now:</p>
 
-        {/* Video (thumbnail opens YouTube app) */}
         <a
           className="video-thumb"
           href={ytUrl}
@@ -24,10 +21,9 @@ function MobileWarning({
           aria-label="Watch a 2-minute walkthrough on YouTube"
           style={{ backgroundImage: `url(${thumbUrl})` }}
         >
-          <span className="play-badge">Watch 2-min demo</span>
+          <span className="play-badge">Watch 45s demo</span>
         </a>
 
-        {/* Contact links */}
         <p>
           <strong>Or grab my details:</strong>
         </p>
@@ -55,7 +51,6 @@ function MobileWarning({
           </a>
         </div>
 
-        {/* Close */}
         <button
           className="mobile-qr-close"
           onClick={() => setShowQrOverlay(false)}
