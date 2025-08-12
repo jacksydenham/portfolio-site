@@ -4,7 +4,7 @@ function MobileWarning({
 }: {
   setShowQrOverlay: (value: boolean) => void;
 }) {
-  const ytId = "jhei7UBwx9g";
+  const ytId = "KLzVZLph8FA";
   const ytUrl = `https://youtu.be/${ytId}`;
   const thumbUrl = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
 
