@@ -23,6 +23,7 @@ html, body {
   --journal-gutter: 0px;
   --main-col: 1440px;
   --main-col-half: calc(var(--main-col) / 2);
+  --journal-fixed-left: 16px;
 }
 
 #root {
@@ -1010,17 +1011,19 @@ figure { margin: 0; }
 
 .journal-rail {
   position: fixed;
-  top: 0%;
+  top: 64px;   
   height: 100vh;
   width: var(--journal-width);
 
-  left: calc(71% - var(--main-col-half) - var(--journal-gutter) - var(--journal-width));
+  left: var(--journal-fixed-left);
+
+  transform-origin: left top;
 
   transform: translateX(-120%) scale(0.85);
-  transition: transform .28s ease, opacity .28s ease;
   opacity: 0;
   pointer-events: none;
 
+  transition: transform .28s ease, opacity .28s ease;
   z-index: 2;
   display: flex;
   align-items: stretch;
@@ -1150,7 +1153,7 @@ figure { margin: 0; }
   padding: 0.95rem 0.95rem 0.9rem;
   margin: 10px 0;
   box-shadow: 0 8px 18px rgba(0,0,0,0.35);
-  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  transition: transform .18s ease, box-shadow .18s ease;
 }
 
 .journal-item:nth-child(1n) { transform: translateX(-2px); }
@@ -1160,7 +1163,6 @@ figure { margin: 0; }
 .journal-item:nth-child(5n) { transform: translateX(6px); }
 .journal-item:nth-child(6n) { transform: translateX(-4px); }
 
-/* keep hover additive */
 .journal-item:hover {
   transform: translateY(-3px) !important;
 }
@@ -1179,7 +1181,112 @@ figure { margin: 0; }
 .journal-tags { display: inline-flex; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
 .journal-tags li { font-size: 11px; color: #aaa; background: rgba(255,255,255,0.06); padding: 0.05rem 0.35rem; border-radius: 6px; }
 .journal-item-title { margin: 0 0 0.25rem; font-size: 15px; color: #ddd; font-weight: 600; }
-.journal-item-body { margin: 0; font-size: 13px; line-height: 1.35; color: #c9c9c9; opacity: 0.9; }
+.journal-item-body { margin: 0; font-size: 13px; line-height: 1.35; color: #c9c9c9; opacity: 0.9; white-space: pre-line; }
+
+.j-points {
+  margin: 0.35rem 0 0;
+  padding-left: 0;
+  list-style: none;
+}
+.j-points li {
+  position: relative;
+  margin: 0.3rem 0;
+  padding-left: 1.1rem;
+  color: #d9f7ff;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.j-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 0; height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 6px solid var(--theme-color);
+  filter: drop-shadow(0 0 6px var(--theme-color));
+}
+
+.journal-item-body { white-space: pre-line; }
+
+.journal-filter {
+  display: inline-flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.journal-filter {
+  display: inline-flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.jtab {
+  position: relative;
+  height: 34px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(17,17,17,.55);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 8px 18px rgba(0,0,0,.35);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: #e6e6e6;
+
+  transition: color .18s ease;
+}
+
+.jtab::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--theme-color);
+  opacity: 0;
+  filter: drop-shadow(0 0 0 var(--theme-color));
+  transition: opacity .15s ease, filter .15s ease;
+}
+
+.jtab:hover {
+  background: rgba(17,17,17,.7);
+}
+.jtab:hover::before {
+  opacity: 1;
+  filter: drop-shadow(0 0 8px var(--theme-color));
+}
+
+.jtab.active,
+.jtab[aria-selected="true"] {
+  background: rgba(17,17,17,.78);
+  color: #fff;
+}
+.jtab.active::before,
+.jtab[aria-selected="true"]::before {
+  opacity: 1;
+  filter: drop-shadow(0 0 8px var(--theme-color));
+}
+
+.jtab:focus,
+.jtab:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.jtab::-moz-focus-inner { border: 0; }
+.jtab { -webkit-tap-highlight-color: transparent; }
+
 
 .mobile-qr-overlay {
   position: fixed;
@@ -1189,11 +1296,11 @@ figure { margin: 0; }
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  padding: 1rem; /* so content isn’t touching edges on small screens */
+  padding: 1rem;
 }
 
 .mobile-qr-dialog {
-  scale: 1; /* full size for legibility */
+  scale: 1;
   background: #111;
   padding: 1.2rem 1rem 1.25rem;
   border-radius: 0.75rem;
