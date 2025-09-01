@@ -18,6 +18,8 @@ import emailjs from "@emailjs/browser";
 import ProjectCard from "./components/ProjectCard";
 import { projects } from "./projectData";
 import MobileWarning from "./components/mobileWarning";
+import JournalRail from "./components/JournalRail";
+import { journalEntries } from "./components/journalData";
 
 function ScrollScene({ activeProject, anchorRef, setActiveTriggers, setHoveredTabletName, }:
   { activeProject: string; anchorRef: React.RefObject<HTMLDivElement | null>; setActiveTriggers: (t: string[] | null) => void; setHoveredTabletName: (name: string | null) => void; }) {
@@ -221,6 +223,7 @@ function ScrollScene({ activeProject, anchorRef, setActiveTriggers, setHoveredTa
 export default function App() {
   const anchorRef = useRef<HTMLDivElement>(null);
   const [showQrOverlay, setShowQrOverlay] = useState(false)
+  const [isJournalOpen, setIsJournalOpen] = useState(false);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -305,8 +308,24 @@ export default function App() {
   }
 
   return (
-    <div className="page-root">
+    <div className={`page-root ${isJournalOpen ? "journal-open" : ""}`}>
       <StarFieldCanvas />
+
+      <button
+        className={`journal-toggle ${isJournalOpen ? "open" : ""}`}
+        aria-pressed={isJournalOpen}
+        aria-label={isJournalOpen ? "Close journal" : "Open journal"}
+        onClick={() => setIsJournalOpen(v => !v)}
+        onMouseDown={(e) => e.preventDefault()}  
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18l6-6-6-6" />
+        </svg>
+
+        <span className="jt-text">Journal</span>
+      </button>
+
+      <JournalRail entries={journalEntries} />
       <div className="canvas-column">
         <Canvas
           camera={{ position: [0, 2, 6], fov: 50 }}
