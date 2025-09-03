@@ -1,6 +1,30 @@
 import type { JournalEntry } from "./JournalRail";
 
 export const journalEntries: JournalEntry[] = [
+    {
+    id: "j-010",
+    date: "2025-09-03",
+    title: "LeetCode + Mimo Spam",
+    points: [
+      "Preparing for technical assessment for Seek",
+      "Mimo feeling too simple for how time consuming it is, but I feel it's worth it anyway",
+    ],
+    tags: ["JS", "coding"],
+    category: "dev"
+  },
+    {
+    id: "j-009",
+    date: "2025-09-02",
+    title: "Phase 1/5 Business Dev Complete",
+    points: [
+      "Twilio VoIP set up",
+      "HTTP tunnel attached to call response (nGrok for now)",
+      "Custom JS file running through call - will host AI interaction"
+    ],
+    body: "Smooth first phase, done in one day",
+    tags: ["business", "JS"],
+    category: "dev"
+  },
   {
     id: "j-008",
     date: "2025-09-01",
