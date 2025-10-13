@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Clock, User } from "lucide-react";
 import clsx from "clsx";
 import ReactPlayer from "react-player";
@@ -16,7 +17,7 @@ export interface ProjectData {
   duration?: string;
   colors: [string, string, string];
   intro?: string;
-  videoUrl?: string;
+  showcaseMedia?: { type: "video" | "image"; url: string; alt?: string }[];
   logoUrl?: string;
   descriptions: DescriptionItem[];
 }
@@ -29,6 +30,27 @@ interface ProjectCardProps {
   onMouseLeave: () => void;
 }
 
+// ✅ Lightbox overlay (minimal)
+function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return createPortal(
+    <div className="lightbox-overlay" onClick={onClose}>
+      <img
+        className="lightbox-image"
+        src={src}
+        alt="Expanded view"
+        onClick={(e) => e.stopPropagation()}
+      />
+    </div>,
+    document.body
+  );
+}
+
 export default function ProjectCard({
   data,
   isActive,
@@ -38,8 +60,8 @@ export default function ProjectCard({
 }: ProjectCardProps) {
   const [c1, c2, c3] = data.colors;
   const [expanded, setExpanded] = useState(false);
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
-  // Collapse when leaving the Projects section
   useEffect(() => {
     if (!inProjects) setExpanded(false);
   }, [inProjects]);
@@ -93,21 +115,34 @@ export default function ProjectCard({
 
       {data.intro && <p className="card-intro">{data.intro}</p>}
 
-      {/* inside ProjectCard.tsx */}
-      {data.videoUrl && (
-        <div className="showcase-video hoverable">
-          <ReactPlayer
-            src={data.videoUrl}
-            controls={false}
-            width="100%"
-            height="100%"
-            config={{
-              youtube: {
-                fs: 0,
-                rel: 0,
-              },
-            }}
-          />
+      {data.showcaseMedia && data.showcaseMedia.length > 0 && (
+        <div className="showcase-scroll">
+          {data.showcaseMedia.map((item, index) => (
+            <div key={index} className="showcase-media">
+              {item.type === "video" ? (
+                <ReactPlayer
+                  src={item.url}
+                  controls={false}
+                  width="100%"
+                  height="100%"
+                  config={{
+                    youtube: { fs: 0, rel: 0 },
+                  }}
+                />
+              ) : (
+                <img
+                  src={item.url}
+                  alt={item.alt || `showcase-${index}`}
+                  className="showcase-img hoverable"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLightboxSrc(item.url);
+                  }}
+                  style={{ cursor: "pointer" }}
+                />
+              )}
+            </div>
+          ))}
         </div>
       )}
 
@@ -129,11 +164,14 @@ export default function ProjectCard({
         {!expanded && <div className="fade-overlay" />}
       </div>
 
-      {/* ↓–––––––––– Click-hint bottom-right (only when collapsed) */}
       {!expanded && (
         <span className="expand-hint" aria-hidden="true">
           click to expand
         </span>
+      )}
+
+      {lightboxSrc && (
+        <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
       )}
     </div>
   );

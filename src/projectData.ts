@@ -5,7 +5,7 @@ export const projects: ProjectData[] = [
     title: "KeyDocs",
     logoUrl: "/images/keydocs.png",
     subtitle: "Astral IP",
-    teamSize: 2,
+    teamSize: 3,
     duration: "12mo",
     colors: ["#2b79d7", "#0541F8", "#5ECBFF"],
     intro:
@@ -96,7 +96,11 @@ export const projects: ProjectData[] = [
     duration: "2 wk",
     intro:
       "Agent Bond is an AI‑powered agent that joins your Discord voice channel, transcribes live speech via Azure Cognitive Services, then uses GPT‑4 to automatically perform Jira actions, moving or creating tasks with an approval step before execution for full transparency and security.",
-    videoUrl: "https://youtu.be/jhei7UBwx9g",
+    showcaseMedia: [
+      { type: "video", url: "https://youtu.be/jhei7UBwx9g" },
+      { type: "image", url: "/images/bond1.png" },
+      { type: "image", url: "/images/bond2.png" },
+    ],
     descriptions: [
       {
         title: "Overview",
@@ -146,46 +150,40 @@ export const projects: ProjectData[] = [
     ],
   },
   {
-    title: "Carer Manager Plus",
-    logoUrl: "/images/carer.png",
+    title: "AI Content Platform",
+    logoUrl: "/images/kingdom.png",
     colors: ["var(--theme-color)", "var(--theme-color)", "var(--theme-color)"],
-
-    subtitle: "GitHub",
-    subtitleUrl:
-      "https://github.com/jacksydenham/Carer-Manager-Plus-Admin-Portal",
-
-    teamSize: 6,
-    duration: "8 wk",
+    subtitle: "In-Progress",
+    teamSize: 5,
+    duration: "12 wk",
     intro:
-      "Prototype admin portal for Carer Manager Plus. Lets admins manage companies, carers, employees and system reference data, bulk-import Excel files, and generate charge-rate reports. Built with React + DevExtreme against a Node/SQL-Server REST API in four agile sprints.",
+      "An automated content platform that transforms a single URL into a complete, SEO-friendly blog post in under 45 seconds. It uses a scalable pipeline to scrape web data, generate AI-driven content, and prepare it for publication.",
     descriptions: [
       {
-        title: "Core features",
+        title: "Core Functionality",
         children: [
-          { title: "CRUD for companies, employees, carers & reference tables" },
-          { title: "Login / logout & secure password-change flow" },
-          { title: "Excel import for clients, carers and employees" },
-          { title: "Hours-charged reporting by company" },
+          { title: "Automated blog post & image generation from a URL" },
+          { title: "Keyword-driven for SEO-optimized content" },
+          { title: "Sub-45s article generation & sub-2m video creation" },
         ],
       },
       {
-        title: "Key integrations",
+        title: "System Architecture",
         children: [
-          { title: "REST API layer to SQL Server" },
-          { title: "Google Places autocomplete for address fields" },
-          { title: "DevExtreme DataGrid, Form & Popup components" },
-          { title: "Swagger UI for live API docs & testing" },
+          { title: "Scalable, multi-tenant backend for concurrent users" },
+          { title: "End-to-end automated content pipeline via n8n" },
+          { title: "Secure user authentication and management with Clerk" },
         ],
       },
       {
-        title: "Tech & delivery",
+        title: "Tech Stack",
         children: [
-          { title: "React 18 • TypeScript • DevExtreme UI" },
-          { title: "Node.js 16 / Express middleware" },
-          { title: "SQL Server database" },
-          { title: "4 x 2-week Scrum sprints with twice-weekly client demos" },
+          { title: "React, Node.js, TypeScript" },
+          { title: "n8n for workflow automation" },
+          { title: "OpenAI API (GPT-4)" },
+          { title: "Clerk for authentication" },
         ],
       },
     ],
-  },
-];
+  }
+]

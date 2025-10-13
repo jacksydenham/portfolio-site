@@ -73,9 +73,9 @@ export const curatedGroups: CuratedGroup[] = [
   },
   {
     title: "Business Process Automation",
-    items: ["Power Automate"],
+    items: ["Power Automate", "n8n"],
     blurb:
-      "Leverage cloud automation to drive event-based workflows, triggering approvals, notifications, and audit logs from enterprise data sources.",
+      "Leverage cloud automation platforms like Power Automate and n8n to drive event-based workflows, triggering approvals, notifications, and data transformations from enterprise sources.",
   },
   {
     title: "Collaborative Workflows",

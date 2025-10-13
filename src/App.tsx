@@ -316,7 +316,7 @@ export default function App() {
         aria-pressed={isJournalOpen}
         aria-label={isJournalOpen ? "Close journal" : "Open journal"}
         onClick={() => setIsJournalOpen(v => !v)}
-        onMouseDown={(e) => e.preventDefault()}  
+        onMouseDown={(e) => e.preventDefault()}
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M9 18l6-6-6-6" />
@@ -354,11 +354,11 @@ export default function App() {
                     <h1 className="hero-name">Jack Sydenham</h1>
                     <div className="hero-subline">
                       <h2 className="hero-subtitle">
-                        End-to-End Integrations&nbsp;&amp;&nbsp;Cloud Automation
+                        Full-Stack Development & AI-Powered Automation
                       </h2>
                       <div className="hero-links">
                         <a
-                          href="/Jack Sydenham FSD Resume 2025.pdf"
+                          href="/Jack Sydenham 2025 SE Graduate Resume.pdf"
                           download
                           className="hero-btn hero-cv"
                         />
@@ -380,10 +380,11 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div className="hero-role">
-                    <span className="full">FULL</span>
-                    <span className="stack">STACK</span>
-                  </div>
+                  <img
+                    src="/images/pfp.png"
+                    alt="A profile picture of Jack Sydenham"
+                    className="hero-pfp"
+                  />
 
                   <div className="skills-info-box">
                     {curated.length > 0 ? (
@@ -431,6 +432,15 @@ export default function App() {
                       onMouseLeave={() => setActiveProject(activeProject)}
                     />
                   ))}
+
+                  <a
+                    href="https://github.com/jacksydenham?tab=repositories"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="projects-footer-link"
+                  >
+                    View all projects on GitHub →
+                  </a>
                 </section>
 
                 <section className="showcase">
