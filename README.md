@@ -1,54 +1,27 @@
-# React + TypeScript + Vite
+# Interactive 3D Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive 3D portfolio built with React Three Fiber to showcase my projects and technical skills in a dynamic and engaging way.
 
-Currently, two official plugins are available:
+### ✨ Always live at https://www.jacksydenham.dev/ ✨
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## About The Project
 
-## Expanding the ESLint configuration
+This project moves beyond a traditional 2D website by creating an interactive 3D space for users to explore my work. The goal was to demonstrate advanced front-end capabilities, particularly in performance optimization and state management within a complex, real-time rendering environment.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Key Features
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+* **Efficient Object Rendering:** Utilizes Three.js instancing and React memoization to render 20x more objects than a standard approach without performance degradation.
+* **Centralized State Management:** Employs Zustand to seamlessly synchronize state across more than 25 individual 3D and UI components, ensuring a consistent and predictable user experience.
+* **Custom Asset Pipeline:** All 3D models were created and optimized in Blender for performant use on the web.
+* **Automated Deployment:** All valid commites go straight to prod via vercel upon merging. With no backend, this process is low risk and keeps uptime at ~100%.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Tech Stack
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+* **Front-End:** React, TypeScript
+* **3D Rendering:** React Three Fiber (r3f), Three.js
+* **State Management:** Zustand
+* **3D Modeling:** Blender
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## Future Improvements
+
+* **Full-Stack Backend Implementation:** I'd always prefer to have a backend with a dedicated database and a secure REST API to enable advanced features, user authentication, and data persistence, but since this is built on Vite, I'd first need to refactor to using Next.js.
