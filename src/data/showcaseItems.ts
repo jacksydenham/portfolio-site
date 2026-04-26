@@ -1,4 +1,4 @@
-import type { ShowcaseItem } from "./components/ShowcaseCarousel";
+import type { ShowcaseItem } from "../components/ShowcaseCarousel";
 
 export const showcaseItems: ShowcaseItem[] = [
   {

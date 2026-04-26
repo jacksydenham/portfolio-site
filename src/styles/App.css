@@ -23,7 +23,6 @@ html, body {
   --journal-gutter: 0px;
   --main-col: 1440px;
   --main-col-half: calc(var(--main-col) / 2);
-  --journal-fixed-left: 16px;
 }
 
 #root {
@@ -47,17 +46,9 @@ html, body {
   left: 50%;
   transform-origin: top center;
   transform: translateX(-50%) scale(0.8);
-  transition: left .28s ease;
-  transform-origin: top center;
-  transform: translateX(-50%) scale(0.8);
   pointer-events: none;
   z-index: 0;
   background: transparent;
-}
-
-.page-root.journal-open .canvas-column,
-.page-root.journal-open .content-shell {
-  left: 60%;
 }
 
 .canvas-column canvas {

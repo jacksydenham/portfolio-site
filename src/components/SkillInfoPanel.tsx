@@ -1,5 +1,5 @@
 import React from "react";
-import type { CuratedGroup } from "../skillGroups";
+import type { CuratedGroup } from "../data/skillGroups";
 
 interface Props {
   curated: CuratedGroup | null;

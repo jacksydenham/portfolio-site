@@ -1,5 +1,5 @@
 import Board from "./Board";
-import { TabletMeta } from "./TabletData";
+import { TabletMeta } from "../data/tabletData";
 import TabletInstance from "./TabletInstance";
 import { useRef, useLayoutEffect, useState } from "react";
 import * as THREE from "three";
