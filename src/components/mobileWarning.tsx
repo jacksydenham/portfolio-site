@@ -29,7 +29,7 @@ function MobileWarning({
         </p>
         <div className="hero-links">
           <a
-            href="/Jack Sydenham FSD Resume 2025.pdf"
+            href="/Jack Sydenham 2025 SE Graduate Resume.pdf"
             download
             className="hero-btn hero-cv"
           >
