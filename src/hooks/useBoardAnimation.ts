@@ -13,6 +13,7 @@ import {
   getProjectTargets,
   getShowcaseTargets,
   getContactTargets,
+  HERO_BOARD_ENTRANCE_DELAY_SEC,
 } from "../config/animationConfig";
 
 export function useBoardAnimation(
@@ -73,7 +74,11 @@ export function useBoardAnimation(
     const w = viewport.width;
 
     if (inHero) {
-      target = getHeroTargets(w, heroBaseY, boardAnimTime.current);
+      const heroPhaseT = Math.max(0, boardAnimTime.current - HERO_BOARD_ENTRANCE_DELAY_SEC);
+      target = getHeroTargets(w, heroBaseY, heroPhaseT);
+      if (boardAnimTime.current < HERO_BOARD_ENTRANCE_DELAY_SEC) {
+        target.pos.set(w, heroBaseY, 0);
+      }
     } else if (inProjects) {
       target = getProjectTargets(w, projectsBaseY, idleTime.current);
       // Continuous spin logic

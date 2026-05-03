@@ -54,13 +54,6 @@ export default function ContactSection({ anchorRef }: ContactSectionProps) {
 
   return (
     <section className="contact">
-      <div className="l-frame">
-        <div className="l-corner tl" />
-        <div className="l-corner tr" />
-        <div className="l-corner bl" />
-        <div className="l-corner br" />
-      </div>
-
       <form className="contact-box" onSubmit={sendEmail}>
         <div className="contact-heading">
           <h2>Contact Me</h2>

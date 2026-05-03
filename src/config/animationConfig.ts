@@ -7,6 +7,9 @@ export interface AnimationTarget {
   dampingRot: number;
 }
 
+/** Hold the board off-screen / idle before hero slide + tilt (eases first-frame GPU + DOM contention). */
+export const HERO_BOARD_ENTRANCE_DELAY_SEC = 0.32;
+
 export const getHeroTargets = (w: number, heroBaseY: number, boardAnimTime: number): AnimationTarget => {
   let targetTiltX = THREE.MathUtils.degToRad(70);
   if (boardAnimTime < 1.8) {

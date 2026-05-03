@@ -28,7 +28,7 @@ export default function HeroSection({ curated }: HeroSectionProps) {
         <h1 className="hero-name">Jack Sydenham</h1>
         <div className="hero-subline">
           <h2 className="hero-subtitle">
-            Full-Stack Development & AI-Powered Automation
+            Frontend Engineering & Product Development
           </h2>
           <div className="hero-links">
             <a
